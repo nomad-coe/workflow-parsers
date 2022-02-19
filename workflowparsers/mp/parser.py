@@ -32,7 +32,7 @@ from nomad.datamodel.metainfo.simulation.method import (
     Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetCellDependent)
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Dos, DosValues, BandStructure, BandEnergies)
-from mpparser.metainfo.mp import Composition, Symmetry
+from .metainfo.mp import Composition, Symmetry
 
 
 class MPParser(FairdiParser):

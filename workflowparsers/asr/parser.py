@@ -38,7 +38,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Energy, EnergyEntry, Forces, ForcesEntry,
     Stress, StressEntry)
 from nomad.datamodel.metainfo.workflow import Workflow
-from asrparser.metainfo.asr import (
+from .metainfo.asr import (
     x_asr_resources, x_asr_metadata,
     x_asr_run_specification, x_asr_parameters, x_asr_code, x_asr_codes, x_asr_dependencies,
     x_asr_dependency)
