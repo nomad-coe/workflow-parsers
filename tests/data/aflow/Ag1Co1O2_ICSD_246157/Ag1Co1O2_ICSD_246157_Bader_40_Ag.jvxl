@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<jvxl version="2.3" jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09" xmlns="http://jmol.org/jvxl_schema" xmlns:cml="http://www.xml-cml.org/schema">
+<jvxlFileTitle>
+Vasp CHGCAR format
+
+
+</jvxlFileTitle>
+<jvxlVolumeData origin="{0.0 0.0 0.0}">
+<jvxlVolumeVector type="0" count="71" vector="{0.0 0.0 0.17769359}"></jvxlVolumeVector>
+<jvxlVolumeVector type="1" count="17" vector="{0.090821624 0.15730768 0.0}"></jvxlVolumeVector>
+<jvxlVolumeVector type="2" count="17" vector="{0.090821624 -0.15730768 0.0}"></jvxlVolumeVector>
+</jvxlVolumeData>
+<jvxlSurfaceSet count="1">
+<jvxlSurface type="isosurface">
+<jvxlSurfaceInfo 
+  cutoff="0.4" 
+  isCutoffAbsolute="false" 
+  pointsPerAngstrom="5.627665" 
+  nBytesData="2301" 
+  isXLowToHigh="true" 
+  nSurfaceInts="584" 
+  nBytesUncompressedEdgeData="1675" 
+  color="[x5020a0]" 
+  translucency="0.0" 
+  rendering="fill noMesh noDots notFrontOnly frontlit" 
+  insideOut="true" 
+  note="progressive JVXL+ -- X values read from low(0) to high(70)" 
+  xyzMin="{0.38571572 -1.9203166 2.0696673}" 
+  xyzMax="{2.5205762 1.9203167 10.368884}" 
+  approximateCompressionRatio="1078:1" 
+  jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09">
+</jvxlSurfaceInfo>
+<jvxlIsosurfaceState>
+  isosurface ID "isosurface1" select ({})  downsample 2 cutoff 0.4 /*file*/"/common/ICSD/RAW/HEX/Ag1Co1O2_ICSD_246157/BvAt_Ag.dat";
+  isosurface ID "isosurface1" fill noMesh noDots notFrontOnly frontlit;
+  color isosurface opaque [x5020a0];
+</jvxlIsosurfaceState>
+<jvxlSurfaceData>
+<jvxlEdgeData count="1675" encoding="base90f1" bsEncoding="base90+35c" isXLowToHigh="true" data=")*{=v'{uYpffPpFOpa]aXpP'{f]]f*{xv~;0 vfafvcc({pp{wxPGuMV]fD_DA]I%#|:j:#||#|00#||zj::5A]U]^R_DD@:eDD:@M^:0:^R^5$||J{||puo*FK_i~;0 l2^~;1 _T|2g2#v1|/npv/n)|#)g2|28;`K`dY^~;1 A6l2233i~;1 6AF`22`Yd8#uo#*TXbH:#/1#KH=CYWV;S;=WFbWsGHKbTH|e#1n#q.q|n#:e#WTHXGH=s,==WYWb]S;;LIV;;ILBWW]b,bH##HF=`JD4/qFFqPDpUw`_vKq!ytd?COKPCk(qv0)q?E_@E@F`?F)qw(q4ok!PC`?CUd;U.t+~%0 y~%0 +q.~;0 JDDULf(d1;9_KIZ+9a59*affqS0fow@ZdETIVVKTE_@(;wnLS9q.9*a8auu5::jj*bbuu.fg9Lf(d1;9_KIZ+95*ffqS0fow@ZdETIVVKTE_@(;wnLS9q.9*8uu5jj*uu.fg9`J4/PpUw`_v>f>Kqytd?OKPk(v0)?_@@`?)w(4okP`?Ud;U.>t+>~%0 ey~%0 e+=q.=~;0 JU[Xb:./Y1YK.=[CCYVS=F!!bsGK..bTe1ZZnq.YYqn:..eTXG=Cs,!=!=Yb]SLIVILB]b,[bF=[W|pu*|WHddHFHKil^~;0 TWW#|g#||v|/pv/)#|#|)|Hg|8WW;KdYH^AH6dl3d3di6dAHFYHd8W#|u#*|TW0@cmc@mMVf_AIm%n#j#|11##|zmj5m?AU^?Rc_@c:me:m@cMRc^?5m$J{m?||0B[[B#e)*='ue##oYPFo#eOXPeB'*xBv[~;0 c[c[(w[xAPeGoueA##$)$/99//>B>/$9BB9$)9>9)$//$*({XpOp'{w~;0 vfaf~;0 vc'{f]]f){xuOpa]apPGYpffpFO*{v{uxbv#$|#|{UM^:0j:A^ReD_D:_DeD@A]M]^Jj::5#|00%|||#|::|||5V]DD]zI^@9RKF`|2uo|*g2;`Yi~;0 ^~;0 6l2l23^~;0 i~;0 A;`F`dTg228#|#v1p/nvn)p#|22)#8K_~;0 2~;0 _TcA36Y/uo*YBWbH##Hs==W]V;S;IS;V;L=WBWbFs,bWXGHbH|:Ke##.1q|1.n##WK:THH=X,YW;;W=FbLI!TbHn#pe#GH=JDqDcU.yt~%0 ty+dq;J!`?CJC4Ok0qw(qF`v?FE__@Eqv`)qo!Ow4PCCT`;+~%0 .T)/q@F?F(qpOJDk?DU8*bfq9*bu5:5:j*a*augq.fLSf(1wd_@KZTIIVZKE;0_(o9L.9a9a9fujtEdVT@;nfwS98*fq9*u55j**ugq.fLSf(1wd_@KZTIIVZKE;0_(o9L.99fujtEdVT@;nfwS9=JqcU.=eyt~%0 e>ty+>dq;J`?J4Ok0w(`v?__@v`)oOw4PT`;+>~%0 f.>T)/@?(pOJk?UY[Bbs=[=]VSISVL=BbCF!s,!bXGb:.K.e.Y1Yq1Z.ZnK.:.T=CX,!Y=F!bLI!.YY.[TbnpeG=[HKWF||u|*|gW;YHdi^6ddll3dH^iAH;FdHTWg8W##||#|vp/v)#p#||)#|H8WKTWcAH3d6dYHW|/u*|W?m#0$#{m?cUMjARcme_:mc_e@c?AM^?Jmj5m#%|n|1#|1|5mVzIm^@@c9mRc@0##AeoeA[*(XO'w[[~;1 c[B')xBueOPe#GoYFo##Oe*ue#xBb[v[B$//$)9>9)$9BB9$/>B>//99/$)$">
+-}4J '0(/)/(0'1~%0 }m$ %1(/).*-+-*-+-*/'}J$ $1).*-+,,+-+,,+$$*,-)/(}'$ $1(.+,,+-*.*-$$(/).*-+,,*/'n(.*-+,,+-*.$$'0(0'0(/).*,-)!'/*-*,-*.)/).$$'0(0'0(/).*,-)0~%0 L'/*-*,-*.)/).$$'0(0'0(/).*,-)0~%0 L'/*-*-+,,+-*.$$'0(0'0(/).*,-)!'/*.(.+,,+-*.*-$$(/).*-+,,*/'n(1$1).*-+,,+-+,,+$$*,-)/(}'$ $D%1(/).*-+-*-+-*/'}#% '0(/)/(0'1~%0 }xo ~%0 1'0(/)/(0'}#% '/*-+-*-+-*.)/(1%D$}'$ (/)-,*$$+,,+-+,,+-*.)1$1(n'/*,,+-*.)/($$-*.*-+,,+.(.*/'!)-,*.)/(0'0(0'$$.*-+,,+-*-*/'L~%0 0)-,*.)/(0'0(0'$$.)/).*-,*-*/'L~%0 0)-,*.)/(0'0(0'$$.)/).*-,*-*/'!)-,*.)/(0'0(0'$$.*-+,,+-*.(n'/*,,+-*.)/($$-*.*-+,,+.(1$}'$ (/)-,*$$+,,+-+,,+-*.)1$}J$ '/*-+-*-+-*.)/(1%}m$ ~%0 1'0(/)/(0'}4J </jvxlEdgeData>
+</jvxlSurfaceData>
+</jvxlSurface>
+</jvxlSurfaceSet>
+</jvxl>

@@ -1,0 +1,6 @@
+COHPstartEnergy  -70
+COHPendEnergy     10
+basisfunctions Hf 6s 5s 5d 6p 5p 6p 6d      
+basisfunctions V 3d 4s 4p 3p 3s 4d 
+#includeOrbitals spd
+cohpGenerator from 2.0 to 3.2     

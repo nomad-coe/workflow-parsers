@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<input>
+
+   <title>Simple-Hexagonal Graphite</title>
+
+   <structure speciespath="/scratch/pavone/vdW/exciting/species">
+      <crystal scale="4.654">
+         <basevect>    0.5000000000000000    0.9303357710710163    0.0668980796703395 </basevect>
+         <basevect>   -0.5000000000000000    0.9303357710710163    0.0668980796703395 </basevect>
+         <basevect>    0.0000000000000000    0.1091503622891445    1.4087779095439645 </basevect>
+      </crystal>
+      <species speciesfile="C.xml" rmt="1.20">
+         <atom coord="0.00000000  0.00000000  0.0"/>
+         <atom coord="0.33333333  0.33333333  0.0"/>
+      </species>
+   </structure>
+
+   <groundstate xctype="GGA_PBE" ngridk="34 34 24" rgkmax="8" swidth="0.01" epsengy="1.0d-7" gmaxvr="20.0" vdWcorrection="DFTD2" maxscl="60">
+   </groundstate>
+
+   <relax method="harmonic" taunewton="0.8" epsforce="1.d-5" maxsteps="25">   
+   </relax>
+
+</input>

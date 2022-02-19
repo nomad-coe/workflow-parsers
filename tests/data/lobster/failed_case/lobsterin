@@ -1,0 +1,4 @@
+COHPstartEnergy  -12
+COHPendEnergy     2.5
+includeOrbitals spd
+cohpGenerator from 2.5 to 3.0

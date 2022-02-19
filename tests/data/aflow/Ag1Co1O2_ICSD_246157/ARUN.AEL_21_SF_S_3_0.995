@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AFLOW REST-API V1.0</title>
+    <style type="text/css">
+        ol.reference {
+          list-style-type: none;
+          counter-reset: ref_count;
+          margin-left:0;
+          padding-left:0;
+        }
+        ol.reference li:before {
+          content: '[' counter(ref_count) '] ';
+          counter-increment: ref_count;
+        }
+        h4.disclaimer { 
+        text-decoration: underline; 
+        text-transform: uppercase;
+        } 
+    </style>
+</head>
+<body>
+<tt> <b>AFLOW REST-API V1.0</b><br>
+Frisco Rose - Richard Taylor - Ohad Levy - Cormac Toher - Marco Buongiorno Nardelli - Stefano Curtarolo - 2021 Duke University [<a http=www.aflowlib.org>aflowlib.org</a> consortium] <br>
+Use of this data repository implies citation of the work: Curtarolo <i>et al.</i>, Comp. Mat. Sci. <b>58</b>, 227 (2012).<br>
+[doi:<a href=http://dx.doi.org/10.1016/j.commatsci.2012.02.002>10.1016/j.commatsci.2012.02.002</a>]<br>
+LICENSE.  The data included within the aflow.org repository is free for scientific, academic and non-commercial purposes.  Any other use is prohibited.<br>
+</tt>
+<br>
+<br>
+<tt> <b>CONTENT:</b></tt>
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aurl">aurl</a>=aflowlib.duke.edu:AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?auid">auid</a>=aflow:48029b31deaa1c21
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?data_api">data_api</a>=aapi1.2
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?data_source">data_source</a>=aflowlib
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?loop">loop</a>=lock,magnetic,static,thermodynamics
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?code">code</a>=vasp.4.6.35
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?compound">compound</a>=Ag2Co2O4
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?prototype">prototype</a>=ARUN.AEL_21_SF_S_3_0.995
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?nspecies">nspecies</a>=3
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?natoms">natoms</a>=8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?natoms_orig">natoms_orig</a>=8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?composition">composition</a>=2,2,4
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?density">density</a>=7.25634
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?density_orig">density_orig</a>=7.25634
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?scintillation_attenuation_length">scintillation_attenuation_length</a>=1.61639
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?stoichiometry">stoichiometry</a>=0.25,0.25,0.5
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?species">species</a>=Ag,Co,O
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?species_pp">species_pp</a>=Ag,Co,O
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?dft_type">dft_type</a>=PAW_PBE
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?species_pp_version">species_pp_version</a>=Ag:PAW_PBE:06Sep2000,Co:PAW_PBE:06Sep2000,O:PAW_PBE:08Apr2002
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?species_pp_ZVAL">species_pp_ZVAL</a>=11,9,6
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?species_pp_AUID">species_pp_AUID</a>=eca65d7d992efb48,9c4653e42c9f870b,85ded82734544fa9
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?ldau_type">ldau_type</a>=2
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?ldau_l">ldau_l</a>=2,2,0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?ldau_u">ldau_u</a>=5.8,5,0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?ldau_j">ldau_j</a>=0,0,0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?ldau_TLUJ">ldau_TLUJ</a>=2;2,2,0;5.8,5,0;0,0,0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?valence_cell_iupac">valence_cell_iupac</a>=26
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?valence_cell_std">valence_cell_std</a>=64
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?volume_cell">volume_cell</a>=90.9869
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?volume_atom">volume_atom</a>=11.3734
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?volume_cell_orig">volume_cell_orig</a>=90.9869
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?volume_atom_orig">volume_atom_orig</a>=11.3734
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?pressure">pressure</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?stress_tensor">stress_tensor</a>=-4.99,4.57,0,4.57,-5.04,0,0,0,-3.6
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?pressure_residual">pressure_residual</a>=-4.54
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Pulay_stress">Pulay_stress</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?geometry">geometry</a>=2.9125861,2.9000015,12.438551,90,90,119.99969
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?geometry_orig">geometry_orig</a>=2.9125861,2.9000015,12.438551,90,90,119.99969
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?energy_cell">energy_cell</a>=-34.8814
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?energy_atom">energy_atom</a>=-4.36017
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?energy_cutoff">energy_cutoff</a>=560
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?delta_electronic_energy_convergence">delta_electronic_energy_convergence</a>=-5.6898e-09
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?delta_electronic_energy_threshold">delta_electronic_energy_threshold</a>=1e-06
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?kpoints_relax">kpoints_relax</a>=14,15,3
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?kpoints">kpoints</a>=14,15,3
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?enthalpy_cell">enthalpy_cell</a>=-34.8814
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?enthalpy_atom">enthalpy_atom</a>=-4.36017
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?eentropy_cell">eentropy_cell</a>=0.00331352
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?eentropy_atom">eentropy_atom</a>=0.00041419
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?enthalpy_formation_cell">enthalpy_formation_cell</a>=4.71567
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?enthalpy_formation_atom">enthalpy_formation_atom</a>=0.589458
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?entropic_temperature">entropic_temperature</a>=-6579.05
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?PV_cell">PV_cell</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?PV_atom">PV_atom</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spin_cell">spin_cell</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spin_atom">spin_atom</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spinD">spinD</a>=0,0,0,0,0,0,0,0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spinF">spinF</a>=0
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?stoich">stoich</a>=0.25     0.25      0.5
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?calculation_time">calculation_time</a>=1173.15
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?calculation_memory">calculation_memory</a>=903.95
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?calculation_cores">calculation_cores</a>=32
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?nbondxx">nbondxx</a>=2.9,3.5318,2.1449,2.9,1.9338,2.5525
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?sg">sg</a>=P6_{3}/mmc #194,P6_{3}/mmc #194,P6_{3}/mmc #194
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?sg2">sg2</a>=C2/m #12,C2/m #12,C2/m #12
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spacegroup_orig">spacegroup_orig</a>=194
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?spacegroup_relax">spacegroup_relax</a>=194
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?forces">forces</a>=0.000552,0.000145,0;-0.000552,-0.000145,0;0,0,0;-0,0,0;-0.000396,-2.6e-05,0.001373;0.000396,2.6e-05,0.001373;0.000396,2.6e-05,-0.001373;-0.000396,-2.6e-05,-0.001373
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?positions_cartesian">positions_cartesian</a>=1.45322,0.83165,3.10964;1.45307,-0.84618,9.32891;0,0,0;0,0,6.21928;1.45503,0.83171,0.96474;1.45126,-0.84624,7.18401;1.45126,-0.84624,11.47381;1.45503,0.83171,5.25454
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?positions_fractional">positions_fractional</a>=0.33337025,0.66668028,0.25;0.66662975,0.33331972,0.75;0,0,0;0,0,0.5;0.33398044,0.66731951,0.077560227;0.66601956,0.33268049,0.57756023;0.66601956,0.33268049,0.92243977;0.33398044,0.66731951,0.42243977
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_orig">Bravais_lattice_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?lattice_variation_orig">lattice_variation_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?lattice_system_orig">lattice_system_orig</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Pearson_symbol_orig">Pearson_symbol_orig</a>=hP8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_relax">Bravais_lattice_relax</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?lattice_variation_relax">lattice_variation_relax</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?lattice_system_relax">lattice_system_relax</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Pearson_symbol_relax">Pearson_symbol_relax</a>=hP8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_family_orig">crystal_family_orig</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_system_orig">crystal_system_orig</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_class_orig">crystal_class_orig</a>=dihexagonal-dipyramidal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_Hermann_Mauguin_orig">point_group_Hermann_Mauguin_orig</a>=6/mmm
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_Schoenflies_orig">point_group_Schoenflies_orig</a>=D_6h
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_orbifold_orig">point_group_orbifold_orig</a>=*622
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_type_orig">point_group_type_orig</a>=centrosymmetric
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_order_orig">point_group_order_orig</a>=24
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_structure_orig">point_group_structure_orig</a>=2_x_dihedral
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_type_orig">Bravais_lattice_lattice_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_variation_type_orig">Bravais_lattice_lattice_variation_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_system_orig">Bravais_lattice_lattice_system_orig</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_type_orig">Bravais_superlattice_lattice_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_variation_type_orig">Bravais_superlattice_lattice_variation_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_system_orig">Bravais_superlattice_lattice_system_orig</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Pearson_symbol_superlattice_orig">Pearson_symbol_superlattice_orig</a>=hP8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_geometry_orig">reciprocal_geometry_orig</a>=2.4909735,2.5017831,0.50513804,90,90,60.00031
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_volume_cell_orig">reciprocal_volume_cell_orig</a>=2.72622
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_lattice_type_orig">reciprocal_lattice_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_lattice_variation_type_orig">reciprocal_lattice_variation_type_orig</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_letters_orig">Wyckoff_letters_orig</a>=c;a;f
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_multiplicities_orig">Wyckoff_multiplicities_orig</a>=2;2;4
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_site_symmetries_orig">Wyckoff_site_symmetries_orig</a>=-6m2;-3m.;3m.
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_family">crystal_family</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_system">crystal_system</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?crystal_class">crystal_class</a>=dihexagonal-dipyramidal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_Hermann_Mauguin">point_group_Hermann_Mauguin</a>=6/mmm
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_Schoenflies">point_group_Schoenflies</a>=D_6h
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_orbifold">point_group_orbifold</a>=*622
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_type">point_group_type</a>=centrosymmetric
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_order">point_group_order</a>=24
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?point_group_structure">point_group_structure</a>=2_x_dihedral
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_type">Bravais_lattice_lattice_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_variation_type">Bravais_lattice_lattice_variation_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_lattice_lattice_system">Bravais_lattice_lattice_system</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_type">Bravais_superlattice_lattice_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_variation_type">Bravais_superlattice_lattice_variation_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Bravais_superlattice_lattice_system">Bravais_superlattice_lattice_system</a>=hexagonal
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Pearson_symbol_superlattice">Pearson_symbol_superlattice</a>=hP8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_geometry">reciprocal_geometry</a>=2.4909735,2.5017831,0.50513804,90,90,60.00031
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_volume_cell">reciprocal_volume_cell</a>=2.72622
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_lattice_type">reciprocal_lattice_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?reciprocal_lattice_variation_type">reciprocal_lattice_variation_type</a>=HEX
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_letters">Wyckoff_letters</a>=c;a;f
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_multiplicities">Wyckoff_multiplicities</a>=2;2;4
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?Wyckoff_site_symmetries">Wyckoff_site_symmetries</a>=-6m2;-3m.;3m.
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_label_orig">aflow_prototype_label_orig</a>=ABC2_hP8_194_c_a_f
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_parameter_list_orig">aflow_prototype_parameter_list_orig</a>=a,c/a,z3
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_parameter_values_orig">aflow_prototype_parameter_values_orig</a>=2.9126,4.2706173,0.077539589
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_label_relax">aflow_prototype_label_relax</a>=ABC2_hP8_194_c_a_f
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_parameter_list_relax">aflow_prototype_parameter_list_relax</a>=a,c/a,z3
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_prototype_parameter_values_relax">aflow_prototype_parameter_values_relax</a>=2.9126,4.2706173,0.077560227
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?files">files</a>=<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_corner.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995_corner.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_dosdata.json.xz">AgCoO:ARUN.AEL_21_SF_S_3_0.995_dosdata.json.xz</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_sconv.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995_sconv.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_sconv_corner.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995_sconv_corner.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_sprim.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995_sprim.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_sprim_corner.cif">AgCoO:ARUN.AEL_21_SF_S_3_0.995_sprim_corner.cif</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_structure_relax.json">AgCoO:ARUN.AEL_21_SF_S_3_0.995_structure_relax.json</a>,<a href="./AgCoO:ARUN.AEL_21_SF_S_3_0.995_structure_relax1.json">AgCoO:ARUN.AEL_21_SF_S_3_0.995_structure_relax1.json</a>,<a href="./CONTCAR.relax">CONTCAR.relax</a>,<a href="./CONTCAR.relax.abinit">CONTCAR.relax.abinit</a>,<a href="./CONTCAR.relax.aims">CONTCAR.relax.aims</a>,<a href="./CONTCAR.relax.qe">CONTCAR.relax.qe</a>,<a href="./CONTCAR.relax.vasp">CONTCAR.relax.vasp</a>,<a href="./CONTCAR.relax1">CONTCAR.relax1</a>,<a href="./DOSCAR.static.xz">DOSCAR.static.xz</a>,<a href="./KPOINTS.relax">KPOINTS.relax</a>,<a href="./KPOINTS.static">KPOINTS.static</a>,<a href="./OUTCAR.static.xz">OUTCAR.static.xz</a>,<a href="./aflow.agroup.orig.json.xz">aflow.agroup.orig.json.xz</a>,<a href="./aflow.agroup.orig.out.xz">aflow.agroup.orig.out.xz</a>,<a href="./aflow.agroup.relax.json.xz">aflow.agroup.relax.json.xz</a>,<a href="./aflow.agroup.relax.out.xz">aflow.agroup.relax.out.xz</a>,<a href="./aflow.fgroup.orig.json.xz">aflow.fgroup.orig.json.xz</a>,<a href="./aflow.fgroup.orig.out.xz">aflow.fgroup.orig.out.xz</a>,<a href="./aflow.fgroup.relax.json.xz">aflow.fgroup.relax.json.xz</a>,<a href="./aflow.fgroup.relax.out.xz">aflow.fgroup.relax.out.xz</a>,<a href="./aflow.iatoms.orig.json.xz">aflow.iatoms.orig.json.xz</a>,<a href="./aflow.iatoms.orig.out.xz">aflow.iatoms.orig.out.xz</a>,<a href="./aflow.iatoms.relax.json.xz">aflow.iatoms.relax.json.xz</a>,<a href="./aflow.iatoms.relax.out.xz">aflow.iatoms.relax.out.xz</a>,<a href="./aflow.pgroup.orig.json.xz">aflow.pgroup.orig.json.xz</a>,<a href="./aflow.pgroup.orig.out.xz">aflow.pgroup.orig.out.xz</a>,<a href="./aflow.pgroup.relax.json.xz">aflow.pgroup.relax.json.xz</a>,<a href="./aflow.pgroup.relax.out.xz">aflow.pgroup.relax.out.xz</a>,<a href="./aflow.pgroup_xtal.orig.json.xz">aflow.pgroup_xtal.orig.json.xz</a>,<a href="./aflow.pgroup_xtal.orig.out.xz">aflow.pgroup_xtal.orig.out.xz</a>,<a href="./aflow.pgroup_xtal.relax.json.xz">aflow.pgroup_xtal.relax.json.xz</a>,<a href="./aflow.pgroup_xtal.relax.out.xz">aflow.pgroup_xtal.relax.out.xz</a>,<a href="./aflow.pgroupk.orig.json.xz">aflow.pgroupk.orig.json.xz</a>,<a href="./aflow.pgroupk.orig.out.xz">aflow.pgroupk.orig.out.xz</a>,<a href="./aflow.pgroupk.relax.json.xz">aflow.pgroupk.relax.json.xz</a>,<a href="./aflow.pgroupk.relax.out.xz">aflow.pgroupk.relax.out.xz</a>,<a href="./aflow.pgroupk_xtal.orig.json.xz">aflow.pgroupk_xtal.orig.json.xz</a>,<a href="./aflow.pgroupk_xtal.orig.out.xz">aflow.pgroupk_xtal.orig.out.xz</a>,<a href="./aflow.pgroupk_xtal.relax.json.xz">aflow.pgroupk_xtal.relax.json.xz</a>,<a href="./aflow.pgroupk_xtal.relax.out.xz">aflow.pgroupk_xtal.relax.out.xz</a>,<a href="./aflow:48029b31deaa1c21.json">aflow:48029b31deaa1c21.json</a>,<a href="./aflow:48029b31deaa1c21.out">aflow:48029b31deaa1c21.out</a>,<a href="./aflowlib.json">aflowlib.json</a>,<a href="./aflowlib.out">aflowlib.out</a>,<a href="./edata.orig.json">edata.orig.json</a>,<a href="./edata.orig.out">edata.orig.out</a>,<a href="./edata.relax.json">edata.relax.json</a>,<a href="./edata.relax.out">edata.relax.out</a>,<a href="./index.php">index.php</a>
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?node_CPU_Model">node_CPU_Model</a>=AMD_Opteron(tm)_Processor_6378___
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?node_CPU_Cores">node_CPU_Cores</a>=64
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?node_CPU_MHz">node_CPU_MHz</a>=2400
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?node_RAM_GB">node_RAM_GB</a>=253
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflow_version">aflow_version</a>=aflow31067
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?catalog">catalog</a>=ICSD
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflowlib_version">aflowlib_version</a>=3.2.8
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aflowlib_date">aflowlib_date</a>=20161229_09:19:30_GMT-5,20161229_09:39:54_GMT-5,20210309_00:09:01_GMT-5
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?keywords">keywords</a>=aurl,auid,data_api,data_source,loop,code,compound,prototype,nspecies,natoms,natoms_orig,composition,density,density_orig,scintillation_attenuation_length,stoichiometry,species,species_pp,dft_type,species_pp_version,species_pp_ZVAL,species_pp_AUID,ldau_type,ldau_l,ldau_u,ldau_j,ldau_TLUJ,valence_cell_iupac,valence_cell_std,volume_cell,volume_atom,volume_cell_orig,volume_atom_orig,pressure,stress_tensor,pressure_residual,Pulay_stress,geometry,geometry_orig,energy_cell,energy_atom,energy_cutoff,delta_electronic_energy_convergence,delta_electronic_energy_threshold,kpoints_relax,kpoints,enthalpy_cell,enthalpy_atom,eentropy_cell,eentropy_atom,enthalpy_formation_cell,enthalpy_formation_atom,entropic_temperature,PV_cell,PV_atom,spin_cell,spin_atom,spinD,spinF,stoich,calculation_time,calculation_memory,calculation_cores,nbondxx,sg,sg2,spacegroup_orig,spacegroup_relax,forces,positions_cartesian,positions_fractional,Bravais_lattice_orig,lattice_variation_orig,lattice_system_orig,Pearson_symbol_orig,Bravais_lattice_relax,lattice_variation_relax,lattice_system_relax,Pearson_symbol_relax,crystal_family_orig,crystal_system_orig,crystal_class_orig,point_group_Hermann_Mauguin_orig,point_group_Schoenflies_orig,point_group_orbifold_orig,point_group_type_orig,point_group_order_orig,point_group_structure_orig,Bravais_lattice_lattice_type_orig,Bravais_lattice_lattice_variation_type_orig,Bravais_lattice_lattice_system_orig,Bravais_superlattice_lattice_type_orig,Bravais_superlattice_lattice_variation_type_orig,Bravais_superlattice_lattice_system_orig,Pearson_symbol_superlattice_orig,reciprocal_geometry_orig,reciprocal_volume_cell_orig,reciprocal_lattice_type_orig,reciprocal_lattice_variation_type_orig,Wyckoff_letters_orig,Wyckoff_multiplicities_orig,Wyckoff_site_symmetries_orig,crystal_family,crystal_system,crystal_class,point_group_Hermann_Mauguin,point_group_Schoenflies,point_group_orbifold,point_group_type,point_group_order,point_group_structure,Bravais_lattice_lattice_type,Bravais_lattice_lattice_variation_type,Bravais_lattice_lattice_system,Bravais_superlattice_lattice_type,Bravais_superlattice_lattice_variation_type,Bravais_superlattice_lattice_system,Pearson_symbol_superlattice,reciprocal_geometry,reciprocal_volume_cell,reciprocal_lattice_type,reciprocal_lattice_variation_type,Wyckoff_letters,Wyckoff_multiplicities,Wyckoff_site_symmetries,aflow_prototype_label_orig,aflow_prototype_parameter_list_orig,aflow_prototype_parameter_values_orig,aflow_prototype_label_relax,aflow_prototype_parameter_list_relax,aflow_prototype_parameter_values_relax,files,node_CPU_Model,node_CPU_Cores,node_CPU_MHz,node_RAM_GB,aflow_version,catalog,aflowlib_version,aflowlib_date,keywords,aapi
+
+<br><a href="/AFLOWDATA/ICSD_WEB/HEX/Ag1Co1O2_ICSD_246157/ARUN.AEL_21_SF_S_3_0.995/?aapi">aapi</a>=1.0
+<br><br><br><h4 class="disclaimer">Disclaimer</h4> <em> The data included within the aflow.org repository is free for scientific, academic and non-commercial purposes.  Any other use is prohibited.<br> AFLOW and AFLOWLIB.ORG come with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law.  </body></html>

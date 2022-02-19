@@ -1,0 +1,10 @@
+cohpstartenergy -10
+cohpendenergy 3
+COHPSteps 200
+basisfunctions Fe 4s 3d
+basisset pbevaspfit2015
+cohpgenerator from 1.0 to 3.0
+densityofenergy
+bwdf
+bwdfcohp
+rmsp

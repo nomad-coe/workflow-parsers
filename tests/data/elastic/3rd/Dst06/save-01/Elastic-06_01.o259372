@@ -1,0 +1,57 @@
+ 
+   Error(checkmt): muffin-tin spheres overlap between
+                   species    1 atom    2 and
+                   species    1 atom    1
+ 
+   Sum of muffin-tin radii :    2.4000    
+   Distance between atoms  :    2.2907    
+ 
+   Please check, and possibly reduce, the input (or default) values
+   of the attribute ''rmt'' inside the element ''species'' 
+   for species    1 and    1
+ 
+   See link: http://exciting-code.org/ref:structure#species 
+ 
+ 
+   Error(checkmt): muffin-tin spheres overlap between
+                   species    1 atom    2 and
+                   species    1 atom    1
+ 
+   Sum of muffin-tin radii :    2.4000    
+   Distance between atoms  :    2.2907    
+ 
+   Please check, and possibly reduce, the input (or default) values
+   of the attribute ''rmt'' inside the element ''species'' 
+   for species    1 and    1
+ 
+   See link: http://exciting-code.org/ref:structure#species 
+ 
+ 
+   Error(checkmt): muffin-tin spheres overlap between
+                   species    1 atom    2 and
+                   species    1 atom    1
+ 
+   Sum of muffin-tin radii :    2.4000    
+   Distance between atoms  :    2.2907    
+ 
+   Please check, and possibly reduce, the input (or default) values
+   of the attribute ''rmt'' inside the element ''species'' 
+   for species    1 and    1
+ 
+   See link: http://exciting-code.org/ref:structure#species 
+ 
+ 
+   Error(checkmt): muffin-tin spheres overlap between
+                   species    1 atom    2 and
+                   species    1 atom    1
+ 
+   Sum of muffin-tin radii :    2.4000    
+   Distance between atoms  :    2.2907    
+ 
+   Please check, and possibly reduce, the input (or default) values
+   of the attribute ''rmt'' inside the element ''species'' 
+   for species    1 and    1
+ 
+   See link: http://exciting-code.org/ref:structure#species 
+ 
+APPLICATION TERMINATED WITH THE EXIT STRING: Hangup (signal 1)

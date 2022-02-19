@@ -1,0 +1,10 @@
+LOBSTER v3.2.0 (g++ 5.4.0)
+Copyright (C) 2019 by Chair of Solid-State and Quantum Chemistry, RWTH Aachen.
+All rights reserved. Contributions by S. Maintz, V. L. Deringer, M. Esser, R. Nelson, C. Ertural, A. L. Tchougreeff and R. Dronskowski
+starting on host altair.mch.rwth-aachen.de on 2021-05-28 at 10:54:38 CEST using 2 threads
+detecting used PAW program...
+ERROR: The input file CONTCAR is present, but has a size of 0 bytes.
+
+ERROR: could not determine which program was used for the quantum-chemical calculation.
+ERROR: Make sure all required files are in the working directory and are not empty.
+

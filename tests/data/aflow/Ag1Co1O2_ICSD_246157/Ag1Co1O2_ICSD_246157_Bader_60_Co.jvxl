@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<jvxl version="2.3" jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09" xmlns="http://jmol.org/jvxl_schema" xmlns:cml="http://www.xml-cml.org/schema">
+<jvxlFileTitle>
+Vasp CHGCAR format
+
+
+</jvxlFileTitle>
+<jvxlVolumeData origin="{0.0 0.0 0.0}">
+<jvxlVolumeVector type="0" count="71" vector="{0.0 0.0 0.17769359}"></jvxlVolumeVector>
+<jvxlVolumeVector type="1" count="17" vector="{0.090821624 0.15730768 0.0}"></jvxlVolumeVector>
+<jvxlVolumeVector type="2" count="17" vector="{0.090821624 -0.15730768 0.0}"></jvxlVolumeVector>
+</jvxlVolumeData>
+<jvxlSurfaceSet count="1">
+<jvxlSurface type="isosurface">
+<jvxlSurfaceInfo 
+  cutoff="0.6" 
+  isCutoffAbsolute="false" 
+  pointsPerAngstrom="5.627665" 
+  nBytesData="1676" 
+  isXLowToHigh="true" 
+  nSurfaceInts="427" 
+  nBytesUncompressedEdgeData="1183" 
+  color="[x5020a0]" 
+  translucency="0.0" 
+  rendering="fill noMesh noDots notFrontOnly frontlit" 
+  insideOut="true" 
+  note="progressive JVXL+ -- X values read from low(0) to high(70)" 
+  xyzMin="{0.0 -2.516923 0.0}" 
+  xyzMax="{2.906292 2.516923 12.438551}" 
+  approximateCompressionRatio="1385:1" 
+  jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09">
+</jvxlSurfaceInfo>
+<jvxlIsosurfaceState>
+  isosurface ID "isosurface1" select ({})  downsample 2 cutoff 0.6 /*file*/"/common/ICSD/RAW/HEX/Ag1Co1O2_ICSD_246157/BvAt_Co.dat";
+  isosurface ID "isosurface1" fill noMesh noDots notFrontOnly frontlit;
+  color isosurface opaque [x5020a0];
+</jvxlIsosurfaceState>
+<jvxlSurfaceData>
+<jvxlEdgeData count="1183" encoding="base90f1" bsEncoding="base90+35c" isXLowToHigh="true" data="JYr4Ec-kZ~;0 _E_R@ZdAA;;^M_E@R@-4F4UFYkcZ4-qZR@L;kR@MFJ^dZ_~;0 EYUrk.EMl4YR3krM_dL;SSd_R@M3MEqZ.r4kF-kQ,U?NUsOi6hh7P?Ui,U`Q9;3c2c@;QU7O6PUN@;;`_sNf2bbml3bblm9;;f_QNN8[b[g=L~;0 _~;0 S_~;0 L~;0 @8-Dm/i.mQ[b8[~;1 D[@NS=Q[g/mmpgr/iipp-mmrp8[[g7~;0 fq=f=c.pRpR/~;0 -9r0rhf=q=~;0 f=R=9f/7.hfc0rrocr-rrro~;0 ffc#t+tUc,U,tc|tJ^U,,U,,JUcU+^^tt#tUUt||+t+J~;0 7~;0 sqcJ.s+~;0 #+UAJspp/sJ~;0 -0hq~;0 /7s.shcU0oJ~;0 cJrtA-rA++|+oJ~;0 cJ+#9N8bbg9=bML_SMf--9b_L@b98-/.Qb8@NbSM=bQgf/p9g9r-/p-p--r-p98g9DQ,?NDsOci6cchh7c[262DP?i,`DQ932@Q7Oc6cPN[@`_DsNDf22m2l63l6m29f2_DQNDJ4Jck~;0 JE_ZAA^J_E@J44d~;1 dUkc4qRLk@JJ^Z~;0 JUk.dl43dkM=LS=S=RM=3dq.d4kkY-ZrE@R_;;dR@M-YFFZ-Z@;RMYd_EFrERYMr_;dd@_MZE-Fr44qk.RlMLLSlR34JkUq4cEA_44SM.kk~;0 _J@kZA^^EZ@c~;0 4UkQ9;@N;f3b2bl2b3bm@;9;_Q,UO?PUQih;cc;N?UU_`mlfNs6hO77i6,UPUs`QN8[-m[/gmr/i/ip/m-mp8DNQ[8[bL~;0 _~;0 D[mim[g=_~;1 N@qprgSL~;1 S@b=8[Q[g~;0 f-rf0crr0r-ro~;0 97hf~;0 fq=pR=9==frrfc.pRR7/orc/q==.~;0 fhfc#t+tU^Ut^|tJcUU,,J,,U^U+c,,ctt#tUUt||+t+JA~;0 -0cJ+rA#+U~;0 J0-oJ~;0 7ssh~;0 qpc.Usp7/soJrAcJt~;0 /sq.s~;0 ++|+J~;0 hcJ+#9-8-/g9r--//p-f9/-p98NbMbQ8bL_g=fb_N@bq9p-r-g9SMLSM@bb=b98Qg9D2Q9@NDf2632l6223m2[D@9_DQ,Occ?PQihN[?_`Dm2l6f2NDs6chO7c7ci6c,Ps`DQND44dqk.d=RlM==LLS=dlR3d4JJJkUq4cEA_44dS~;0 M~;0 .dkk~;0 J_J@JkZA^^EZ@Jc~;0 J4UkY-ZrE@R_;;dR@M-YFFZ-Z@;RMYd_EFrERYMr_;dd@_MZE-Fr">
+-#(*.).*-+,,%$'}6$ '$%,,+-*.).*-*.).*-+,,%$'}6$ '$%,,+-*.).*-*-+,,+-*.$%%}~;0 $ $.++-*-+-*,,+-*.)/$$~%0 }^$ %-+,,+,,*.)/(0$$%}'% %.*-*.~%0 }Ov ~%0 .)/(0$$%}'% %.*-*.*,+-*.)/$$~%0 }^$ %-+,,+,,,*-+,,+-*.$%%}~;0 $ $.++-*-+-*-*.).*-+,,%$'}6$ '$%,,+-*.).*-*.).*-+,,%$'}6$ '$%,,+-*.).*-*.).*-+,,%$'}6$ '$%,,+-*.).*-*-+-*-++.$}~;0 $ %%$.*-+,,+-*,,,+,,+-%}^$ ~%0 $$/).*-+,*.*-*.%}'% %$$0(/).~%0 }Ov ~%0 .*-*.%}'% %$$0(/).*,,+,,+-%}^$ ~%0 $$/).*-+,,*-+-*-++.$}~;0 $ %%$.*-+,,+-*-*.).*-+,,%$'}6$ '$%,,+-*.).*-*.).*-+,,%$'}6$ '$%,,+-*.).*(</jvxlEdgeData>
+</jvxlSurfaceData>
+</jvxlSurface>
+</jvxlSurfaceSet>
+</jvxl>

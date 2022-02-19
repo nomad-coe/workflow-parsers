@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<jvxl version="2.3" jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09" xmlns="http://jmol.org/jvxl_schema" xmlns:cml="http://www.xml-cml.org/schema">
+<jvxlFileTitle>
+Vasp CHGCAR format
+
+
+</jvxlFileTitle>
+<jvxlVolumeData origin="{0.0 0.0 0.0}">
+<jvxlVolumeVector type="0" count="71" vector="{0.0 0.0 0.17769359}"></jvxlVolumeVector>
+<jvxlVolumeVector type="1" count="17" vector="{0.090821624 0.15730768 0.0}"></jvxlVolumeVector>
+<jvxlVolumeVector type="2" count="17" vector="{0.090821624 -0.15730768 0.0}"></jvxlVolumeVector>
+</jvxlVolumeData>
+<jvxlSurfaceSet count="1">
+<jvxlSurface type="isosurface">
+<jvxlSurfaceInfo 
+  cutoff="0.75" 
+  isCutoffAbsolute="false" 
+  pointsPerAngstrom="5.627665" 
+  nBytesData="2417" 
+  isXLowToHigh="true" 
+  nSurfaceInts="584" 
+  nBytesUncompressedEdgeData="1719" 
+  color="[x5020a0]" 
+  translucency="0.0" 
+  rendering="fill noMesh noDots notFrontOnly frontlit" 
+  insideOut="true" 
+  note="progressive JVXL+ -- X values read from low(0) to high(70)" 
+  xyzMin="{0.6427191 -1.6857169 0.17946658}" 
+  xyzMax="{2.263573 1.6857169 12.259085}" 
+  approximateCompressionRatio="994:1" 
+  jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09">
+</jvxlSurfaceInfo>
+<jvxlIsosurfaceState>
+  isosurface ID "isosurface1" select ({})  downsample 2 cutoff 0.75 /*file*/"/common/ICSD/RAW/HEX/Ag1Co1O2_ICSD_246157/BvAt_O.dat";
+  isosurface ID "isosurface1" fill noMesh noDots notFrontOnly frontlit;
+  color isosurface opaque [x5020a0];
+</jvxlIsosurfaceState>
+<jvxlSurfaceData>
+<jvxlEdgeData count="1719" encoding="base90f1" bsEncoding="base90+35c" isXLowToHigh="true" data="*,x(xssQD^Q,A'yB//wB'yx^wB*#*B(^Q/##/sQA(xD/*/D,xwv)xQBBQxvwA(@y,_sx5ef:vd@yU@;z'o'%zz%o'z'0U@d@J)y~%0 5fefjj~%0 v@''@:)J0%%;Sb+]H+=]AGs=G^S'Q'LQ'S'N=GAGbBs,H+b+WL]BBS++LW,]G''G=BbNL^[vcP)vTzLKd`;`d?LTS)z%PvODc~;1 [DO%u**S?;KJ`UC?bKtDT^[A[^DDK[=t+C`!UUJJJU!+b?=[DATl-SLlzu{x]$zy@|>_>@a~%0 z|#z]{B*lx'l-Rrr'luM*lB#zy$~%0 za_1~%1 MI%yP^SAPPee:PS^L%~%0 zyIVR1MR1V~%0 yzL:PAPy%OO%]7;I1d]kcZ~;0 k]ZcE]%1;n%hOIVOVO7hOn%E]~;0 kd]%1D1SmmSSw8KTwS1m8Kgm1DgmTwmD1SS1---8KrT8rKrggT7;nI[1ndcL22ZL~;0 ZL((cLE1n22;nnhI[2(2[VV7nLLnhnE~;0 d~%1 zMPIP%zy^BSBAe4e4:SB^BL%z~%0 zzyIPPVRMPPRV~%0 zB4BzyzL:Ay-SnLu{x]$y@O|>O_>O@Oa~%0 |#]{B*x'-nRnrr'uM*B#yOO$~%0 a_J`3UC3?bK%tD%T^[A[^DD%K%[=t+C3`3!UUJJJ33U!+b%%?=[DAT[vcP)vTzLKd`;`d?LTS)z%PvODc~;1 [DO%u**S?;KSb]H=]As=^SQLQSN=AbBs,HbWL]BBSLW,]=BbNL^t5e:tXvdyU;Xxzo%xxzz%xXoz0XUdJ)ty~%0 t5ejj~%0 tv:)tJ0X%x%x;X9_*,(s_xs^,xA'w'x^xw(x_^sA_(,wv9)v9wA_(x@,_xs_x''N[N~%0 ]pp]~%0 ]u|u]Np||pN'[pup[''N]]N'~%0 '@y_,)xsQBwB^Q(xv(xD/*/D)xws^Q/##/QA,wB*#*B('yB//BAyxx(sQDQ^,A,xxswudv@z'zo'U@)e5fy5fj:y~%0 U@v@J;o''0%z%%z''%0d@@;J~%0 ef):jA]GS'Q'=GBbS+sH+L]]BH+S+W=s,=G]Gb^Q''NLS''LNAGG^b,b++B=WBLTud`L*u[zPDcc~;0 P[O)z%LvSK`?;d;?TKS%v))O~;0 DKb^[D=`JtCUUUJCJ!?t+Db[T[DA^ADKT[+`=?!JUz@y>~%0 zl{u|]*lR-x-rMlx'l]uB$z|#z>ya_@_a#z{~%0 $zB'lS*LlrPP~%1 ^eS%y1MIR1IMV%~%0 zySLAPe:P:P^APL~%0 yzVR1y%]k]%O;7cZ1hOOIIVO%17n%d]ZE]~;0 kc~;0 kE];d]n%VOhO%1SS1DmwmD1mK88gm1STwKTwSSgmmS1D1---K8r8rgTKrTg;7ncLZL1nhI[2(2I[V1n227nndZL((LE~;0 cL22L~;0 E;n[ndnVh~%1 z^Be4SB%zyMPIPRIPMPV%z~%0 zzySBBLAe44::^BBAL~%0 zPPzyzVRy@yO>O~%0 {u|]*R-nx-nrMx']uB$|#>OyOa_@OO_a#{~%0 $B'Sn*LrKb%^[D%=`J3tC3UUUJC3J3!?t+D%b%[T[DA^ADK%%T[+`33=?!JUTud`L*u[zPDcc~;0 P[O)z%LvSK`?;d;?TKS%v))O~;0 DA]SQ=BbSsHL]]BHSW=s,=]b^QNLSLNA^b,bB=WBLXxxXtdvzzoU)te5y5j:ty~%0 tUvJ;Xo0X%xz%x%xz%x0Xd;XJ~%0 te):tj_x'@_x_9,)sw^(v9()ws_^A_,xw(x'Axx(xs^,xA_,s_wu9~%0 'N]]N''[pup['Np||pN]u|u]~%0 ]pp]~%0 N[N''">
+-}t) $1).*.)/(/)0~%0 2%}l$ (.+-*-+-*.)/(0'2$}J$ '/*-+,,,+,,,+-*.)0~%0 }I$ '/*-+,,,+,,,+-*.)0~%0 }I$ '/*-+,,,+,,,+-*.)0~%0 }J$ %1(.+-*-+-*-+-*/'2$}[$ (/).*-+-*.)/(0'}#% '0(/)/(0'1~%0 }Y% %3$}yR %3$}Y% '0(/)/(0'1~%0 }#% (/).*-+-*.)/(0'}[$ %1(.+-*-+-*-+-*/'2$}J$ '/*-+,,,+,,,+-*.)0~%0 }I$ '/*-+,,,+,,,+-*.)0~%0 }I$ '/*-+,,,+,,,+-*.)0~%0 }Z$ (.+-*-+-*.)/(0'2$}]$ $1).*.)/(/)0~%0 2%}B/ %2~%0 0)/(/).*.)1$}]$ $2'0(/).*-+-*-+.(}Z$ ~%0 0).*-+,,,+,,,+-*/'}I$ ~%0 0).*-+,,,+,,,+-*/'}I$ ~%0 0).*-+,,,+,,,+-*/'}J$ $2'/*-+-*-+-*-+.(1%}[$ '0(/).*-+-*.)/(}#% ~%0 1'0(/)/(0'}Y% $3%}yR $3%}Y% ~%0 1'0(/)/(0'}#% '0(/).*-+-*.)/(}[$ $2'/*-+-*-+-*-+.(1%}J$ ~%0 0).*-+,,,+,,,+-*/'}I$ ~%0 0).*-+,,,+,,,+-*/'}I$ ~%0 0).*-+,,,+,,,+-*/'}J$ $2'0(/).*-+-*-+.(}l$ %2~%0 0)/(/).*.)1$}t) </jvxlEdgeData>
+</jvxlSurfaceData>
+</jvxlSurface>
+</jvxlSurfaceSet>
+</jvxl>

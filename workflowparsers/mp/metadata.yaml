@@ -1,0 +1,13 @@
+codeLabel: MP
+codeLabelStyle: all in capitals
+codeName: materialsproject
+codeUrl: https://www.materialsproject.org/
+parserDirName: dependencies/parsers/mp/
+parserGitUrl: https://github.com/nomad-coe/nomad-parser-mp.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: |
+  |Input Filename| Description|
+  |--- | --- |
+  |`*materials.json` | **Mainfile:** a json file containing system info|
+  |`*.json` | json files containing workflow results|

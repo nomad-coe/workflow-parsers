@@ -1,0 +1,166 @@
+{
+    "emmet_version": "0.12.7",
+    "pymatgen_version": "2022.0.9",
+    "build_date": "2021-09-16 01:07:46.647000",
+    "nsites": 2,
+    "elements": [
+        {
+            "@module": "pymatgen.core.periodic_table",
+            "@class": "Element",
+            "element": "Si"
+        }
+    ],
+    "nelements": 1,
+    "composition": {
+        "Si": 2.0
+    },
+    "composition_reduced": {
+        "Si": 1.0
+    },
+    "formula_pretty": "Si",
+    "formula_anonymous": "A",
+    "chemsys": "Si",
+    "volume": 40.88829284866483,
+    "density": 2.2811942835376744,
+    "density_atomic": 20.444146424332416,
+    "symmetry": {
+        "crystal_system": "cubic",
+        "symbol": "Fd-3m",
+        "number": 227,
+        "point_group": "m-3m",
+        "symprec": 0.1,
+        "version": "1.16.0"
+    },
+    "property_name": "thermo",
+    "material_id": "mp-149",
+    "deprecated": false,
+    "deprecation_reasons": null,
+    "last_updated": "2020-11-11 23:21:54.717000",
+    "origins": [],
+    "warnings": [],
+    "uncorrected_energy_per_atom": -5.42531402,
+    "energy_per_atom": -5.42531402,
+    "energy_uncertainy_per_atom": null,
+    "formation_energy_per_atom": 0.0,
+    "energy_above_hull": 0.0,
+    "is_stable": true,
+    "equilibrium_reaction_energy_per_atom": 0.0,
+    "decomposes_to": null,
+    "energy_type": "GGA",
+    "entry_types": [
+        "GGA"
+    ],
+    "entries": {
+        "GGA": {
+            "@module": "pymatgen.entries.computed_entries",
+            "@class": "ComputedStructureEntry",
+            "energy": -10.85062804,
+            "composition": {
+                "Si": 2.0
+            },
+            "entry_id": "mp-149",
+            "correction": 0.0,
+            "energy_adjustments": [],
+            "parameters": {
+                "potcar_spec": [
+                    {
+                        "titel": "PAW_PBE Si 05Jan2001",
+                        "hash": "b2b0ea6feb62e7cde209616683b8f7f5"
+                    }
+                ],
+                "is_hubbard": false,
+                "hubbards": {},
+                "run_type": "GGA"
+            },
+            "data": {
+                "oxide_type": "None",
+                "aspherical": true,
+                "last_updated": {
+                    "@module": "datetime",
+                    "@class": "datetime",
+                    "string": "2020-11-11 23:21:54.717000"
+                },
+                "task_id": "mp-1791788",
+                "oxidation_states": {},
+                "run_type": "GGA"
+            },
+            "structure": {
+                "@module": "pymatgen.core.structure",
+                "@class": "Structure",
+                "charge": null,
+                "lattice": {
+                    "matrix": [
+                        [
+                            0.0,
+                            2.734364,
+                            2.734364
+                        ],
+                        [
+                            2.734364,
+                            0.0,
+                            2.734364
+                        ],
+                        [
+                            2.734364,
+                            2.734364,
+                            0.0
+                        ]
+                    ],
+                    "a": 3.8669746532647453,
+                    "b": 3.8669746532647453,
+                    "c": 3.8669746532647453,
+                    "alpha": 59.99999999999999,
+                    "beta": 59.99999999999999,
+                    "gamma": 59.99999999999999,
+                    "volume": 40.88829284866483
+                },
+                "sites": [
+                    {
+                        "species": [
+                            {
+                                "element": "Si",
+                                "occu": 1
+                            }
+                        ],
+                        "abc": [
+                            0.25,
+                            0.25,
+                            0.25
+                        ],
+                        "xyz": [
+                            1.367182,
+                            1.367182,
+                            1.367182
+                        ],
+                        "label": "Si",
+                        "properties": {
+                            "magmom": -0.0
+                        }
+                    },
+                    {
+                        "species": [
+                            {
+                                "element": "Si",
+                                "occu": 1
+                            }
+                        ],
+                        "abc": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "xyz": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "label": "Si",
+                        "properties": {
+                            "magmom": -0.0
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

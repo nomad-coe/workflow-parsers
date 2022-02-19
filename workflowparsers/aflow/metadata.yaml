@@ -1,0 +1,14 @@
+codeLabel: AFLOW
+codeLabelStyle: all capitals
+codeName: abinit
+codeUrl: http://www.aflowlib.org/
+parserDirName: dependencies/parsers/aflow/
+parserGitUrl: https://github.com/nomad-coe/nomad-parser-aflow.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: |
+  |Input Filename| Description|
+  |--- | --- |
+  |`aflowlib.json` | **Mainfile:** a json file containing the aflow output|
+  |`aflow.ael.out`| plain text, elastic outputs|
+  |`aflow.agl.out` | plain text, Debye model output|

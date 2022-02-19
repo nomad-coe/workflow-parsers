@@ -1,0 +1,113 @@
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW]                                                                                     
+[AFLOW]                     .o.        .o88o. oooo                                          
+[AFLOW]                    .888.       888 `` `888                                          
+[AFLOW]                   .8'888.     o888oo   888   .ooooo.  oooo oooo    ooo              
+[AFLOW]                  .8' `888.     888     888  d88' `88b  `88. `88.  .8'               
+[AFLOW]                 .88ooo8888.    888     888  888   888   `88..]88..8'                
+[AFLOW]                .8'     `888.   888     888  888   888    `888'`888'                 
+[AFLOW]               o88o     o8888o o888o   o888o `Y8bod8P'     `8'  `8'  .in             
+[AFLOW]                                                                                     
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] * Stefano Curtarolo - (AFLOW V3.2.1) 
+[AFLOW] * D. Morgan, W. Setyawan, G. Hart, M. Jahnatek, S. Wang, O. Levy, K. Yang, J. Xue,  
+[AFLOW] * R. Taylor, C. Calderon, C. Toher, C. Oses, J. J. Plata, D. Hicks, M. Esters,      
+[AFLOW] * P. Nath, F. Rose, E. Gossett, E. Perim, R. Chepulskyy, K. Rasch, M. Fornari,      
+[AFLOW] * M. Buongiorno Nardelli 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] AFLOW automatically generated (aflow_avasp.cpp) 
+[AFLOW] GENERATOR = esters 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW]SYSTEM=Mg_pvO:.AB_cF8_225_a_b.AB
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] input file for aflow 
+[AFLOW_MODE=VASP] 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW_MODE_ZIP=xz] 
+[AFLOW_MODE_BINARY=vasp_std] 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW_MODE_MPI]
+[AFLOW_MODE_MPI_MODE]NCPUS=16 
+[AFLOW_MODE_MPI_MODE]COMMAND ="mpirun -np" 
+[AFLOW_MODE_MPI_MODE]AUTOTUNE 
+[AFLOW_MODE_MPI_MODE]BINARY="vasp_std" 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW_SYMMETRY]CALC                                        // README_AFLOW_SYM.TXT
+#[AFLOW_SYMMETRY]SGROUP_WRITE                               // README_AFLOW_SYM.TXT
+#[AFLOW_SYMMETRY]SGROUP_RADIUS=7.77                         // README_AFLOW_SYM.TXT
+[AFLOW] ************************************************************************************************************************** 
+#[AFLOW_NEIGHBOURS]CALC                                     // README_AFLOW.TXT
+[AFLOW_NEIGHBOURS]RADIUS=7.7                                // README_AFLOW.TXT
+[AFLOW_NEIGHBOURS]DRADIUS=0.1                               // README_AFLOW.TXT
+[AFLOW] ************************************************************************************************************************** 
+[VASP_RUN]STATIC                                            // GENERATE | STATIC | RELAX=N | RELAX_STATIC=N | STATIC_BANDS | RELAX_STATIC_BANDS=N | REPEAT_BANDS [,DS[,DD[,DSCF]]] 
+[VASP_FORCE_OPTION]NEGLECT_NOMIX 
+[VASP_FORCE_OPTION]WAVECAR=OFF                              // ON | OFF (default: DEFAULT_VASP_FORCE_OPTION_WAVECAR in .aflow.rc)
+[VASP_FORCE_OPTION]CHGCAR=ON                                // ON | OFF (default: DEFAULT_VASP_FORCE_OPTION_CHGCAR in .aflow.rc)
+#[VASP_FORCE_OPTION]KPOINTS=keyword[,keyword]               // EVEN | ODD | KSHIFT_GAMMA_EVEN | KSHIFT_GAMMA_ODD | KSCHEME_MONKHORST_PACK | KSCHEME_GAMMA | GAMMA | KEEPK | IBZKPT
+[VASP_FORCE_OPTION]SYM=ON                                   // ON | OFF  (default: DEFAULT_VASP_FORCE_OPTION_SYM in .aflow.rc)
+[VASP_FORCE_OPTION]AUTO_PSEUDOPOTENTIALS=potpaw_PBE         // pot_LDA | pot_GGA | potpaw_LDA | potpaw_GGA | potpaw_PBE | potpaw_LDA_KIN | potpaw_PBE_KIN  
+[VASP_FORCE_OPTION]NBANDS                                   // Estimate Bands (better than VASP)
+#[VASP_FORCE_OPTION]PSTRESS=0.0                             // Pressure in kBar (1kB=0.1GPa)
+#[VASP_FORCE_OPTION]EDIFFG=-0.001                           // EDIFFG for relaxed forces
+#[VASP_FORCE_OPTION]ENMAX_MULTIPLY=1.4                      // Multiplication of the max(pseudopotential_cutoffs)
+#[VASP_FORCE_OPTION]POTIM=0.5                               // ionic time-step
+[VASP_FORCE_OPTION]SPIN=OFF                                 // (ON | OFF  (default: DEFAULT_VASP_FORCE_OPTION_SYM in .aflow.rc)), REMOVE_RELAX_1 | _2 (default: DEFAULT_VASP_FORCE_OPTION_SPIN_REMOVE_RELAX_1 _2 in .aflow.rc)
+#[VASP_FORCE_OPTION]AUTO_MAGMOM=ON                          // ON | OFF (default: DEFAULT_VASP_FORCE_OPTION_AUTO_MAGMOM in .aflow.rc)
+[VASP_FORCE_OPTION]PREC=PHONONS                             // (LOW | MEDIUM | NORMAL | HIGH | ACCURATE | PHONONS), PRESERVED (default: DEFAULT_VASP_FORCE_OPTION_PREC_SCHEME in .aflow.rc)
+[VASP_FORCE_OPTION]ALGO=FAST                                // (NORMAL | VERYFAST | FAST | ALL | DAMPED), PRESERVED (default: DEFAULT_VASP_FORCE_OPTION_ALGO_SCHEME in .aflow.rc)
+#[VASP_FORCE_OPTION]METAGGA=NONE                            // (TPSS | RTPSS | M06L | MBJL | SCAN | MS0 | MS1 | MS2 | NONE) (default: DEFAULT_VASP_FORCE_OPTION_METAGGA_SCHEME in .aflow.rc)
+#[VASP_FORCE_OPTION]IVDW=0                                  // (number_for_VASP_see_manual_for_IVDW | 0) (default: DEFAULT_VASP_FORCE_OPTION_IVDW_SCHEME in .aflow.rc)
+#[VASP_FORCE_OPTION]NOTUNE 
+[VASP_FORCE_OPTION]TYPE=INSULATOR                           // (METAL | INSULATOR | SEMICONDUCTOR | DEFAULT) (default DEFAULT) 
+[VASP_FORCE_OPTION]CONVERT_UNIT_CELL=PRES                   // (SPRIM, SCONV, NIGGLI, MINK, INCELL, COMPACT, WS, CART, FRAC, PRES) 
+#[VASP_FORCE_OPTION]VOLUME+=10.0 
+#[VASP_FORCE_OPTION]VOLUME*=1.05 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] ************************************************************************************************************************** 
+[VASP_INCAR_MODE_EXPLICIT]START 
+SYSTEM=Mg_pvO:.AB_cF8_225_a_b.AB
+# Added by [AFLOW_APL] begin
+IBRION=8                                        # Linear Response method
+LEPSILON=.TRUE.                                 # Calculate Born effective charges and dielectric tensor
+# Added by [AFLOW_APL] end
+#PSTRESS=000       # Pressure in kBar (1kB=0.1GPa)          # for hand modification
+#EDIFFG=-0.001     # For relaxed forces                     # for hand modification
+#POTIM=-0.001      # default                                # for hand modification
+#NBANDS=XX                                                  # for hand modification
+#IALGO=48                                                   # for hand modification
+[VASP_INCAR_MODE_EXPLICIT]STOP 
+[AFLOW] ************************************************************************************************************************** 
+[VASP_KPOINTS_MODE_IMPLICIT] 
+[VASP_KPOINTS_FILE]STATIC_KSCHEME=G
+[VASP_KPOINTS_FILE]STATIC_KPPRA=10000
+[AFLOW] ************************************************************************************************************************** 
+[VASP_POSCAR_MODE_EXPLICIT]START 
+Mg_pvO/AB_cF8_225_a_b.AB params=-1 SG=22  [FCC,FCC,cF8] (STD_PRIM doi:10.1016/j.commatsci.2010.05.010) [Standard_Primitive Unit Cell Form] Born effective charges/dielectric tensor
+1.000000
+   0.00000000000000   2.12775112482397   2.12775112482397
+   2.12775112482397   0.00000000000000   2.12775112482397
+   2.12775112482397   2.12775112482397   0.00000000000000
+Mg O 
+1 1 
+Direct(2) [A1B1] 
+   0.00000000000000   0.00000000000000   0.00000000000000  Mg_pv 
+   0.50000000000000   0.50000000000000   0.50000000000000  O     
+[VASP_POSCAR_MODE_EXPLICIT]STOP 
+[AFLOW] ************************************************************************************************************************** 
+[VASP_POTCAR_MODE_IMPLICIT]
+[VASP_POTCAR_FILE]Mg
+[VASP_POTCAR_FILE]O
+[AFLOW] potpaw_PBE: Mg O 
+[AFLOW] COMPOSITION_PP=|Mg1|O1|
+[AFLOW] COMPOSITION=|Mg1|O1|
+[AFLOW] VOLUME(A^3)=|22.8178|7.7823|
+[AFLOW] MASS(amu)=|24.305|15.9994|
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] AFLOW automatically generated (aflow_avasp.cpp) 
+[AFLOW] ************************************************************************************************************************** 
+[AFLOW] AFLOW V(3.2.1) in ./ARUN.APL_6_LRBE
+[AFLOW] ************************************************************************************************************************** 

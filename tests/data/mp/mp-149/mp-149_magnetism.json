@@ -1,0 +1,19 @@
+{
+    "task_id": "mp-149",
+    "magnetism": {
+        "ordering": "NM",
+        "is_magnetic": false,
+        "exchange_symmetry": 227,
+        "num_magnetic_sites": 0,
+        "num_unique_magnetic_sites": 0,
+        "types_of_magnetic_species": [],
+        "magmoms": [
+            0.0,
+            0.0
+        ],
+        "total_magnetization": 0.0,
+        "total_magnetization_normalized_vol": 0.0,
+        "total_magnetization_normalized_formula_units": 0.0
+    },
+    "last_updated": "2020-07-15 20:06:29.905000"
+}

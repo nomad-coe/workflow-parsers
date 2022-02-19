@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<jvxl version="2.3" jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09" xmlns="http://jmol.org/jvxl_schema" xmlns:cml="http://www.xml-cml.org/schema">
+<jvxlFileTitle>
+Vasp CHGCAR format
+
+
+</jvxlFileTitle>
+<jvxlVolumeData origin="{0.0 0.0 0.0}">
+<jvxlVolumeVector type="0" count="71" vector="{0.0 0.0 0.17769359}"></jvxlVolumeVector>
+<jvxlVolumeVector type="1" count="17" vector="{0.090821624 0.15730768 0.0}"></jvxlVolumeVector>
+<jvxlVolumeVector type="2" count="17" vector="{0.090821624 -0.15730768 0.0}"></jvxlVolumeVector>
+</jvxlVolumeData>
+<jvxlSurfaceSet count="1">
+<jvxlSurface type="isosurface">
+<jvxlSurfaceInfo 
+  cutoff="0.4" 
+  isCutoffAbsolute="false" 
+  pointsPerAngstrom="5.627665" 
+  nBytesData="3741" 
+  isXLowToHigh="true" 
+  nSurfaceInts="936" 
+  nBytesUncompressedEdgeData="2727" 
+  color="[x5020a0]" 
+  translucency="0.0" 
+  rendering="fill noMesh noDots notFrontOnly frontlit" 
+  insideOut="true" 
+  note="progressive JVXL+ -- X values read from low(0) to high(70)" 
+  xyzMin="{0.45783657 -1.8915896 0.023784794}" 
+  xyzMax="{2.4484553 1.8915896 12.414766}" 
+  approximateCompressionRatio="649:1" 
+  jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09">
+</jvxlSurfaceInfo>
+<jvxlIsosurfaceState>
+  isosurface ID "isosurface1" select ({})  downsample 2 cutoff 0.4 /*file*/"/common/ICSD/RAW/HEX/Ag1Co1O2_ICSD_246157/BvAt_O.dat";
+  isosurface ID "isosurface1" fill noMesh noDots notFrontOnly frontlit;
+  color isosurface opaque [x5020a0];
+</jvxlIsosurfaceState>
+<jvxlSurfaceData>
+<jvxlEdgeData count="2727" encoding="base90f1" bsEncoding="base90+35c" isXLowToHigh="true" data="(>w2m2m(wa9mI@I=mf=lE77E=lb=mE3/3E9mb(wI7//7I>www2m@737@mmm2mIEEImmm(wmlmwwwbbfa/Rp~;0 cA^~;0 c/pMMMTMRQMQMNQMQMNTMMMK/pRppp~;0 ccccA^^^^~;0 cccc/pMMMMpppKNNSMwYsslwsF55j~;0 c~;0 c5j#||y~%0 Z,{(swZ(s3,ls,l,(sw(sE{$E=y#||5jjjj~;0 cccc~;0 cccc5jjjjb%Ysls~%0 Fjfs-UOTf-,8yAA8~%0 5sr{9-fs9-JTKPOPKUJr9-f9-,{$5,8yggA^^A^^8gg$s--~%0 ,caMEJ`>%FzYqkvV4av~;0 `a?RJUZEZUMR?c~;0 >v)>VkI.v)%zFzzz)qY.I)a4>r8VLSqg.AF^X9Y8i-q8.ISLSLSLVI.r-gi6g8Fg^XGA.^A.GA^g68Zg=u9htf=O+8*gOdbaqN>==9p+t9+7h7+t+fbp/=f=NaQ;Oq.O*8ut+tu.Odg;OQ/=9>f=2H2..nLiUE6nlmSwIL22Wea:HHmae>22ISV3nw(nEiZS.UJ.J.LS.[(nl63nV>2:HL2QbQ[JNd]>Q[vvf)vvww(vZfv9Z>NaVQ]BQ;bd;bBQIVQa9Z(v)vQZEeeEpS^]EAp{yl~%0 {ply3pEE]ZEMe]BeBeRMeZE3p~%0 zBpEShSy[rN-yyvv)ySNrQSDh[DhQS)y-yS--272-77--2-[rrNr-vmhvm)NrhhrrQD[rmrDQ)-S^L]7ELAy~%0 l~%1 l~%0 y~%0 3EL]LZM]77BBRL~%1 LMZ3~%0 BJNZd:]:>ZQv/f/)w$w$(f/v/9>ZNZaV]::B;d::;BIZ/%/ZVa9()QLiNU=EN6lSDwIDLe)a):a)e)>IESEV3w(ENiNZSU==JJLNNS[(lE))E63V>:Lu9mhWtmf+8q*qgda1qN1>92p+mt9+mH7Wh7W2+mt+mfp/fN1a1Q;q.*q8qut+qqtu.d11g;Q/9mWm>fr8bVLSqbgAFP^X9PY8=i-bq8.bISLSLSLVI=.br-bgi6g8PFPg^XGA^AGAPP^g68bbZgcaMEJ`>%FqYqkvV4av~;0 `a?RJUZEZUMR?c~;0 >v)>VkI.v)%qFqzz)qY.I)a4>fsUOTf,%8yAA8~%0 s{9fs9JTKPOPKUJ9f9,{$,8yggA^^%A^%^8gg$s~%0 ,rwYswFr55~;1 5#j|-y~%0 rrZ{(wZ(,s,(w(E-{$rEr=y#j|5jj~;0 cc~;0 cc5jjb%rY~%0 Frj,3,5~;1 5#/R~;0 A~;0 /MsMTR,,lQQN33sQQN,,TMK/Rp#p5~;0 c5c~;0 A^~;0 ^~;1 c~;0 c5/p5pKN,N3S,M/~;0 A~;0 /R(>22(aRR9=fRR==bRR=9bR/(>w/w~;0 2m~;0 mA2mAm~;0 (w~;0 w/bRbRfRaR/(22(2V_V23ZhhZ32ZlplZ2(VhpphV(2_hlh_22VZZV2(232(>(w9m=l=m(ww2mIEEI2mm2m@737@2mm(wI7//7I(wwa=mE3/3Embf=lE77Elbb9mI@Imfb>wmmwawmmwR/pLMQMQMTM/pp~;0 c~;0 ccA^A^^~;0 c~;0 cc/p/ppMTMMKRQMMNNQMMNNMMMRKRpc^cpMpc^cp55jyYslszF=5jj~;0 c~;0 cc~;0 c~;0 cc5j5jj#|b|~%0 {$Z,w(sZs3sw,ll,ws(ssEw$yE~%0 #|jccjj|jccj(Ys,l(sFy8s--{,8gAA^AA^88g~%0 5{$srf9-s-UfJOTPTOKrfU9--,f$5y,~%0 g^^g9s-KPJ9-,kqav>V.F%zv%zzYv)VqI4v)ac~;0 aM`REJZJEU`M?>c)k>4I)Fz.Yz?aUZR~;0 >EA8ig8^.^XA.X^G8AgYi68r-8VqILSSSLLqV.gr6FgYfGA.^.8LSI-gOa=d9pf=N;O8+q*t*+ugOq.ONdQb>=p/=9t+9ht7th+fbt/=af>=Q.O8;gOut=+97*f=nS2leHa2I3n.iLwDS..UUJ.ELZ6nw(nIlVmL2a>2W:He:Hm>2SL2V(ni36nZJ.S.2H2ZvvZQNIvwf>VQbd];bQ]dBQ>IaQZf9Z)vw(v(vv)v9[NQ[aBQ;bUQEpzpEe]RylEMee]]BeEERZEBpl3p~%0 {y~%0 {3p^ApZEBeLeESyyShr[vNDhSN[QS-yv)y)yr-yQSDhS-2--77-272--r[rvmNrDNrhh[rQ-vmhm))rrr-QD]RLy~%0 l~%0 ELM]7]7BELRLZBl~%1 3~%0 y~%2 3^L7LAZBLNIZv/w%f/>ZVd:]:;]:d:B>ZIZaQf//9)w$$((v//)9NZ::ZQaB;USlEe)a)IE3iLNwDNSU=U=JENLNZ6w(IElEVLa))>:e)):>SDDLV(iN=N36ZJSad19mWmpfN1;8+qq*qt*q+qugq.N1d1Q>p/92t+m9mHht7WW2th+mmft/a11f>Q.8qq;gut+9m7W*mfEAP8bbig8P^^XAX^G8PAPgYi68=r-b8bVqILSSSLL=qV.bbgr6FPPgYfGA^.8bLSI-bgkqav>V.F%qv%qzYv)VqI4v)ac~;0 aM`REJZJEU`M?>c)k>4I)Fq.Yz?aUZR~;0 >y8s{,8g%AA^%AA^88g~%0 {$sf9sUfJOTPTOKfU9,f$y,~%0 g^^%g9sKPJ9,55yrYzFr=5j~;1 c~;1 c55j#jb-|~%0 r{$rZw(Zsw,ws(E-w$ryE~%0 r#jj|jccjr(Y,(Fr5R/L,Q3Q,T/p5~;2 c~;1 AA^~;0 5~;1 c5#//pMTKsR,QN,lN3QN3sN,MR,KRMp#c5^~;0 c~;0 p5,3,/RRRR/~;0 >(9==(w~;0 A22mA~;0 22m~;0 /((w/aR=bRfR=bRbR9fRbR>aRw/m~;0 mAw~;0 /(232(2VZZV22_hlh_2(VhpphV(2ZlplZ23ZhhZ32V_V2(22(">
+-}_~%0  (/).*-+-*.)/(0'}Y$ ).*-+,,+-+,,+-*.)/(}7$ ~%0 /+,,+-*.).+,$$).*-++.(/(o~%0 0(.+,,+-*.*-$$(/).*-+,,*/'n(/(.++.*-*.*-$$(/).*-+,,*/'2$^(/(.+,,+-*.*-$$(/).*-+,,*/'n(0~%0 0)-,+-+,+-+,$$).*-++.(1%p~%0 B'/*-+,,,+,,,+-*.)0~%0 }Z$ (/).*-+-*.)/(0'}#% '0(/)/(0'1~%0 }G% ~%0 1'1~%0 2%}/L ~%0 1'1~%0 2%}G% '0(/)/(0'1~%0 }#% (/).*-+-*.)/(0'}Z$ '/*-+,,,+,,,+-*.)0~%0 }8$ ~%0 0)-,+-+,+-+,$$).*-++.(1%p~%0 0(.+,,+-*.*-$$(/).*-+,,*/'n(/(.++.*-*.*-$$(/).*-+,,*/'2$^(/(.+,,+-*.*-$$(/).*-+,,*/'n(0~%0 /+,,+-*.).+,$$).*-++.(/(o~%0 A).*-+,,+-+,,+-*.)/(}Y$ (/).*-+-*.)/(0'}t( '0(/).*-+-*.)/(}Y$ (/).*-+,,+-+,,+-*.)A~%0 o(/(.++-*.)$$,+.).*-+,,+/~%0 0(n'/*,,+-*.)/($$-*.*-+,,+.(/(^$2'/*,,+-*.)/($$-*.*-*.++.(/(n'/*,,+-*.)/($$-*.*-+,,+.(0~%0 p%1(.++-*.)$$,+-+,+-+,-)0~%0 }8$ ~%0 0).*-+,,,+,,,+-*/'}Z$ '0(/).*-+-*.)/(}#% ~%0 1'0(/)/(0'}G% %2~%0 1'1~%0 }/L %2~%0 1'1~%0 }G% ~%0 1'0(/)/(0'}#% '0(/).*-+-*.)/(}Z$ ~%0 0).*-+,,,+,,,+-*/'B~%0 p%1(.++-*.)$$,+-+,+-+,-)0~%0 0(n'/*,,+-*.)/($$-*.*-+,,+.(/(^$2'/*,,+-*.)/($$-*.*-*.++.(/(n'/*,,+-*.)/($$-*.*-+,,+.(0~%0 o(/(.++-*.)$$,+.).*-+,,+/~%0 }7$ (/).*-+,,+-+,,+-*.)}Y$ '0(/).*-+-*.)/(}_~%0  </jvxlEdgeData>
+</jvxlSurfaceData>
+</jvxlSurface>
+</jvxlSurfaceSet>
+</jvxl>

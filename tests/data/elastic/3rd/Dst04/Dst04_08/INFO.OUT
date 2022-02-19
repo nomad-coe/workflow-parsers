@@ -1,0 +1,610 @@
+================================================================================
+| EXCITING BORON started                                                       =
+| version hash id:                                                             =
+| MPI version using     16 processor(s)                                        =
+|                                                                              =
+| Date (DD-MM-YYYY) : 09-08-2015                                               =
+| Time (hh:mm:ss)   : 22:26:04                                                 =
+|                                                                              =
+| All units are atomic (Hartree, Bohr, etc.)                                   =
+================================================================================
+ 
+********************************************************************************
+| Structural optimisation starting from atomic densities                       *
+********************************************************************************
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Starting initialization                                                      +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+ Lattice vectors (cartesian) :
+      2.3270000000      3.9076975036      0.0000000000
+     -2.3270000000      3.9076975036      0.0000000000
+      0.0000000000      0.0000000000      6.5761020000
+ 
+ Reciprocal lattice vectors (cartesian) :
+      1.3500613036      0.8039498069      0.0000000000
+     -1.3500613036      0.8039498069      0.0000000000
+      0.0000000000      0.0000000000      0.9554573982
+ 
+ Unit cell volume                           :     119.5957804353
+ Brillouin zone volume                      :       2.0740716147
+ 
+ Species :    1 (C)
+     parameters loaded from                 :    C.xml
+     name                                   :    carbon
+     nuclear charge                         :      -6.00000000
+     electronic charge                      :       6.00000000
+     atomic mass                            :   21894.16673000
+     muffin-tin radius                      :       1.20000000
+     # of radial points in muffin-tin       :     250
+ 
+     atomic positions (lattice) :
+       1 :   0.00000000  0.00000000  0.00000000
+       2 :   0.33333333  0.33333333  0.00000000
+ 
+ Total number of atoms per unit cell        :       2
+ 
+ Spin treatment                             :    spin-unpolarised
+ 
+ Number of Bravais lattice symmetries       :       8
+ Number of crystal symmetries               :       8
+ 
+ k-point grid                               :      34   34   24
+ Total number of k-points                   :    3991
+ k-point set is reduced with crystal symmetries
+ 
+ R^MT_min * |G+k|_max (rgkmax)              :       8.00000000
+ Species with R^MT_min                      :       1 (C)
+ Maximum |G+k| for APW functions            :       6.66666667
+ Maximum |G| for potential and density      :      20.00000000
+ 
+ G-vector grid sizes                        :      30    30    45
+ Total number of G-vectors                  :   16163
+ 
+ Maximum angular momentum used for
+     APW functions                          :       8
+     computing H and O matrix elements      :       8
+     potential and density                  :       8
+     inner part of muffin-tin               :       2
+ 
+ Total nuclear charge                       :     -12.00000000
+ Total electronic charge                    :      12.00000000
+ Total core charge                          :       4.00000000
+ Total valence charge                       :       8.00000000
+ 
+ Number of empty states                     :       5
+ Total number of valence states             :      10
+ 
+ Maximum Hamiltonian size                   :     632
+ Maximum number of plane-waves              :     624
+ Total number of local-orbitals             :       8
+ 
+ Exchange-correlation type                  :      20
+     Perdew-Burke-Ernzerhof, Phys. Rev. Lett. 77, 3865 (1996)
+     Generalised gradient approximation (GGA)
+ 
+ Smearing scheme                            :    Gaussian
+ Smearing width                             :       0.01000000
+ 
+ Using multisecant Broyden potential mixing
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Ending initialization                                                        +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+********************************************************************************
+| Groundstate module started                                                   *
+********************************************************************************
+ Output level for this task is set to normal
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Self-consistent loop started                                                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Density and potential initialised from atomic data
+ 
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    1                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -78.54598654
+ _______________________________________________________________
+ Fermi energy                               :         0.16797360
+ Kinetic energy                             :        74.52151495
+ Coulomb energy                             :      -142.10226462
+ Exchange energy                            :       -10.54376700
+ Correlation energy                         :        -0.42146987
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         0.83736605
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00128625
+     valence                                :         8.00000000
+     interstitial                           :         4.45157762
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.77421119
+                  atom     2     C          :         3.77421119
+     total charge in muffin-tins            :         7.54842238
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :        92.72
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    2                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -77.68699682
+ _______________________________________________________________
+ Fermi energy                               :         0.19199466
+ Kinetic energy                             :        75.10872122
+ Coulomb energy                             :      -141.87034807
+ Exchange energy                            :       -10.50295628
+ Correlation energy                         :        -0.42241369
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         0.90125989
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00129995
+     valence                                :         8.00000000
+     interstitial                           :         4.52002598
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.73998701
+                  atom     2     C          :         3.73998701
+     total charge in muffin-tins            :         7.47997402
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       183.35
+ 
+ RMS change in effective potential (target) :   1.61585      ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.858990      ( 0.100000E-06)
+ Charge distance                   (target) :  0.137588E-01  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.302229E-01  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    3                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -77.07774157
+ _______________________________________________________________
+ Fermi energy                               :         0.20835360
+ Kinetic energy                             :        75.52096756
+ Coulomb energy                             :      -141.70224532
+ Exchange energy                            :       -10.47330225
+ Correlation energy                         :        -0.42316156
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         0.95601710
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00130886
+     valence                                :         8.00000000
+     interstitial                           :         4.57001879
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.71499061
+                  atom     2     C          :         3.71499061
+     total charge in muffin-tins            :         7.42998121
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       274.34
+ 
+ RMS change in effective potential (target) :   1.19348      ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.609255      ( 0.100000E-06)
+ Charge distance                   (target) :  0.101662E-01  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.149901E-01  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    4                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.80872445
+ _______________________________________________________________
+ Fermi energy                               :         0.21471378
+ Kinetic energy                             :        75.71764555
+ Coulomb energy                             :      -141.64564792
+ Exchange energy                            :       -10.45706492
+ Correlation energy                         :        -0.42365715
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         0.99362242
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00130132
+     valence                                :         8.00000000
+     interstitial                           :         4.60226481
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.69886760
+                  atom     2     C          :         3.69886760
+     total charge in muffin-tins            :         7.39773519
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       365.59
+ 
+ RMS change in effective potential (target) :  0.725826E-01  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.269017      ( 0.100000E-06)
+ Charge distance                   (target) :  0.706170E-02  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.126668E-01  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    5                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -75.92153370
+ _______________________________________________________________
+ Fermi energy                               :         0.23745352
+ Kinetic energy                             :        76.29317581
+ Coulomb energy                             :      -141.37512908
+ Exchange energy                            :       -10.41477408
+ Correlation energy                         :        -0.42480635
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.08815861
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00132226
+     valence                                :         8.00000000
+     interstitial                           :         4.67059575
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.66470213
+                  atom     2     C          :         3.66470213
+     total charge in muffin-tins            :         7.32940425
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       456.25
+ 
+ RMS change in effective potential (target) :  0.338555E-01  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.887191      ( 0.100000E-06)
+ Charge distance                   (target) :  0.137932E-01  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.128805E-01  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    6                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20413217
+ _______________________________________________________________
+ Fermi energy                               :         0.23036225
+ Kinetic energy                             :        76.11012475
+ Coulomb energy                             :      -141.46144924
+ Exchange energy                            :       -10.42837557
+ Correlation energy                         :        -0.42443211
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05572809
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131588
+     valence                                :         8.00000000
+     interstitial                           :         4.64853616
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67573192
+                  atom     2     C          :         3.67573192
+     total charge in muffin-tins            :         7.35146384
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       547.36
+ 
+ RMS change in effective potential (target) :  0.722240E-03  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.282598      ( 0.100000E-06)
+ Charge distance                   (target) :  0.449665E-02  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.525714E-02  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    7                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20391745
+ _______________________________________________________________
+ Fermi energy                               :         0.23036433
+ Kinetic energy                             :        76.11064935
+ Coulomb energy                             :      -141.46177224
+ Exchange energy                            :       -10.42836413
+ Correlation energy                         :        -0.42443044
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05596962
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64857512
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67571244
+                  atom     2     C          :         3.67571244
+     total charge in muffin-tins            :         7.35142488
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       638.35
+ 
+ RMS change in effective potential (target) :  0.183914E-03  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.214711E-03  ( 0.100000E-06)
+ Charge distance                   (target) :  0.303746E-04  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.824208E-04  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    8                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20487785
+ _______________________________________________________________
+ Fermi energy                               :         0.23033913
+ Kinetic energy                             :        76.10993021
+ Coulomb energy                             :      -141.46197122
+ Exchange energy                            :       -10.42840723
+ Correlation energy                         :        -0.42442961
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05582730
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64850078
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67574961
+                  atom     2     C          :         3.67574961
+     total charge in muffin-tins            :         7.35149922
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       728.62
+ 
+ RMS change in effective potential (target) :  0.273540E-04  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.960395E-03  ( 0.100000E-06)
+ Charge distance                   (target) :  0.173136E-04  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.258685E-04  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :    9                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20475953
+ _______________________________________________________________
+ Fermi energy                               :         0.23034200
+ Kinetic energy                             :        76.11000231
+ Coulomb energy                             :      -141.46193053
+ Exchange energy                            :       -10.42840153
+ Correlation energy                         :        -0.42442978
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05583897
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64850974
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67574513
+                  atom     2     C          :         3.67574513
+     total charge in muffin-tins            :         7.35149026
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       819.15
+ 
+ RMS change in effective potential (target) :  0.183841E-05  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.118316E-03  ( 0.100000E-06)
+ Charge distance                   (target) :  0.182438E-05  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.297001E-05  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :   10                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20475911
+ _______________________________________________________________
+ Fermi energy                               :         0.23034203
+ Kinetic energy                             :        76.11000305
+ Coulomb energy                             :      -141.46193086
+ Exchange energy                            :       -10.42840152
+ Correlation energy                         :        -0.42442978
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05583878
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64850980
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67574510
+                  atom     2     C          :         3.67574510
+     total charge in muffin-tins            :         7.35149020
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :       909.79
+ 
+ RMS change in effective potential (target) :  0.197727E-06  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.422238E-06  ( 0.100000E-06)
+ Charge distance                   (target) :  0.275239E-06  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.371110E-05  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| SCF iteration number :   11                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.20475910
+ _______________________________________________________________
+ Fermi energy                               :         0.23034203
+ Kinetic energy                             :        76.11000312
+ Coulomb energy                             :      -141.46193092
+ Exchange energy                            :       -10.42840152
+ Correlation energy                         :        -0.42442978
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05583888
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64850980
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67574510
+                  atom     2     C          :         3.67574510
+     total charge in muffin-tins            :         7.35149020
+     total charge                           :        12.00000000
+ 
+ Wall time (seconds)                        :      1000.11
+ 
+ RMS change in effective potential (target) :  0.323632E-07  ( 0.100000E-05)
+ Absolute change in total energy   (target) :  0.804755E-08  ( 0.100000E-06)
+ Charge distance                   (target) :  0.624023E-07  ( 0.100000E-04)
+ Abs. change in max-nonIBS-force   (target) :  0.108859E-05  ( 0.250000E-05)
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Convergence targets achieved. Performing final SCF iteration                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.21330619
+ _______________________________________________________________
+ Fermi energy                               :         0.23034203
+ Kinetic energy                             :        76.11000312
+ Coulomb energy                             :      -141.46193092
+ Exchange energy                            :       -10.42840152
+ Correlation energy                         :        -0.42442978
+ DFT-D2 dispersion correction               :        -0.00854708
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05583888
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131577
+     valence                                :         8.00000000
+     interstitial                           :         4.64850979
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67574510
+                  atom     2     C          :         3.67574510
+     total charge in muffin-tins            :         7.35149021
+     total charge                           :        12.00000000
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Self-consistent loop stopped                                                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ STATE.OUT is written
+ 
+--------------------------------------------------------------------------------
+| Writing atomic positions and forces                                          -
+--------------------------------------------------------------------------------
+ 
+ Atomic positions (lattice) :
+ atom     1   C  :     0.00000000    0.00000000    0.00000000
+ atom     2   C  :     0.33333333    0.33333333    0.00000000
+ 
+ Total atomic forces including IBS (cartesian) :
+ atom     1   C  :     0.00000000   -0.01012854    0.00000000
+ atom     2   C  :     0.00000000    0.01012854    0.00000000
+ 
+ Atomic force components including IBS (cartesian) :
+ atom     1   C  :     0.00000000   -0.00276615    0.00000000   HF force
+                 :     0.00000000   -0.00736624    0.00000000   core correction
+                 :     0.00000000   -0.00006655    0.00000000   IBS correction
+                 :     0.00000000    0.00007040    0.00000000   DFT-D2 force
+ atom     2   C  :     0.00000000    0.00276615    0.00000000   HF force
+                 :     0.00000000    0.00736624    0.00000000   core correction
+                 :     0.00000000    0.00006655    0.00000000   IBS correction
+                 :     0.00000000   -0.00007040    0.00000000   DFT-D2 force
+ 
+********************************************************************************
+| Groundstate module stopped                                                   *
+********************************************************************************
+ 
+********************************************************************************
+| Structure-optimization module started                                        *
+********************************************************************************
+ Output level for this task is set to normal
+ 
+ Maximum displacement tau_BFGS   is         :         0.3000
+ Maximum displacement tau_newton is         :         0.8000
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Use harmonic method for optimizing atomic positions                          +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+--------------------------------------------------------------------------------
+| Optimization step 0: Initialize optimization                                 -
+--------------------------------------------------------------------------------
+ Maximum force magnitude           (target) :         0.01012854  (  0.00001000)
+ Total energy at this optimization step     :       -76.21330619
+ 
+ Atomic positions at this step (lattice) :
+ atom     1   C  :     0.00000000    0.00000000    0.00000000
+ atom     2   C  :     0.33333333    0.33333333    0.00000000
+ 
+ Total atomic forces including IBS (cartesian) :
+ atom     1   C  :     0.00000000   -0.01012854    0.00000000
+ atom     2   C  :     0.00000000    0.01012854    0.00000000
+ 
+--------------------------------------------------------------------------------
+| Optimization step    1    (method = harmonic)                                -
+--------------------------------------------------------------------------------
+ Number of scf iterations                   :        12  (full newton step)
+ Maximum force magnitude           (target) :         0.00034584  (  0.00001000)
+ Total energy at this optimization step     :       -76.21338367
+ 
+ Atomic positions at this step (lattice) :
+ atom     1   C  :     0.00000000    0.00000000    0.00000000
+ atom     2   C  :     0.33540689    0.33540689    0.00000000
+ 
+ Total atomic forces including IBS (cartesian) :
+ atom     1   C  :     0.00000000    0.00034584    0.00000000
+ atom     2   C  :     0.00000000   -0.00034584    0.00000000
+ 
+ Time spent in this optimization step       :      1159.33 seconds
+ 
+--------------------------------------------------------------------------------
+| Optimization step    2    (method = harmonic)                                -
+--------------------------------------------------------------------------------
+ Number of scf iterations                   :        11  (full harmonic step)
+ Maximum force magnitude           (target) :         0.00000392  (  0.00001000)
+ Total energy at this optimization step     :       -76.21338381
+ 
+ Atomic positions at this step (lattice) :
+ atom     1   C  :     0.00000000    0.00000000    0.00000000
+ atom     2   C  :     0.33533842    0.33533842    0.00000000
+ 
+ Total atomic forces including IBS (cartesian) :
+ atom     1   C  :     0.00000000    0.00000392    0.00000000
+ atom     2   C  :     0.00000000   -0.00000392    0.00000000
+ 
+ Time spent in this optimization step       :      1068.66 seconds
+ 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Force convergence target achieved                                            +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Total energy                               :       -76.21338381
+ _______________________________________________________________
+ Fermi energy                               :         0.23033688
+ Kinetic energy                             :        76.10795341
+ Coulomb energy                             :      -141.46030719
+ Exchange energy                            :       -10.42805043
+ Correlation energy                         :        -0.42443358
+ DFT-D2 dispersion correction               :        -0.00854602
+ 
+ DOS at Fermi energy (states/Ha/cell)       :         1.05298503
+ 
+ Electron charges :
+     core                                   :         4.00000000
+     core leakage                           :         0.00131567
+     valence                                :         8.00000000
+     interstitial                           :         4.64953902
+     charge in muffin-tin spheres :
+                  atom     1     C          :         3.67523049
+                  atom     2     C          :         3.67523049
+     total charge in muffin-tins            :         7.35046098
+     total charge                           :        12.00000000
+ 
+ Optimized atomic positions (lattice) :
+ atom     1   C  :     0.00000000    0.00000000    0.00000000
+ atom     2   C  :     0.33533842    0.33533842    0.00000000
+ 
+ Total atomic forces including IBS (cartesian) :
+ atom     1   C  :     0.00000000    0.00000392    0.00000000
+ atom     2   C  :     0.00000000   -0.00000392    0.00000000
+ 
+ Atomic force components including IBS (cartesian) :
+ atom     1   C  :     0.00000000    0.00765610    0.00000000   HF force
+                 :     0.00000000   -0.00755986    0.00000000   core correction
+                 :     0.00000000   -0.00015733    0.00000000   IBS correction
+                 :     0.00000000    0.00006501    0.00000000   DFT-D2 force
+ atom     2   C  :     0.00000000   -0.00765610    0.00000000   HF force
+                 :     0.00000000    0.00755986    0.00000000   core correction
+                 :     0.00000000    0.00015733    0.00000000   IBS correction
+                 :     0.00000000   -0.00006501    0.00000000   DFT-D2 force
+ 
+********************************************************************************
+| Structure-optimization module stopped                                        *
+********************************************************************************
+ 
+ Total time spent (seconds)                 :      3393.95
+ 
+================================================================================
+| EXCITING BORON stopped                                                       =
+================================================================================

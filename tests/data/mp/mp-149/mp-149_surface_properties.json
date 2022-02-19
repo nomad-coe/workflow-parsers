@@ -1,0 +1,445 @@
+{
+    "surfaces": [
+        {
+            "miller_index": [
+                1,
+                0,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.0801577169953221,
+            "surface_energy": 1.284268152730187,
+            "is_reconstructed": true,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   7.73394931\n_cell_length_b   3.86697465\n_cell_length_c   21.87491200\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si16\n_cell_volume   654.21268558\n_cell_formula_units_Z   16\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.991208  0.000000  0.786609  1\n  Si  Si2  1  0.508313  0.000000  0.775584  1\n  Si  Si3  1  0.997425  0.500000  0.850596  1\n  Si  Si4  1  0.498162  0.500000  0.836820  1\n  Si  Si5  1  0.264643  0.500000  0.907008  1\n  Si  Si6  1  0.736349  0.500000  0.909150  1\n  Si  Si7  1  0.307094  0.000000  0.970707  1\n  Si  Si8  1  0.592885  0.000000  0.941019  1\n  Si  Si9  1  0.157115  0.000000  0.558981  1\n  Si  Si10  1  0.442906  0.000000  0.529293  1\n  Si  Si11  1  0.013651  0.500000  0.590850  1\n  Si  Si12  1  0.485357  0.500000  0.592992  1\n  Si  Si13  1  0.251838  0.500000  0.663180  1\n  Si  Si14  1  0.752575  0.500000  0.649404  1\n  Si  Si15  1  0.241687  0.000000  0.724416  1\n  Si  Si16  1  0.758792  0.000000  0.713391  1\n",
+            "work_function": 4.78965393182432,
+            "efermi": 0.39426286,
+            "area_fraction": 0.35532525407581556,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                1,
+                0,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.13302691479006934,
+            "surface_energy": 2.131326047257664,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   3.86697465\n_cell_length_c   21.87491200\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si8\n_cell_volume   327.10634279\n_cell_formula_units_Z   8\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.000000  0.000000  0.999183  1\n  Si  Si2  1  0.000000  0.500000  0.812650  1\n  Si  Si3  1  0.500000  0.500000  0.874754  1\n  Si  Si4  1  0.500000  0.000000  0.937279  1\n  Si  Si5  1  0.000000  0.000000  0.749850  1\n  Si  Si6  1  0.000000  0.500000  0.563317  1\n  Si  Si7  1  0.500000  0.500000  0.625221  1\n  Si  Si8  1  0.500000  0.000000  0.687746  1\n",
+            "work_function": 5.274168430599489,
+            "efermi": 0.04395049,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                2,
+                1,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09279208264954868,
+            "surface_energy": 1.4866929977468957,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   5.46872800\n_cell_length_b   6.69779657\n_cell_length_c   24.45689512\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   114.09484255\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si20\n_cell_volume   817.76585697\n_cell_formula_units_Z   20\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.585131  0.195782  0.403105  1\n  Si  Si2  1  0.198527  0.400084  0.301779  1\n  Si  Si3  1  0.801854  0.599817  0.200079  1\n  Si  Si4  1  0.404368  0.793294  0.097424  1\n  Si  Si5  1  0.137520  0.091632  0.004885  1\n  Si  Si6  1  0.201473  0.899916  0.173221  1\n  Si  Si7  1  0.814869  0.104218  0.071895  1\n  Si  Si8  1  0.262480  0.208368  0.470115  1\n  Si  Si9  1  0.995632  0.506706  0.377576  1\n  Si  Si10  1  0.598146  0.700183  0.274921  1\n  Si  Si11  1  0.903842  0.806179  0.348740  1\n  Si  Si12  1  0.499865  0.999681  0.248839  1\n  Si  Si13  1  0.092245  0.197930  0.150966  1\n  Si  Si14  1  0.639395  0.367028  0.047601  1\n  Si  Si15  1  0.371784  0.562160  0.434751  1\n  Si  Si16  1  0.900135  0.300319  0.226161  1\n  Si  Si17  1  0.496158  0.493821  0.126260  1\n  Si  Si18  1  0.028216  0.737840  0.040249  1\n  Si  Si19  1  0.760605  0.932972  0.427399  1\n  Si  Si20  1  0.307755  0.102070  0.324034  1\n",
+            "work_function": 4.7066779890023875,
+            "efermi": 0.4609,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                1,
+                1,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09404195777464205,
+            "surface_energy": 1.5067182040304126,
+            "is_reconstructed": true,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   5.46872800\n_cell_length_c   30.93579723\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si16\n_cell_volume   654.21268558\n_cell_formula_units_Z   16\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.000000  0.008304  0.908164  1\n  Si  Si2  1  0.000000  0.001030  0.781484  1\n  Si  Si3  1  0.000000  0.249320  0.844264  1\n  Si  Si4  1  0.000000  0.223562  0.975418  1\n  Si  Si5  1  0.500000  0.423668  0.951027  1\n  Si  Si6  1  0.500000  0.499839  0.843623  1\n  Si  Si7  1  0.500000  0.751627  0.780967  1\n  Si  Si8  1  0.500000  0.760457  0.905486  1\n  Si  Si9  1  0.000000  0.000680  0.655736  1\n  Si  Si10  1  0.000000  0.026438  0.524582  1\n  Si  Si11  1  0.000000  0.241696  0.591836  1\n  Si  Si12  1  0.000000  0.248970  0.718516  1\n  Si  Si13  1  0.500000  0.498373  0.719033  1\n  Si  Si14  1  0.500000  0.489543  0.594514  1\n  Si  Si15  1  0.500000  0.826332  0.548973  1\n  Si  Si16  1  0.500000  0.750161  0.656377  1\n",
+            "work_function": 4.974445572673043,
+            "efermi": 0.28071661,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                1,
+                1,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.10981660413080353,
+            "surface_energy": 1.7594558903717257,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   5.46872800\n_cell_length_c   30.93579723\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si16\n_cell_volume   654.21268558\n_cell_formula_units_Z   16\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.000000  0.998846  0.875117  1\n  Si  Si2  1  0.000000  0.983218  0.993074  1\n  Si  Si3  1  0.000000  0.250137  0.812525  1\n  Si  Si4  1  0.000000  0.256913  0.936774  1\n  Si  Si5  1  0.500000  0.493087  0.936774  1\n  Si  Si6  1  0.500000  0.499863  0.812525  1\n  Si  Si7  1  0.500000  0.766782  0.993074  1\n  Si  Si8  1  0.500000  0.751154  0.875117  1\n  Si  Si9  1  0.000000  0.993087  0.625726  1\n  Si  Si10  1  0.000000  0.999863  0.749975  1\n  Si  Si11  1  0.000000  0.266782  0.569426  1\n  Si  Si12  1  0.000000  0.251154  0.687383  1\n  Si  Si13  1  0.500000  0.498846  0.687383  1\n  Si  Si14  1  0.500000  0.483218  0.569426  1\n  Si  Si15  1  0.500000  0.750137  0.749975  1\n  Si  Si16  1  0.500000  0.756913  0.625726  1\n",
+            "work_function": 4.725519563707091,
+            "efermi": 0.47498551,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                2,
+                2,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.10272178317702729,
+            "surface_energy": 1.6457843320763543,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   11.60092396\n_cell_length_c   32.81236800\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si36\n_cell_volume   1471.97854255\n_cell_formula_units_Z   36\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.000005  0.457295  0.947603  1\n  Si  Si2  1  0.999996  0.894607  0.884509  1\n  Si  Si3  1  0.000003  0.920863  0.995553  1\n  Si  Si4  1  0.999998  0.329759  0.834660  1\n  Si  Si5  1  0.999998  0.774185  0.777882  1\n  Si  Si6  1  0.999999  0.224062  0.721594  1\n  Si  Si7  1  0.999999  0.670765  0.664182  1\n  Si  Si8  1  0.999993  0.105234  0.613352  1\n  Si  Si9  1  0.000000  0.542554  0.569929  1\n  Si  Si10  1  0.999998  0.388461  0.764301  1\n  Si  Si11  1  0.000001  0.831092  0.709195  1\n  Si  Si12  1  0.999998  0.946502  0.816148  1\n  Si  Si13  1  0.999998  0.278016  0.651889  1\n  Si  Si14  1  1.000000  0.733999  0.593868  1\n  Si  Si15  1  0.000006  0.094709  0.538885  1\n  Si  Si16  1  0.000008  0.673766  0.955838  1\n  Si  Si17  1  0.999999  0.040859  0.934113  1\n  Si  Si18  1  0.999998  0.498430  0.875356  1\n  Si  Si19  1  0.499998  0.610849  0.862011  1\n  Si  Si20  1  0.499998  0.057740  0.804697  1\n  Si  Si21  1  0.499999  0.154958  0.920012  1\n  Si  Si22  1  0.499999  0.500410  0.749581  1\n  Si  Si23  1  0.500001  0.942337  0.697738  1\n  Si  Si24  1  0.499999  0.390421  0.638540  1\n  Si  Si25  1  0.499999  0.848105  0.579769  1\n  Si  Si26  1  0.500008  0.215137  0.558048  1\n  Si  Si27  1  0.500005  0.794217  0.974993  1\n  Si  Si28  1  0.499998  0.664765  0.792310  1\n  Si  Si29  1  0.499999  0.114641  0.736014  1\n  Si  Si30  1  0.499998  0.218102  0.849689  1\n  Si  Si31  1  0.499999  0.559111  0.679220  1\n  Si  Si32  1  0.499994  0.994321  0.629380  1\n  Si  Si33  1  0.500002  0.431617  0.566298  1\n  Si  Si34  1  0.500005  0.968062  0.518322  1\n  Si  Si35  1  0.500005  0.346370  0.943991  1\n  Si  Si36  1  0.499996  0.783679  0.900531  1\n",
+            "work_function": 4.5873553402154155,
+            "efermi": 0.5883,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                2,
+                1,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.10398814093326293,
+            "surface_energy": 1.6660736192125039,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   9.47211475\n_cell_length_c   26.79118628\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si24\n_cell_volume   981.31902837\n_cell_formula_units_Z   24\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  1.000000  0.018800  0.995336  1\n  Si  Si2  1  1.000000  0.332092  0.081952  1\n  Si  Si3  1  1.000000  0.664908  0.166895  1\n  Si  Si4  1  0.000000  0.000063  0.249849  1\n  Si  Si5  1  0.000000  0.331531  0.332393  1\n  Si  Si6  1  0.000000  0.675132  0.418097  1\n  Si  Si7  1  0.500000  0.083348  0.208475  1\n  Si  Si8  1  0.500000  0.418511  0.291440  1\n  Si  Si9  1  0.500000  0.751187  0.376391  1\n  Si  Si10  1  0.500000  0.064414  0.462978  1\n  Si  Si11  1  0.500000  0.408163  0.040253  1\n  Si  Si12  1  0.500000  0.751829  0.125946  1\n  Si  Si13  1  0.500000  0.001662  0.124947  1\n  Si  Si14  1  0.500000  0.333159  0.207915  1\n  Si  Si15  1  0.500000  0.667988  0.292292  1\n  Si  Si16  1  0.500000  0.003474  0.376329  1\n  Si  Si17  1  0.500000  0.294418  0.435615  1\n  Si  Si18  1  0.500000  0.656983  0.041684  1\n  Si  Si19  1  1.000000  0.415432  0.166040  1\n  Si  Si20  1  0.000000  0.750260  0.250417  1\n  Si  Si21  1  0.000000  0.081687  0.333379  1\n  Si  Si22  1  0.000000  0.426312  0.416660  1\n  Si  Si23  1  1.000000  0.788835  0.022728  1\n  Si  Si24  1  1.000000  0.079812  0.081987  1\n",
+            "work_function": 4.742362086629032,
+            "efermi": 0.446,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                1,
+                1,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.08134696554942418,
+            "surface_energy": 1.3033220143041493,
+            "is_reconstructed": true,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697424\n_cell_length_b   7.73394985\n_cell_length_c   37.88845900\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   120.00000144\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si24\n_cell_volume   981.31897919\n_cell_formula_units_Z   24\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.165545  0.168428  0.055497  1\n  Si  Si2  1  0.458210  0.961118  0.055350  1\n  Si  Si3  1  0.001848  0.502048  0.218661  1\n  Si  Si4  1  0.998353  0.998104  0.218781  1\n  Si  Si5  1  0.664626  0.165846  0.138799  1\n  Si  Si6  1  0.660742  0.662680  0.131765  1\n  Si  Si7  1  0.668537  0.168328  0.199951  1\n  Si  Si8  1  0.664514  0.664807  0.195985  1\n  Si  Si9  1  0.314004  0.315396  0.114485  1\n  Si  Si10  1  0.341216  0.843365  0.114407  1\n  Si  Si11  1  0.160723  0.664369  0.020658  1\n  Si  Si12  1  0.496549  0.500249  0.036690  1\n  Si  Si13  1  0.335486  0.335193  0.304015  1\n  Si  Si14  1  0.331463  0.831672  0.300049  1\n  Si  Si15  1  0.839277  0.335631  0.479342  1\n  Si  Si16  1  0.503451  0.499751  0.463310  1\n  Si  Si17  1  0.658784  0.156635  0.385593  1\n  Si  Si18  1  0.685996  0.684604  0.385515  1\n  Si  Si19  1  0.541790  0.038882  0.444650  1\n  Si  Si20  1  0.834455  0.831572  0.444503  1\n  Si  Si21  1  0.339258  0.337320  0.368235  1\n  Si  Si22  1  0.335374  0.834154  0.361201  1\n  Si  Si23  1  0.998152  0.497952  0.281339  1\n  Si  Si24  1  0.001647  0.001896  0.281219  1\n",
+            "work_function": 4.6372212326434115,
+            "efermi": 0.55074891,
+            "area_fraction": 0.4145697179313191,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                1,
+                1,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09813053067561109,
+            "surface_energy": 1.5722243606882504,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   3.86697465\n_cell_length_c   37.88845900\n_cell_angle_alpha   90.00000000\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   120.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si12\n_cell_volume   490.65951418\n_cell_formula_units_Z   12\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.333334  0.666668  0.051866  1\n  Si  Si2  1  0.000000  0.000000  0.218708  1\n  Si  Si3  1  0.666666  0.333332  0.135276  1\n  Si  Si4  1  0.666666  0.333332  0.197947  1\n  Si  Si5  1  0.333334  0.666668  0.114844  1\n  Si  Si6  1  0.000000  0.000000  0.035331  1\n  Si  Si7  1  0.333334  0.666668  0.302053  1\n  Si  Si8  1  0.000000  0.000000  0.464669  1\n  Si  Si9  1  0.666666  0.333332  0.385156  1\n  Si  Si10  1  0.666666  0.333332  0.448134  1\n  Si  Si11  1  0.333334  0.666668  0.364724  1\n  Si  Si12  1  0.000000  0.000000  0.281292  1\n",
+            "work_function": 4.437810151391643,
+            "efermi": 0.76617063,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                2,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09049016349268361,
+            "surface_energy": 1.449812188585454,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   5.46872800\n_cell_length_b   10.23105326\n_cell_length_c   30.69315978\n_cell_angle_alpha   81.78678930\n_cell_angle_beta   84.88891030\n_cell_angle_gamma   74.49864043\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si40\n_cell_volume   1635.53171395\n_cell_formula_units_Z   40\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.392962  0.006423  0.194800  1\n  Si  Si2  1  0.201761  0.517145  0.090858  1\n  Si  Si3  1  0.001399  0.756544  0.243632  1\n  Si  Si4  1  0.807514  0.257644  0.141833  1\n  Si  Si5  1  0.498640  0.737769  0.053185  1\n  Si  Si6  1  0.798682  0.123144  0.015446  1\n  Si  Si7  1  0.450600  0.446630  0.154357  1\n  Si  Si8  1  0.196381  0.965200  0.055019  1\n  Si  Si9  1  0.044868  0.195737  0.206626  1\n  Si  Si10  1  0.832060  0.700310  0.103707  1\n  Si  Si11  1  0.991024  0.881509  0.120173  1\n  Si  Si12  1  0.757170  0.337365  0.037396  1\n  Si  Si13  1  0.601291  0.630681  0.168859  1\n  Si  Si14  1  0.439407  0.119619  0.067495  1\n  Si  Si15  1  0.205258  0.380961  0.217977  1\n  Si  Si16  1  0.094078  0.313967  0.080752  1\n  Si  Si17  1  0.856383  0.567911  0.230974  1\n  Si  Si18  1  0.647742  0.068357  0.133749  1\n  Si  Si19  1  0.430042  0.553637  0.020917  1\n  Si  Si20  1  0.250122  0.817077  0.181132  1\n  Si  Si21  1  0.453619  0.734800  0.444981  1\n  Si  Si22  1  0.199400  0.253370  0.345643  1\n  Si  Si23  1  0.851318  0.576856  0.484554  1\n  Si  Si24  1  0.817940  0.999690  0.396293  1\n  Si  Si25  1  0.605132  0.504263  0.293374  1\n  Si  Si26  1  0.648601  0.943456  0.256368  1\n  Si  Si27  1  0.448239  0.182855  0.409142  1\n  Si  Si28  1  0.257038  0.693577  0.305200  1\n  Si  Si29  1  0.151360  0.962231  0.446815  1\n  Si  Si30  1  0.842486  0.442356  0.358167  1\n  Si  Si31  1  0.002258  0.631643  0.366251  1\n  Si  Si32  1  0.793617  0.132089  0.269026  1\n  Si  Si33  1  0.555922  0.386033  0.419248  1\n  Si  Si34  1  0.399878  0.882923  0.318868  1\n  Si  Si35  1  0.219958  0.146363  0.479083  1\n  Si  Si36  1  0.048709  0.069319  0.331141  1\n  Si  Si37  1  0.892830  0.362635  0.462604  1\n  Si  Si38  1  0.658976  0.818491  0.379827  1\n  Si  Si39  1  0.444742  0.319039  0.282023  1\n  Si  Si40  1  0.210593  0.580381  0.432505  1\n",
+            "work_function": 4.823350497793534,
+            "efermi": 0.4066,
+            "area_fraction": 0.17936410820856055,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                1,
+                0
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09301414532957898,
+            "surface_energy": 1.490250833954849,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   5.46872800\n_cell_length_b   8.64681819\n_cell_length_c   20.82429581\n_cell_angle_alpha   94.76364169\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si24\n_cell_volume   981.31902837\n_cell_formula_units_Z   24\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.996717  0.812944  0.143263  1\n  Si  Si2  1  0.051618  0.436427  0.057638  1\n  Si  Si3  1  0.998901  0.229431  0.227331  1\n  Si  Si4  1  0.253283  0.312944  0.143263  1\n  Si  Si5  1  0.198382  0.936427  0.057638  1\n  Si  Si6  1  0.251099  0.729431  0.227331  1\n  Si  Si7  1  0.520187  0.106483  0.101084  1\n  Si  Si8  1  0.328746  0.664491  0.055811  1\n  Si  Si9  1  0.504759  0.520840  0.188852  1\n  Si  Si10  1  0.745241  0.020840  0.188852  1\n  Si  Si11  1  0.729813  0.606483  0.101084  1\n  Si  Si12  1  0.921254  0.164491  0.055811  1\n  Si  Si13  1  0.020187  0.060183  0.398916  1\n  Si  Si14  1  0.004759  0.645828  0.311148  1\n  Si  Si15  1  0.828746  0.502175  0.444189  1\n  Si  Si16  1  0.229813  0.560183  0.398916  1\n  Si  Si17  1  0.245241  0.145828  0.311148  1\n  Si  Si18  1  0.421254  0.002175  0.444189  1\n  Si  Si19  1  0.496717  0.353722  0.356737  1\n  Si  Si20  1  0.498901  0.937235  0.272669  1\n  Si  Si21  1  0.551618  0.730241  0.442362  1\n  Si  Si22  1  0.698382  0.230241  0.442362  1\n  Si  Si23  1  0.753283  0.853722  0.356737  1\n  Si  Si24  1  0.751099  0.437235  0.272669  1\n",
+            "work_function": 4.230017727786346,
+            "efermi": 0.76,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                3,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09871550378616417,
+            "surface_energy": 1.5815966627478346,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   8.64681819\n_cell_length_c   30.20203753\n_cell_angle_alpha   86.71745780\n_cell_angle_beta   86.32950349\n_cell_angle_gamma   77.07903362\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si24\n_cell_volume   981.31902837\n_cell_formula_units_Z   24\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.654891  0.667518  0.022697  1\n  Si  Si2  1  0.339834  0.254999  0.065336  1\n  Si  Si3  1  0.000810  0.763568  0.234811  1\n  Si  Si4  1  0.999487  0.890554  0.110473  1\n  Si  Si5  1  0.666519  0.516808  0.150151  1\n  Si  Si6  1  0.333323  0.141092  0.192263  1\n  Si  Si7  1  0.584168  0.607998  0.223668  1\n  Si  Si8  1  0.223119  0.516684  0.037078  1\n  Si  Si9  1  0.916258  0.984265  0.183218  1\n  Si  Si10  1  0.918368  0.104614  0.058647  1\n  Si  Si11  1  0.582475  0.736545  0.098508  1\n  Si  Si12  1  0.250485  0.359515  0.139516  1\n  Si  Si13  1  0.665832  0.392002  0.276332  1\n  Si  Si14  1  0.333742  0.015735  0.316782  1\n  Si  Si15  1  0.026881  0.483316  0.462922  1\n  Si  Si16  1  0.999515  0.640485  0.360484  1\n  Si  Si17  1  0.667525  0.263455  0.401492  1\n  Si  Si18  1  0.331632  0.895386  0.441353  1\n  Si  Si19  1  0.595109  0.332482  0.477303  1\n  Si  Si20  1  0.249190  0.236432  0.265189  1\n  Si  Si21  1  0.910166  0.745001  0.434664  1\n  Si  Si22  1  0.916677  0.858908  0.307737  1\n  Si  Si23  1  0.583481  0.483192  0.349849  1\n  Si  Si24  1  0.250514  0.109446  0.389527  1\n",
+            "work_function": 4.649970832369976,
+            "efermi": 0.49170523,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                2,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09467959360764863,
+            "surface_energy": 1.5169342558850045,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   6.69779657\n_cell_length_b   8.64681819\n_cell_length_c   26.51064257\n_cell_angle_alpha   93.74022039\n_cell_angle_beta   94.83089688\n_cell_angle_gamma   104.96321743\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si36\n_cell_volume   1471.97854255\n_cell_formula_units_Z   36\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.701520  0.223273  0.267333  1\n  Si  Si2  1  0.990902  0.654985  0.319065  1\n  Si  Si3  1  0.128134  0.073207  0.370888  1\n  Si  Si4  1  0.217691  0.906322  0.305495  1\n  Si  Si5  1  0.378278  0.327265  0.377695  1\n  Si  Si6  1  0.036544  0.402850  0.288118  1\n  Si  Si7  1  0.412968  0.386606  0.291460  1\n  Si  Si8  1  0.531787  0.867745  0.346009  1\n  Si  Si9  1  0.712575  0.302473  0.404678  1\n  Si  Si10  1  0.958769  0.553720  0.402977  1\n  Si  Si11  1  0.634219  0.644234  0.312956  1\n  Si  Si12  1  0.793671  0.114951  0.345700  1\n  Si  Si13  1  0.294244  0.527178  0.431092  1\n  Si  Si14  1  0.456803  0.972752  0.485304  1\n  Si  Si15  1  0.626443  0.416810  0.544110  1\n  Si  Si16  1  0.708567  0.223315  0.487764  1\n  Si  Si17  1  0.875193  0.666965  0.541797  1\n  Si  Si18  1  0.542401  0.777089  0.429796  1\n  Si  Si19  1  0.874807  0.749702  0.458203  1\n  Si  Si20  1  0.041433  0.193352  0.512236  1\n  Si  Si21  1  0.207599  0.639578  0.570204  1\n  Si  Si22  1  0.455756  0.889489  0.568908  1\n  Si  Si23  1  0.123557  0.999857  0.455890  1\n  Si  Si24  1  0.293197  0.443915  0.514696  1\n  Si  Si25  1  0.791231  0.862947  0.597023  1\n  Si  Si26  1  0.956329  0.301716  0.654300  1\n  Si  Si27  1  0.115781  0.772433  0.687044  1\n  Si  Si28  1  0.218213  0.548922  0.653991  1\n  Si  Si29  1  0.337032  0.030061  0.708540  1\n  Si  Si30  1  0.037425  0.114194  0.595322  1\n  Si  Si31  1  0.371722  0.089401  0.622305  1\n  Si  Si32  1  0.532309  0.510345  0.694505  1\n  Si  Si33  1  0.713456  0.013817  0.711882  1\n  Si  Si34  1  0.048480  0.193394  0.732667  1\n  Si  Si35  1  0.621866  0.343459  0.629112  1\n  Si  Si36  1  0.759098  0.761682  0.680935  1\n",
+            "work_function": 4.5931274990093085,
+            "efermi": 0.5169,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                2,
+                2
+            ],
+            "surface_energy_EV_PER_ANG2": 0.08694029984399101,
+            "surface_energy": 1.3929371052941404,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   15.94394495\n_cell_length_c   24.76071913\n_cell_angle_alpha   105.37550393\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si36\n_cell_volume   1471.97854255\n_cell_formula_units_Z   36\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.500000  0.931019  0.285776  1\n  Si  Si2  1  0.500000  0.101769  0.401486  1\n  Si  Si3  1  0.500000  0.506914  0.329980  1\n  Si  Si4  1  1.000000  0.126957  0.351554  1\n  Si  Si5  1  1.000000  0.552049  0.286758  1\n  Si  Si6  1  1.000000  0.762035  0.415371  1\n  Si  Si7  1  1.000000  0.714433  0.316462  1\n  Si  Si8  1  1.000000  0.005160  0.266922  1\n  Si  Si9  1  0.000000  0.286307  0.357730  1\n  Si  Si10  1  0.500000  0.946528  0.388620  1\n  Si  Si11  1  0.500000  0.359683  0.339061  1\n  Si  Si12  1  0.500000  0.794597  0.302814  1\n  Si  Si13  1  0.500000  0.713549  0.451725  1\n  Si  Si14  1  0.500000  0.941583  0.569713  1\n  Si  Si15  1  0.500000  0.324610  0.501877  1\n  Si  Si16  1  1.000000  0.987184  0.530757  1\n  Si  Si17  1  0.000000  0.360615  0.456836  1\n  Si  Si18  1  0.000000  0.585422  0.565885  1\n  Si  Si19  1  1.000000  0.512812  0.469243  1\n  Si  Si20  1  1.000000  0.914573  0.434113  1\n  Si  Si21  1  1.000000  0.139387  0.543178  1\n  Si  Si22  1  0.500000  0.786434  0.548264  1\n  Si  Si23  1  0.500000  0.175389  0.498131  1\n  Si  Si24  1  0.500000  0.558395  0.430275  1\n  Si  Si25  1  0.500000  0.553478  0.611383  1\n  Si  Si26  1  0.500000  0.705397  0.697186  1\n  Si  Si27  1  0.500000  0.140358  0.660965  1\n  Si  Si28  1  0.000000  0.785554  0.683533  1\n  Si  Si29  1  0.000000  0.213709  0.642283  1\n  Si  Si30  1  0.000000  0.494845  0.733086  1\n  Si  Si31  1  0.000000  0.373055  0.648452  1\n  Si  Si32  1  0.000000  0.737961  0.584626  1\n  Si  Si33  1  1.000000  0.947928  0.713202  1\n  Si  Si34  1  0.500000  0.568980  0.714230  1\n  Si  Si35  1  0.500000  0.993093  0.670001  1\n  Si  Si36  1  0.500000  0.398240  0.598521  1\n",
+            "work_function": 4.692971626130509,
+            "efermi": 0.5157,
+            "area_fraction": 0.0507409197843048,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                1,
+                1
+            ],
+            "surface_energy_EV_PER_ANG2": 0.09496232591607794,
+            "surface_energy": 1.5214641266582059,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   6.69779657\n_cell_length_c   29.70279592\n_cell_angle_alpha   92.15381448\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   106.77865488\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si18\n_cell_volume   735.98927128\n_cell_formula_units_Z   18\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.257194  0.514388  0.410123  1\n  Si  Si2  1  0.708947  0.417895  0.293338  1\n  Si  Si3  1  0.982392  0.964783  0.354313  1\n  Si  Si4  1  0.316644  0.633286  0.291807  1\n  Si  Si5  1  0.508350  0.016702  0.309211  1\n  Si  Si6  1  0.800006  0.600011  0.367921  1\n  Si  Si7  1  0.089048  0.178095  0.576050  1\n  Si  Si8  1  0.534689  0.069378  0.465277  1\n  Si  Si9  1  0.812151  0.624303  0.520669  1\n  Si  Si10  1  0.077619  0.155238  0.423950  1\n  Si  Si11  1  0.354516  0.709030  0.479331  1\n  Si  Si12  1  0.631977  0.263955  0.534723  1\n  Si  Si13  1  0.850023  0.700047  0.708193  1\n  Si  Si14  1  0.366661  0.733322  0.632079  1\n  Si  Si15  1  0.658316  0.316632  0.690789  1\n  Si  Si16  1  0.909472  0.818945  0.589877  1\n  Si  Si17  1  0.184275  0.368550  0.645687  1\n  Si  Si18  1  0.457720  0.915438  0.706662  1\n",
+            "work_function": 4.228783920116648,
+            "efermi": 0.7497,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        },
+        {
+            "miller_index": [
+                3,
+                3,
+                2
+            ],
+            "surface_energy_EV_PER_ANG2": 0.10040791159520826,
+            "surface_energy": 1.6087120239639487,
+            "is_reconstructed": false,
+            "structure": "# generated using pymatgen\ndata_Si\n_symmetry_space_group_name_H-M   'P 1'\n_cell_length_a   3.86697465\n_cell_length_b   18.13771886\n_cell_length_c   56.56896230\n_cell_angle_alpha   98.38019175\n_cell_angle_beta   90.00000000\n_cell_angle_gamma   90.00000000\n_symmetry_Int_Tables_number   1\n_chemical_formula_structural   Si\n_chemical_formula_sum   Si96\n_cell_volume   3925.27611347\n_cell_formula_units_Z   96\nloop_\n _symmetry_equiv_pos_site_id\n _symmetry_equiv_pos_as_xyz\n  1  'x, y, z'\nloop_\n _atom_site_type_symbol\n _atom_site_label\n _atom_site_symmetry_multiplicity\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_occupancy\n  Si  Si1  1  0.000000  0.948768  0.715823  1\n  Si  Si2  1  0.000000  0.797660  0.546982  1\n  Si  Si3  1  0.000000  0.630645  0.380144  1\n  Si  Si4  1  0.000000  0.671223  0.670643  1\n  Si  Si5  1  0.000000  0.504488  0.504437  1\n  Si  Si6  1  0.000000  0.336557  0.338054  1\n  Si  Si7  1  0.000000  0.323733  0.695623  1\n  Si  Si8  1  0.000000  0.150859  0.526216  1\n  Si  Si9  1  0.000000  0.986091  0.362050  1\n  Si  Si10  1  0.000000  0.027042  0.652258  1\n  Si  Si11  1  0.000000  0.860027  0.485009  1\n  Si  Si12  1  0.000000  0.695702  0.317610  1\n  Si  Si13  1  0.000000  0.734506  0.608828  1\n  Si  Si14  1  0.000000  0.567007  0.442143  1\n  Si  Si15  1  0.000000  0.418215  0.286578  1\n  Si  Si16  1  0.000000  0.573801  0.732269  1\n  Si  Si17  1  0.000000  0.442274  0.567022  1\n  Si  Si18  1  0.000000  0.273507  0.399805  1\n  Si  Si19  1  0.000000  0.378724  0.629081  1\n  Si  Si20  1  0.000000  0.213934  0.463773  1\n  Si  Si21  1  0.000000  0.037211  0.294799  1\n  Si  Si22  1  0.000000  0.784134  0.271653  1\n  Si  Si23  1  0.000000  0.090481  0.589809  1\n  Si  Si24  1  0.000000  0.922195  0.422983  1\n  Si  Si25  1  0.000000  0.985527  0.610314  1\n  Si  Si26  1  0.000000  0.817735  0.443456  1\n  Si  Si27  1  0.000000  0.655219  0.275250  1\n  Si  Si28  1  0.000000  0.850689  0.740306  1\n  Si  Si29  1  0.000000  0.692640  0.567176  1\n  Si  Si30  1  0.000000  0.525178  0.400323  1\n  Si  Si31  1  0.000000  0.948697  0.257755  1\n  Si  Si32  1  0.000000  0.337366  0.587675  1\n  Si  Si33  1  0.000000  0.172558  0.422207  1\n  Si  Si34  1  0.000000  0.213306  0.714219  1\n  Si  Si35  1  0.000000  0.048298  0.547847  1\n  Si  Si36  1  0.000000  0.879912  0.381652  1\n  Si  Si37  1  0.000000  0.921110  0.672432  1\n  Si  Si38  1  0.000000  0.755267  0.505353  1\n  Si  Si39  1  0.000000  0.590150  0.338202  1\n  Si  Si40  1  0.000000  0.629777  0.629097  1\n  Si  Si41  1  0.000000  0.462346  0.462692  1\n  Si  Si42  1  0.000000  0.295391  0.295642  1\n  Si  Si43  1  0.000000  0.563547  0.689264  1\n  Si  Si44  1  0.000000  0.400752  0.525481  1\n  Si  Si45  1  0.000000  0.229632  0.357719  1\n  Si  Si46  1  0.000000  0.281155  0.653044  1\n  Si  Si47  1  0.000000  0.109508  0.484636  1\n  Si  Si48  1  0.000000  0.946649  0.321085  1\n  Si  Si49  1  0.500000  0.142109  0.704358  1\n  Si  Si50  1  0.500000  0.975154  0.537308  1\n  Si  Si51  1  0.500000  0.807723  0.370903  1\n  Si  Si52  1  0.500000  0.847350  0.661798  1\n  Si  Si53  1  0.500000  0.682233  0.494647  1\n  Si  Si54  1  0.500000  0.516390  0.327568  1\n  Si  Si55  1  0.500000  0.490851  0.678915  1\n  Si  Si56  1  0.500000  0.327992  0.515364  1\n  Si  Si57  1  0.500000  0.156345  0.346956  1\n  Si  Si58  1  0.500000  0.207868  0.642281  1\n  Si  Si59  1  0.500000  0.036748  0.474519  1\n  Si  Si60  1  0.500000  0.873953  0.310736  1\n  Si  Si61  1  0.500000  0.912322  0.599677  1\n  Si  Si62  1  0.500000  0.744860  0.432824  1\n  Si  Si63  1  0.500000  0.586811  0.259694  1\n  Si  Si64  1  0.500000  0.782281  0.724750  1\n  Si  Si65  1  0.500000  0.619765  0.556544  1\n  Si  Si66  1  0.500000  0.451973  0.389686  1\n  Si  Si67  1  0.500000  0.557588  0.618348  1\n  Si  Si68  1  0.500000  0.389202  0.452153  1\n  Si  Si69  1  0.500000  0.224194  0.285781  1\n  Si  Si70  1  0.500000  0.488803  0.742245  1\n  Si  Si71  1  0.500000  0.264942  0.577793  1\n  Si  Si72  1  0.500000  0.100134  0.412325  1\n  Si  Si73  1  0.500000  0.100943  0.661946  1\n  Si  Si74  1  0.500000  0.933012  0.495563  1\n  Si  Si75  1  0.500000  0.766277  0.329357  1\n  Si  Si76  1  0.500000  0.806855  0.619856  1\n  Si  Si77  1  0.500000  0.639840  0.453018  1\n  Si  Si78  1  0.500000  0.488732  0.284177  1\n  Si  Si79  1  0.500000  0.451409  0.637950  1\n  Si  Si80  1  0.500000  0.286641  0.473784  1\n  Si  Si81  1  0.500000  0.113767  0.304377  1\n  Si  Si82  1  0.500000  0.163993  0.600195  1\n  Si  Si83  1  0.500000  0.995226  0.432978  1\n  Si  Si84  1  0.500000  0.863699  0.267731  1\n  Si  Si85  1  0.500000  0.019285  0.713422  1\n  Si  Si86  1  0.500000  0.870493  0.557857  1\n  Si  Si87  1  0.500000  0.702994  0.391172  1\n  Si  Si88  1  0.500000  0.741798  0.682390  1\n  Si  Si89  1  0.500000  0.577473  0.514991  1\n  Si  Si90  1  0.500000  0.410458  0.347742  1\n  Si  Si91  1  0.500000  0.653366  0.728347  1\n  Si  Si92  1  0.500000  0.515305  0.577017  1\n  Si  Si93  1  0.500000  0.347019  0.410191  1\n  Si  Si94  1  0.500000  0.400289  0.705201  1\n  Si  Si95  1  0.500000  0.223566  0.536227  1\n  Si  Si96  1  0.500000  0.058776  0.370919  1\n",
+            "work_function": 4.683644396167888,
+            "efermi": 0.5342,
+            "area_fraction": 0.0,
+            "has_wulff": true
+        }
+    ],
+    "weighted_surface_energy_EV_PER_ANG2": 0.08284816797681305,
+    "weighted_surface_energy": 1.3273739277139247,
+    "surface_anisotropy": 0.046483676566591,
+    "pretty_formula": "Si",
+    "shape_factor": 5.080957776573802,
+    "weighted_work_function": 4.727598156108368,
+    "has_reconstructed": true,
+    "task_id": "mp-149",
+    "structure": {
+        "@module": "pymatgen.core.structure",
+        "@class": "Structure",
+        "charge": null,
+        "lattice": {
+            "matrix": [
+                [
+                    5.468728,
+                    0.0,
+                    3.348630120303753e-16
+                ],
+                [
+                    -3.348630120303753e-16,
+                    5.468728,
+                    3.348630120303753e-16
+                ],
+                [
+                    0.0,
+                    0.0,
+                    5.468728
+                ]
+            ],
+            "a": 5.468728,
+            "b": 5.468728,
+            "c": 5.468728,
+            "alpha": 90.0,
+            "beta": 90.0,
+            "gamma": 90.00000000000001,
+            "volume": 163.55317139465933
+        },
+        "sites": [
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.25,
+                    0.75,
+                    0.25
+                ],
+                "xyz": [
+                    1.3671819999999997,
+                    4.101546,
+                    1.3671820000000003
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.0,
+                    0.0,
+                    0.5
+                ],
+                "xyz": [
+                    0.0,
+                    0.0,
+                    2.734364
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.25,
+                    0.25,
+                    0.75
+                ],
+                "xyz": [
+                    1.367182,
+                    1.367182,
+                    4.101546
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.0,
+                    0.5,
+                    0.0
+                ],
+                "xyz": [
+                    -1.6743150601518765e-16,
+                    2.734364,
+                    1.6743150601518765e-16
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.75,
+                    0.75,
+                    0.75
+                ],
+                "xyz": [
+                    4.101546,
+                    4.101546,
+                    4.101546000000001
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.5,
+                    0.0,
+                    0.0
+                ],
+                "xyz": [
+                    2.734364,
+                    0.0,
+                    1.6743150601518765e-16
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.75,
+                    0.25,
+                    0.25
+                ],
+                "xyz": [
+                    4.101546,
+                    1.367182,
+                    1.3671820000000003
+                ],
+                "label": "Si",
+                "properties": {}
+            },
+            {
+                "species": [
+                    {
+                        "element": "Si",
+                        "occu": 1
+                    }
+                ],
+                "abc": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "xyz": [
+                    2.734364,
+                    2.734364,
+                    2.7343640000000002
+                ],
+                "label": "Si",
+                "properties": {}
+            }
+        ]
+    }
+}

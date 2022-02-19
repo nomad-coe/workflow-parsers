@@ -1,0 +1,9 @@
+codeLabel: ElaStic
+codeLabelStyle: 'capitals: E, S. This is part of the exciting project'
+codeName: elastic
+codeUrl: http://exciting-code.org/elastic
+parserDirName: dependencies/parsers/elastic/
+parserGitUrl: https://github.com/nomad-coe/nomad-parser-elastic.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: ''

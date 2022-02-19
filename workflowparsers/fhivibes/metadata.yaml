@@ -1,0 +1,13 @@
+codeLabel: FHI-vibes
+codeLabelStyle: 'Capitals: FHI, the rest in lowercase; use dash.'
+codeName: fhi-vibes
+codeUrl: https://vibes.fhi-berlin.mpg.de/
+parserDirName: dependencies/parsers/fhi-vibes/
+parserGitUrl: https://github.com/nomad-coe/nomad-parser-fhi-vibes.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: |
+  |Input Filename| Description|
+  |--- | --- |
+  |`<hdf_file>` | **Mainfile**, binary hdf file w/ ext .nc` |
+

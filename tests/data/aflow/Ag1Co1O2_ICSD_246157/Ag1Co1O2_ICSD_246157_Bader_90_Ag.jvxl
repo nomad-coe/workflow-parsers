@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<jvxl version="2.3" jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09" xmlns="http://jmol.org/jvxl_schema" xmlns:cml="http://www.xml-cml.org/schema">
+<jvxlFileTitle>
+Vasp CHGCAR format
+
+
+</jvxlFileTitle>
+<jvxlVolumeData origin="{0.0 0.0 0.0}">
+<jvxlVolumeVector type="0" count="71" vector="{0.0 0.0 0.17769359}"></jvxlVolumeVector>
+<jvxlVolumeVector type="1" count="17" vector="{0.090821624 0.15730768 0.0}"></jvxlVolumeVector>
+<jvxlVolumeVector type="2" count="17" vector="{0.090821624 -0.15730768 0.0}"></jvxlVolumeVector>
+</jvxlVolumeData>
+<jvxlSurfaceSet count="1">
+<jvxlSurface type="isosurface">
+<jvxlSurfaceInfo 
+  cutoff="0.9" 
+  isCutoffAbsolute="false" 
+  pointsPerAngstrom="5.627665" 
+  nBytesData="1545" 
+  isXLowToHigh="true" 
+  nSurfaceInts="384" 
+  nBytesUncompressedEdgeData="1095" 
+  color="[x5020a0]" 
+  translucency="0.0" 
+  rendering="fill noMesh noDots notFrontOnly frontlit" 
+  insideOut="true" 
+  note="progressive JVXL+ -- X values read from low(0) to high(70)" 
+  xyzMin="{0.56366384 -1.7266521 2.2120404}" 
+  xyzMax="{2.3426282 1.7266521 10.22651}" 
+  approximateCompressionRatio="1519:1" 
+  jmolVersion="Jmol 14.3.16_2015.08.21  2015-08-21 21:09">
+</jvxlSurfaceInfo>
+<jvxlIsosurfaceState>
+  isosurface ID "isosurface1" select ({})  downsample 2 cutoff 0.9 /*file*/"/common/ICSD/RAW/HEX/Ag1Co1O2_ICSD_246157/BvAt_Ag.dat";
+  isosurface ID "isosurface1" fill noMesh noDots notFrontOnly frontlit;
+  color isosurface opaque [x5020a0];
+</jvxlIsosurfaceState>
+<jvxlSurfaceData>
+<jvxlEdgeData count="1095" encoding="base90f1" bsEncoding="base90+35c" isXLowToHigh="true" data="!vbPb)xVKxV'PbKKvbOC!bVbCO')DvaAa)x[T4,{4OTDbH$$bH=OT$$[TP'{44$Aa,,va^[Da4$$4a[^$xTHT)'Q=D1?l>[/l`PD[$k$~;0 [[[=W=DW=[=H~;0 [D[cOk$$4/m>mpn>[[aa1m$$mnp5P[==[aOcID[qhi7CHPfj!:PWze%i7{.hqi.h6{$6ez::PHPe!!C9j55f9CCPP!e:$hi%7WfZ-Xc-EajzzmO5Zst:,bZ=,GXGs=,f9,Et+EOjP>m2%z%%z%3a>P+Z--5EfZXcEajzzmO5Zt:bZ=GXG=f9Et+EOjP>m2%z%%z%3a>P+Z5Erqh7rCHfj!:W,ze%ssi{.qi.6,{$s6sez::He!!C9j55f9CC!e:$rh%7rW6O1?>/`OPDk~;0 [h[WD77W[H~;0 DcOOk4O/>pn>aa1np5OPaOOcID6[3D3D{DvA){Dbx[{ODbbbb=bDO[PD'{{${2Av^2[DD[D^2${x)'{2QD=bDbD>>KkskKW{!vP){WK{xx'{KkPvOk>Cs!Cs>>Ok'{){k>KWK==ITI=TT==I=v!bxVPbCPbKK!bO)xVKV''vbb)OC[xTbHNT'vDa4$${4Aa[Aa,,Da^){44$OT$$xTPDbH$$H==[T4,4TDP$vaa')^[DP[[=V=~;0 [O>1m$j$/mn>[>[a/m1mpak$$4~;0 [P[c[W==HD[==DHD[$$[[c4?l[lO`panHCPzhi{7e:P!f!9jj5!fC:PCPeWe:%{$i7q.hih6q$z6%:HPPWeC59!.hi7jaZ--tEO>zl%zz%mz2OaP5t+Zsf9,Z,XbGsbX=,,Ee+jE5P2%%>~;0 Z-G9-EjaZtEO>zl%zz%mz2OaP5t+Zf9ZXbGbX=Ee+jE5P2%%>~;0 ZG9EHCzrh{7re:!f!9jj5!fC:CeWe:,%s{$siq.i6,q$sz6%s:HWeC59!r.h7rODP[6V~;0 OO>1j/n>>a/1paOk4O~;0 Pc[WHhD7[D7HD[c4O?O`Opan6DbbD2{[xbN'{2DvD{A[D2AD^2){{${DOxPDDbb=b=b[DbPD${v'){D^3[D3KWK>k{{k>>sv!xPCs>kP!OkK){x'{KW'{v){WKOkCskK>>=I==TT=ITI==">
+-}YM ~%0 1'1~%0 2%}6% ~%0 0).*.).*.)/(1%}[$ '/*-+,,,+,,,+-*.)0~%0 }9$ $1).*-+,,+-+,,+$$*,-)/(}'$ $2~%0 0).*-+,,+-+,$$).*-++.(}~%0 $ ~%0 1~%0 0).*-+,,+-+,$$).*-++.(}~%0 $ ~%0 2$1).*-+,,+-+,,+$$*,-)/(}'$ $C'/*-+,,,+,,,+-*.)0~%0 }[$ ~%0 0).*.).*.)/(1%}6% ~%0 1'1~%0 2%}hv %2~%0 1'1~%0 }6% %1(/).*.).*.)0~%0 }[$ ~%0 0).*-+,,,+,,,+-*/'C$}'$ (/)-,*$$+,,+-+,,+-*.)1$2~%0 }~%0 $ (.++-*.)$$,+-+,,+-*.)0~%0 1~%0 }~%0 $ (.++-*.)$$,+-+,,+-*.)0~%0 2$}'$ (/)-,*$$+,,+-+,,+-*.)1$}9$ ~%0 0).*-+,,,+,,,+-*/'}[$ %1(/).*.).*.)0~%0 }6% %2~%0 1'1~%0 }YM </jvxlEdgeData>
+</jvxlSurfaceData>
+</jvxlSurface>
+</jvxlSurfaceSet>
+</jvxl>

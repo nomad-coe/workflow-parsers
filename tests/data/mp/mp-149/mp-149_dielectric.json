@@ -1,0 +1,83 @@
+{
+    "dielectric": {
+        "emmet_version": "0.12.8",
+        "pymatgen_version": "2022.0.14",
+        "build_date": "2021-09-22 17:15:34.221906",
+        "nsites": null,
+        "elements": null,
+        "nelements": null,
+        "composition": null,
+        "composition_reduced": null,
+        "formula_pretty": null,
+        "formula_anonymous": null,
+        "chemsys": null,
+        "volume": null,
+        "density": null,
+        "density_atomic": null,
+        "symmetry": null,
+        "property_name": "dielectric",
+        "material_id": null,
+        "deprecated": null,
+        "deprecation_reasons": null,
+        "last_updated": "2021-09-22 17:15:34.221939",
+        "origins": [],
+        "warnings": [],
+        "total": [
+            [
+                13.003383000000028,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                13.003383000000028,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                13.003383000000028
+            ]
+        ],
+        "ionic": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "electronic": [
+            [
+                13.003383000000028,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                13.003383000000028,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                13.003383000000028
+            ]
+        ],
+        "e_total": 13.003383000000028,
+        "e_ionic": 0.0,
+        "e_electronic": 13.003383000000028,
+        "n": 3.606020382637906
+    },
+    "task_id": "mp-149",
+    "last_updated": "2020-07-15 20:06:29.905000"
+}

@@ -1,0 +1,9 @@
+codeLabel: Phonopy
+codeLabelStyle: 'Capitals: P'
+codeName: phonopy
+codeUrl: https://phonopy.github.io/phonopy/
+parserDirName: dependencies/parsers/phonopy/
+parserGitUrl: https://github.com/nomad-coe/nomad-parser-phonopy.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: ''

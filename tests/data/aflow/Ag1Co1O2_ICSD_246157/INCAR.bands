@@ -1,0 +1,31 @@
+SYSTEM=Ag1Co1O2_ICSD_246157
+#incar
+LPLANE=.TRUE.                                   # parallelization 
+NPAR=2                                          # lookup table from NCPUS=16
+NSIM=4                                          # tune size vector/matrix product
+LSCALU=.FALSE.                                  # neglect scalapack 
+NBANDS=85                                       # KBIN_XVASP_INCAR_GetNBANDS
+ISYM=2                                          # SYMMMETRY=ON
+LDAU=.TRUE.                                     # AFLOW LSDA+U
+#LDAU_SPECIES=Ag Co O                           # LDAU species 
+LDAUL=2 2 0                                     # l-quantum number for which the on site interaction is added (Default 2) automatic LDAUL table
+LDAUU=5.8 5 0                                   # UEFF parameter. Automatic LDAUU table
+LDAUJ=0 0 0                                     # J parameter (if used). Automatic LDAUJ table
+LDAUTYPE=2                                      # Type of LDA+U. 
+LMAXMIX=4                                       # Controls up to which l-quantum number the onsite PAW charge densities are passed through the charge density mixer. 
+LDAUPRINT=0                                     # Controls verbosity of the L(S)DA+U module. (Default 0) # AFLOW LSDA+U
+ENMAX=560                                       # 1.4*ENMAX (400) of pseudopotentials 
+ISPIN=1                                         # SPIN=OFF
+PREC=High                                       # Performing RELAX_STATIC_BANDS (aleksey)
+ISMEAR=0                                        # Performing RELAX_STATIC_BANDS (put back Gauss, use 1 if metals)
+SIGMA=0.05                                      # Performing RELAX_STATIC_BANDS (so the DOS will not spill too much from band edges)
+ALGO=Normal                                     # Performing RELAX_STATIC_BANDS (stefano from ICSD)
+ISIF=2                                          # Performing RELAX_STATIC_BANDS
+IBRION=2                                        # Performing RELAX_STATIC_BANDS
+NSW=0                                           # Performing RELAX_STATIC_BANDS
+NELM=120                                        # Performing RELAX_STATIC_BANDS
+NELMIN=2                                        # Performing RELAX_STATIC_BANDS
+ICHARG=11                                       # Performing RELAX_STATIC_BANDS
+LCHARG=.FALSE.                                  # Performing RELAX_STATIC_BANDS
+LAECHG=.TRUE.                                   # Performing RELAX_STATIC_BANDS (Bader ON)
+LWAVE=.FALSE.                                   # Performing RELAX_STATIC_BANDS 
