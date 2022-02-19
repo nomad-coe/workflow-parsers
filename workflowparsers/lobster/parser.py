@@ -22,7 +22,6 @@ import ase.io
 from os import path
 
 from nomad.datamodel import EntryArchive
-from nomad.parsing import FairdiParser
 from nomad.units import ureg as units
 from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
 from nomad.datamodel.metainfo.simulation.system import (
@@ -373,14 +372,9 @@ mainfile_parser = TextParser(quantities=[
 ])
 
 
-class LobsterParser(FairdiParser):
+class LobsterParser:
     def __init__(self):
-        super().__init__(
-            name='parsers/lobster', code_name='LOBSTER',
-            code_homepage='http://schmeling.ac.rwth-aachen.de/cohp/',
-            mainfile_name_re=r'.*lobsterout$',
-            mainfile_contents_re=(r'^LOBSTER\s*v[\d\.]+.*'),
-        )
+        pass
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         mainfile_parser.mainfile = mainfile
