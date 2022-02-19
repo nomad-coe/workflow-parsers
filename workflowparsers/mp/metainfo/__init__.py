@@ -23,4 +23,3 @@ from . import mp
 
 m_env = Environment()
 m_env.m_add_sub_section(Environment.packages, mp.m_package)
-

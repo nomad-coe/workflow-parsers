@@ -22,7 +22,7 @@ import logging
 
 from nomad.utils import configure_logging
 from nomad.datamodel import EntryArchive
-from workflowparsers.mp import MPParser 
+from workflowparsers.mp import MPParser
 
 if __name__ == "__main__":
     configure_logging(console_log_level=logging.DEBUG)

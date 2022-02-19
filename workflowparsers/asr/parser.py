@@ -24,8 +24,8 @@ import datetime
 
 try:
     import asr
-    from asr.core.cache import get_cache
-    from asr.core.record import Record
+    from asr.core.cache import get_cache  # pylint: disable=E0611,E0401
+    from asr.core.record import Record  # pylint: disable=E0611,E0401
 except Exception:
     pass
 
