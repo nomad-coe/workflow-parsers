@@ -38,7 +38,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Thermodynamics, Energy, EnergyEntry, Stress, StressEntry, Forces, ForcesEntry
 )
 from nomad.datamodel.metainfo.workflow import Workflow
-from fhivibesparser.metainfo.fhi_vibes import x_fhi_vibes_section_attributes,\
+from .metainfo.fhi_vibes import x_fhi_vibes_section_attributes,\
     x_fhi_vibes_section_metadata, x_fhi_vibes_section_atoms, x_fhi_vibes_section_MD,\
     x_fhi_vibes_section_calculator, x_fhi_vibes_section_calculator_parameters,\
     x_fhi_vibes_section_vibes, x_fhi_vibes_section_relaxation,\

@@ -31,7 +31,7 @@ from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import Calculation
 from nomad.datamodel.metainfo.workflow import Workflow, Elastic, StrainDiagrams
 
-from elasticparser.metainfo.elastic import x_elastic_section_fitting_parameters
+from .metainfo.elastic import x_elastic_section_fitting_parameters
 
 
 class InfoParser(TextParser):
