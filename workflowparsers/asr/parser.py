@@ -30,6 +30,7 @@ except Exception:
     pass
 
 from nomad.units import ureg
+from nomad.parsing.parser import FairdiParser
 from nomad.datamodel import EntryArchive
 from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
@@ -196,9 +197,14 @@ class ASRRecord:
         return self._archive
 
 
-class ASRParser:
+class ASRParser(FairdiParser):
     def __init__(self):
-        pass
+        super().__init__(
+            name='parsers/asr', code_name='ASR',
+            code_homepage='https://asr.readthedocs.io/en/latest/index.html',
+            mainfile_mime_re=r'(application/json)|(text/.*)',
+            mainfile_name_re=r'.*archive_.*\.json',
+            mainfile_contents_re=(r'"name": "ASR"'))
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         with open(mainfile, 'rt') as f:

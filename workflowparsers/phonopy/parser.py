@@ -41,6 +41,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
 from nomad.datamodel.metainfo.workflow import Workflow, Phonon
 
 from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import
+from nomad.parsing.parser import MatchingParser
 
 
 def read_aims(filename):
@@ -210,14 +211,14 @@ class ControlParser(TextParser):
             Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac)]
 
 
-class PhonopyParser:
+class PhonopyParser(MatchingParser):
     level = 1
 
     def __init__(self, **kwargs):
-        # super().__init__(
-        #     name='parsers/phonopy', code_name='Phonopy', code_homepage='https://phonopy.github.io/phonopy/',
-        #     mainfile_name_re=(r'(.*/phonopy-FHI-aims-displacement-0*1/control.in$)|(.*/phon.+yaml)')
-        # )
+        super().__init__(
+            name='parsers/phonopy', code_name='Phonopy', code_homepage='https://phonopy.github.io/phonopy/',
+            mainfile_name_re=(r'(.*/phonopy-FHI-aims-displacement-0*1/control.in$)|(.*/phon.+yaml)')
+        )
         self._kwargs = kwargs
         self.control_parser = ControlParser()
 

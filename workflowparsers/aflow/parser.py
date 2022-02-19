@@ -25,6 +25,7 @@ from ase.cell import Cell
 from ase.io import vasp
 
 from nomad.units import ureg
+from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.calculation import (
@@ -130,8 +131,24 @@ class AflowInParser(AflowOutParser):
                 'ael', 'agl', 'apl', 'qha', 'aapl'] if module in self._results]
 
 
-class AFLOWParser:
+class AFLOWParser(FairdiParser):
     def __init__(self):
+        super().__init__(
+            name='parsers/aflow', code_name='AFlow', code_homepage='http://www.aflowlib.org/',
+            mainfile_mime_re=r'(application/json)|(text/.*)',
+            mainfile_name_re=r'.*aflowlib\.json.*',  # only the alternative mainfile name should match
+            mainfile_contents_re=(
+                r"^\s*\[AFLOW\] \*+"
+                r"\s*\[AFLOW\]"
+                r"\s*\[AFLOW\]                     .o.        .o88o. oooo"
+                r"\s*\[AFLOW\]                    .888.       888 `` `888"
+                r"\s*\[AFLOW\]                   .8'888.     o888oo   888   .ooooo.  oooo oooo    ooo"
+                r"\s*\[AFLOW\]                  .8' `888.     888     888  d88' `88b  `88. `88.  .8'"
+                r"\s*\[AFLOW\]                 .88ooo8888.    888     888  888   888   `88..]88..8'"
+                r"\s*\[AFLOW\]                .8'     `888.   888     888  888   888    `888'`888'"
+                r"\s*\[AFLOW\]               o88o     o8888o o888o   o888o `Y8bod8P'     `8'  `8'  .in"
+                r"|^\s*\{\"aurl\"\:\"aflowlib\.duke\.edu\:AFLOWDATA"),
+            supported_compressions=['gz', 'bz2', 'xz'], mainfile_alternative=True)
         self.ael_parser = AflowOutParser()
         self.agl_parser = AflowOutParser()
         self.apl_parser = AflowOutParser()
