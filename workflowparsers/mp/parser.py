@@ -28,6 +28,8 @@ from nomad.datamodel.metainfo.workflow import (
     Workflow, Elastic, EquationOfState, EOSFit, Thermodynamics, Stability, Decomposition,
     Phonon)
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
+from nomad.datamodel.metainfo.simulation.method import (
+    Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetCellDependent)
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Dos, DosValues, BandStructure, BandEnergies)
 from mpparser.metainfo.mp import Composition, Symmetry
@@ -162,6 +164,42 @@ class MPParser(FairdiParser):
 
         # TODO add eigendisplacements
 
+    def parse_tasks(self, data):
+        if len(data['calcs_reversed']) == 0:
+            return
+
+        xc_func_mapping = {
+            'PAW_PBE': ['GGA_X_PBE', 'GGA_C_PBE']
+        }
+
+        sec_method = self.archive.run[-1].m_create(Method)
+        sec_xc_functional = XCFunctional()
+        for potcar_type in data['calcs_reversed'][0].get('input', {}).get('potcar_type', []):
+            for xc_functional in xc_func_mapping.get(potcar_type, []):
+                if '_X_' in xc_functional or xc_functional.endswith('_X'):
+                    sec_xc_functional.exchange.append(Functional(name=xc_functional))
+                elif '_C_' in xc_functional or xc_functional.endswith('_C'):
+                    sec_xc_functional.correlation.append(Functional(name=xc_functional))
+                elif 'HYB' in xc_functional:
+                    sec_xc_functional.hybrid.append(Functional(name=xc_functional))
+                else:
+                    sec_xc_functional.contributions.append(Functional(name=xc_functional))
+
+        sec_method.dft = DFT(xc_functional=sec_xc_functional)
+        sec_method.electronic = Electronic(method="DFT")
+
+        encut = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('ENCUT')
+        prec = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('PREC')
+        if encut is not None and prec is not None:
+            sec_basis = sec_method.m_create(BasisSet)
+            sec_basis.type = 'plane waves'
+            sec_basis_set_cell_dependent = sec_basis.m_create(BasisSetCellDependent)
+            sec_basis_set_cell_dependent.kind = 'plane waves'
+            prec = 1.3 if 'acc' in prec else 1.0
+            sec_basis_set_cell_dependent.planewave_cutoff = encut * prec * ureg.eV
+
+        self.archive.run[-1].calculation[0].method_ref = sec_method
+
     def parse(self, filepath, archive, logger):
         self.filepath = os.path.abspath(filepath)
         self.archive = archive
@@ -171,7 +209,7 @@ class MPParser(FairdiParser):
         self.init_parser()
 
         sec_run = archive.m_create(Run)
-        sec_run.program = Program(name='MaterialsProject')
+        sec_run.program = Program(name='MaterialsProject', version="1.0.0")
 
         #  TODO system should be referenced
         structure = self.data.get('structure')
@@ -207,7 +245,7 @@ class MPParser(FairdiParser):
                     pass
 
         # misc
-        sec_system.x_mp_elements = [e['element'] for e in self.data.get('elements', [])]
+        sec_system.x_mp_elements = self.data.get('elements', [])
         for key, val in self.data.items():
             try:
                 setattr(sec_system, 'x_mp_%s' % key, val)
@@ -239,3 +277,5 @@ class MPParser(FairdiParser):
                 self.parse_phonon(data)
             if 'property_name' in data and data.get('property_name') == 'thermo':
                 self.parse_thermo(data)
+            if 'calcs_reversed' in data:
+                self.parse_tasks(data)

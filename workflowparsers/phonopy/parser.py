@@ -23,7 +23,7 @@ import phonopy
 from phonopy.units import THzToEv
 from phonopy.structure.atoms import PhonopyAtoms
 
-from .phonopy import PhononProperties
+from .calculator import PhononProperties
 
 import nomad.config
 from nomad.units import ureg
@@ -40,7 +40,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
 )
 from nomad.datamodel.metainfo.workflow import Workflow, Phonon
 
-from .metainfo import phonopy  # pylint: disable=unused-import
+from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import
 from nomad.parsing.parser import MatchingParser
 
 
