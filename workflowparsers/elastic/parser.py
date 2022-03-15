@@ -22,7 +22,6 @@ import logging
 from ase import Atoms as aseAtoms
 
 from nomad.units import ureg
-from nomad.parsing.parser import FairdiParser
 from nomad.parsing.file_parser import Quantity, TextParser
 
 from nomad.datamodel.metainfo.simulation.run import Run, Program
@@ -167,12 +166,8 @@ class ElasticConstant3Parser(TextParser):
                 'cijk', r'(C\d\d\d)\s*=\s*([\-\d\.]+)\s*GPa', repeats=True, convert=False)]
 
 
-class ElasticParser(FairdiParser):
+class ElasticParser:
     def __init__(self):
-        super().__init__(
-            name='parsers/elastic', code_name='elastic', code_homepage='http://exciting-code.org/elastic',
-            mainfile_contents_re=r'\s*Order of elastic constants\s*=\s*[0-9]+\s*',
-            mainfile_name_re=(r'.*/INFO_ElaStic'))
         self._mainfile = None
         self.logger = None
         self._deform_dirs = None

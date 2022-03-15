@@ -22,7 +22,6 @@ import json
 import numpy as np
 
 from nomad.units import ureg
-from nomad.parsing.parser import FairdiParser
 from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.workflow import (
     Workflow, Elastic, EquationOfState, EOSFit, Thermodynamics, Stability, Decomposition,
@@ -35,14 +34,9 @@ from nomad.datamodel.metainfo.simulation.calculation import (
 from .metainfo.mp import Composition, Symmetry
 
 
-class MPParser(FairdiParser):
+class MPParser:
     def __init__(self):
-        super().__init__(
-            name='parsers/mp', code_name='MaterialsProject',
-            code_homepage='https://materialsproject.org',
-            mainfile_mime_re=r'(application/json)|(text/.*)',
-            mainfile_name_re=r'.*mp.+materials\.json',
-            mainfile_contents_re=(r'"pymatgen_version":'))
+        pass
 
     def init_parser(self):
         try:

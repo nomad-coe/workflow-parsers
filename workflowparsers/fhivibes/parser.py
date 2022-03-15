@@ -24,7 +24,6 @@ import json
 import re
 
 from nomad.units import ureg
-from nomad.parsing.parser import FairdiParser
 from nomad.parsing.file_parser import FileParser
 
 from nomad.datamodel.metainfo.simulation.run import Run, Program
@@ -90,14 +89,8 @@ class XarrayParser(FileParser):
         self._results[key] = val
 
 
-class FHIVibesParser(FairdiParser):
+class FHIVibesParser:
     def __init__(self):
-        super().__init__(
-            name='parsers/fhi-vibes', code_name='FHI-vibes',
-            code_homepage='https://vibes.fhi-berlin.mpg.de/',
-            mainfile_name_re=(r'^.*\.(nc)$'), mainfile_mime_re=r'(application/x-hdf)',
-            mainfile_binary_header_re=br'^\x89HDF')
-
         self.parser = XarrayParser()
 
         self._units = {
