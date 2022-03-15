@@ -2,8 +2,8 @@ codeName: lobster
 codeLabel: LOBSTER
 codeLabelStyle: All in capitals
 codeUrl: http://schmeling.ac.rwth-aachen.de/cohp/
-parserDirName: dependencies/parsers/lobster/
-parserGitUrl: https://github.com/nomad-coe/nomad-parser-lobster.git
+parserDirName: dependencies/workflow/workflowparsers/lobster/
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 preamble: ''
 tableOfFiles: |
   |Input Filename| Description|

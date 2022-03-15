@@ -2,8 +2,8 @@ codeLabel: MP
 codeLabelStyle: all in capitals
 codeName: materialsproject
 codeUrl: https://www.materialsproject.org/
-parserDirName: dependencies/parsers/mp/
-parserGitUrl: https://github.com/nomad-coe/nomad-parser-mp.git
+parserDirName: dependencies/workflow/workflowparsers/mp/
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 parserSpecific: ''
 preamble: ''
 tableOfFiles: |

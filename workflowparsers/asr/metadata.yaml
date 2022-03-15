@@ -2,8 +2,8 @@ codeLabel: ASR
 codeLabelStyle: all in capitals
 codeName: atomicsimulationrecipes
 codeUrl: https://asr.readthedocs.io/en/latest/index.html
-parserDirName: dependencies/parsers/asr/
-parserGitUrl: https://github.com/nomad-coe/nomad-parser-asr.git
+parserDirName: dependencies/workflow/workflowparsers/asr/
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 parserSpecific: ''
 preamble: ''
 tableOfFiles: |

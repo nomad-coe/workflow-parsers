@@ -2,8 +2,8 @@ codeLabel: AFLOW
 codeLabelStyle: all capitals
 codeName: abinit
 codeUrl: http://www.aflowlib.org/
-parserDirName: dependencies/parsers/aflow/
-parserGitUrl: https://github.com/nomad-coe/nomad-parser-aflow.git
+parserDirName: dependencies/workflow/workflowparsers/aflow/
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 parserSpecific: ''
 preamble: ''
 tableOfFiles: |
