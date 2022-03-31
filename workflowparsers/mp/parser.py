@@ -203,7 +203,7 @@ class MPParser:
         self.init_parser()
 
         sec_run = archive.m_create(Run)
-        sec_run.program = Program(name='MaterialsProject', version="1.0.0")
+        sec_run.program = Program(name='MaterialsProject', version='1.0.0')
 
         #  TODO system should be referenced
         structure = self.data.get('structure')
@@ -239,7 +239,8 @@ class MPParser:
                     pass
 
         # misc
-        sec_system.x_mp_elements = self.data.get('elements', [])
+        sec_system.x_mp_elements = [e.get('element') if isinstance(
+            e, dict) else e for e in self.data.get('elements', [])]
         for key, val in self.data.items():
             try:
                 setattr(sec_system, 'x_mp_%s' % key, val)
