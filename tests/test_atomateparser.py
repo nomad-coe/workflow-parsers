@@ -20,7 +20,7 @@
 import pytest
 
 from nomad.datamodel import EntryArchive
-from workflowparsers.mp import MPParser
+from workflowparsers.atomate import AtomateParser
 
 
 def approx(value, abs=0, rel=1e-6):
@@ -29,7 +29,7 @@ def approx(value, abs=0, rel=1e-6):
 
 @pytest.fixture(scope='module')
 def parser():
-    return MPParser()
+    return AtomateParser()
 
 
 def test_all(parser):

@@ -31,11 +31,16 @@ from nomad.datamodel.metainfo.simulation.method import (
     Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetCellDependent)
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Dos, DosValues, BandStructure, BandEnergies)
-from .metainfo.mp import Composition, Symmetry
+from .metainfo.atomate import Composition, Symmetry
 
 
-class MPParser:
+class AtomateParser:
     def __init__(self):
+        # NOTE This is not technically the atomate parser but for the json file materials
+        # project produces for its workflow runs. They use atomate for workflow and the
+        # emmet package for post-processing.
+        # TODO extend this to read atomate output. There are probably some deviations in
+        # names.
         pass
 
     def init_parser(self):

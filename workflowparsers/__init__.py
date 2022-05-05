@@ -21,5 +21,5 @@ from .asr.parser import ASRParser
 from .elastic.parser import ElasticParser
 from .fhivibes.parser import FHIVibesParser
 from .lobster.parser import LobsterParser
-from .mp.parser import MPParser
+from .atomate.parser import AtomateParser
 from .phonopy.parser import PhonopyParser
