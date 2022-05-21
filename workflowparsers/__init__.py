@@ -23,3 +23,4 @@ from .fhivibes.parser import FHIVibesParser
 from .lobster.parser import LobsterParser
 from .atomate.parser import AtomateParser
 from .phonopy.parser import PhonopyParser
+from .mofstructures.parser import MOFStructuresParser
