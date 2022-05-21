@@ -27,7 +27,7 @@ from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.system import System, Atoms, AtomsGroup
 from nomad.datamodel.metainfo.simulation.method import Method
 from nomad.datamodel.metainfo.workflow import Workflow
-from workflowparsers.mofstructures.metainfo import m_env  # pylint: disable=unused-import
+from workflowparsers.mofstructures.metainfo.mofstructures import x_mof_atoms
 
 
 class MOFStructuresParser:
@@ -60,10 +60,12 @@ class MOFStructuresParser:
             system.atoms = Atoms()
             parse_atoms(entry['Optimised'], system.atoms)
 
+            mof_atoms = system.m_create(x_mof_atoms)
+
             # add the reference structure from experiment
             if entry.get('Experiment') is not None:
-                system.x_mof_atoms_experiment = Atoms()
-                parse_atoms(entry['Experiment'], system.x_mof_atoms_experiment)
+                mof_atoms.x_mof_atoms_experiment = Atoms()
+                parse_atoms(entry['Experiment'], mof_atoms.x_mof_atoms_experiment)
 
             # add structure building units
             # only unique sbus are included
@@ -73,7 +75,7 @@ class MOFStructuresParser:
                     atoms_group = AtomsGroup(atom_indices=atom_indices, label=name)
                     system.atoms_group.append(atoms_group)
                 # add unique
-                system.x_mof_sbu.append(atoms_group)
+                mof_atoms.x_mof_sbu.append(atoms_group)
 
             # add linkers
             for name, linker in entry.get('linkers', dict()).items():
@@ -81,7 +83,7 @@ class MOFStructuresParser:
                     atoms_group = AtomsGroup(atom_indices=atom_indices, label=name)
                     system.atoms_group.append(atoms_group)
                 # add unique
-                system.x_mof_linker.append(atoms_group)
+                mof_atoms.x_mof_linker.append(atoms_group)
 
             return system
 

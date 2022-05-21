@@ -28,15 +28,22 @@ from nomad.datamodel.metainfo import simulation
 m_package = Package()
 
 
-class System(simulation.system.System):
+class x_mof_atoms(MSection):
 
-    m_def = Section(validate=False, extends_base_section=True)
+    m_def = Section(validate=False)
 
     x_mof_atoms_experiment = SubSection(sub_section=simulation.system.Atoms)
 
     x_mof_sbu = SubSection(sub_section=simulation.system.AtomsGroup, repeats=True)
 
     x_mof_linker = SubSection(sub_section=simulation.system.AtomsGroup, repeats=True)
+
+
+class System(simulation.system.System):
+
+    m_def = Section(validate=False, extends_base_section=True)
+
+    x_mof_atoms = SubSection(sub_section=x_mof_atoms)
 
 
 class Method(simulation.method.Method):
