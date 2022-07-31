@@ -16,12 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .aflow.parser import AFLOWParser
-from .asr.parser import ASRParser
-from .elastic.parser import ElasticParser
-from .fhivibes.parser import FHIVibesParser
-from .lobster.parser import LobsterParser
-from .atomate.parser import AtomateParser
-from .phonopy.parser import PhonopyParser
-from .mofstructures.parser import MOFStructuresParser
-from .quantum_espresso_phonon import QuantumEspressoPhononParser
+from .parser import QuantumEspressoPhononParser
