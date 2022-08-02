@@ -279,8 +279,9 @@ class QuantumEspressoPhononParser:
                 setattr(sec_method, f'x_qe_phonon_{key}', calculation.get(key))
 
             # vibrational frequencies
-            sec_calc.vibrational_frequencies.append(
-                VibrationalFrequencies(value=calculation.frequencies * (1 / ureg.cm)))
+            if calculation.frequencies is not None:
+                sec_calc.vibrational_frequencies.append(
+                    VibrationalFrequencies(value=calculation.frequencies * (1 / ureg.cm)))
 
             # specs and results of dynamical matrix calculation
             if calculation.dynamical_matrix is not None:
