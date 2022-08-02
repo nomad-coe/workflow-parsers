@@ -304,7 +304,7 @@ class QuantumEspressoPhononParser:
                     smearing_map = {'Methfessel-Paxton': 'methfessel-paxton'}
                     sec_method.electronic = Electronic(smearing=Smearing(
                         kind=smearing_map.get(calculation.dynamical_matrix.smearing[0]),
-                        width=calculation.dynamical_matrix.smearing[1]))
+                        width=(calculation.dynamical_matrix.smearing[1] * ureg.Ry).to_base_units().magnitude))
 
                 sec_method.x_qe_phonon_n_kpoints = calculation.dynamical_matrix.n_kpoints
                 sec_method.x_qe_phonon_alpha_ewald = calculation.dynamical_matrix.alpha_ewald
