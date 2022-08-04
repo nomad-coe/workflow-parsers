@@ -1,0 +1,11 @@
+codeLabel: MOFStructures
+codeLabelStyle: 'Capitals: M, O, F, S'
+codeName: mofstructures
+parserDirName: dependencies/workflow/workflowparsers/mofstructures
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: |
+  |Input Filename| Description|
+  |--- | --- |
+  |`*.json` | json files containing workflow results|
