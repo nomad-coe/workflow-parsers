@@ -67,6 +67,10 @@ class MOFStructuresParser:
                 mof_atoms.x_mof_atoms_experiment = Atoms()
                 parse_atoms(entry['Experiment'], mof_atoms.x_mof_atoms_experiment)
 
+            # optimised structures
+            mof_atoms.x_mof_atoms_optimised = Atoms()
+            parse_atoms(entry['Optimised'], mof_atoms.x_mof_atoms_optimised)
+
             # add structure building units
             # only unique sbus are included
             for name, sbu in entry.get('sbus', dict()).items():
@@ -84,6 +88,13 @@ class MOFStructuresParser:
                     system.atoms_group.append(atoms_group)
                 # add unique
                 mof_atoms.x_mof_linker.append(atoms_group)
+
+            for name, o_sbu in entry.get('Organic_sbu', dict()).items():
+                for atom_indices in o_sbu.get('atom_indices_mapping', []):
+                    atoms_group = AtomsGroup(atom_indices=atom_indices, label=name)
+                    system.atoms_group.append(atoms_group)
+                # add unique
+                mof_atoms.x_mof_organic_sbu.append(atoms_group)
 
             return system
 
@@ -107,10 +118,70 @@ class MOFStructuresParser:
 
             system = parse_system(entry)
             system.name = f'mof_{name}'
-
+            metadata = entry.get('Metadata')
+            system.x_mof_refcode = metadata.get('CSD_Refcode')
+            system.x_mof_alias = metadata.get('alias')
+            system.x_mof_source = metadata.get('Source')
+            system.x_mof_ccdc_number = metadata.get('ccdc_number')
+            system.x_mof_csd_deposition_date = metadata.get('CSD_Deposition_date')
+            system.x_mof_chemical_name = metadata.get('chemical_name')
+            system.x_mof_topology = metadata.get('Topology')
+            system.x_mof_pld = metadata.get('PLD')
+            system.x_mof_lcd = metadata.get('LCD')
+            system.x_mof_lfpd = metadata.get('LFPD')
+            system.x_mof_asa = metadata.get('ASA_m2_g')
+            system.x_mof_nasa = metadata.get('NASA_m2_g')
+            system.x_mof_density = metadata.get('Density')
+            system.x_mof_volume = metadata.get('Volume_A3')
+            system.x_mof_n_channel = metadata.get('N_channel')
+            system.x_mof_space_group_symbol = metadata.get('Space_group_symbol')
+            system.x_mof_space_group_number = metadata.get('Space_group_number')
+            system.x_mof_point_group_symbol = metadata.get('Point_group_symbol')
+            system.x_mof_crystal_system = metadata.get('Crystal_system')
+            system.x_mof_hall_symbol = metadata.get('Hall_symbol')
+            system.x_mof_charge = metadata.get('charge')
+            system.x_mof_is_rod = metadata.get('Is_rod')
+            system.x_mof_is_paddlewheel = metadata.get('is_paddlewheel')
+            system.x_mof_is_ferrocene = metadata.get('is_ferrocene')
+            system.x_mof_is_paddle_water = metadata.get('is_Paddle_water')
+            system.x_mof_is_ui006 = metadata.get('is_UIO66')
+            system.x_mof_is_mof32 = metadata.get('is_MOF32')
+            system.x_mof_is_irmof = metadata.get('is_IRMOF')
+            system.x_mof_doi = metadata.get('DOI')
+            system.x_mof_citation = metadata.get('citation')
+            system.x_mof_core_metal = metadata.get('Core_metal')
+            system.x_mof_cn = metadata.get('CN')
+            exp_condition = metadata.get('Exp_condition')
+            system.x_mof_synthesis_method = exp_condition.get('synthesis_method')
+            system.x_mof_linker_reagents = exp_condition.get('linker_reagents')
+            system.x_mof_metal_reagents = exp_condition.get('metal_reagents')
+            system.x_mof_temperature = exp_condition.get('temperature')
+            system.x_mof_time_h = exp_condition.get('time_h')
+            system.x_mof_yield_percent = exp_condition.get('Yield_Percent')
+            system.x_mof_metal_os_1 = exp_condition.get('metal_os_1')
+            system.x_mof_counterions1 = exp_condition.get('counterions1')
+            system.x_mof_metal_os_2 = exp_condition.get('metal_os_2')
+            system.x_mof_counterions2 = exp_condition.get('counterions2')
+            system.x_mof_metal_os_3 = exp_condition.get('metal_os_3')
+            system.x_mof_counterions3 = exp_condition.get('counterions3')
+            system.x_mof_solvent1 = exp_condition.get('solvent1')
+            system.x_mof_sol_molratio1 = exp_condition.get('sol_molratio1')
+            system.x_mof_solvent2 = exp_condition.get('solvent2')
+            system.x_mof_sol_molratio2 = exp_condition.get('sol_molratio2')
+            system.x_mof_solvent3 = exp_condition.get('solvent3')
+            system.x_mof_sol_molratio3 = exp_condition.get('sol_molratio3')
+            system.x_mof_solvent4 = exp_condition.get('solvent4')
+            system.x_mof_sol_molratio4 = exp_condition.get('sol_molratio4')
+            system.x_mof_solvent5 = exp_condition.get('solvent5')
+            system.x_mof_sol_molratio5 = exp_condition.get('sol_molratio5')
+            system.x_mof_additive1 = exp_condition.get('additive1')
+            system.x_mof_additive2 = exp_condition.get('additive2')
+            system.x_mof_additive3 = exp_condition.get('additive3')
+            system.x_mof_additive4 = exp_condition.get('additive4')
+            system.x_mof_additive5 = exp_condition.get('additive5')
             # add metadata
             sec_method = run.m_create(Method)
-            sec_method.x_mof_metadata = entry.get('Metadata')
+            sec_method.x_mof_metadata = metadata
 
             workflow = self.archive.m_create(Workflow)
             workflow.type = 'single_point'
