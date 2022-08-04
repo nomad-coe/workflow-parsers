@@ -4,7 +4,7 @@ This is a collection of the NOMAD parsers for the following workflow engines.
 3. [ElaStic](http://exciting-code.org/elastic)
 4. [FHI-vibes](https://vibes.fhi-berlin.mpg.de/)
 5. [LOBSTER](http://schmeling.ac.rwth-aachen.de/cohp/)
-6. [MaterialsProject](https://www.materialsproject.org/)
+6. [Atomate](https://www.materialsproject.org/)
 7. [Phonopy](https://phonopy.github.io/phonopy/)
 
 
