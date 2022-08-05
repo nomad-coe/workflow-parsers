@@ -105,7 +105,7 @@ class x_lobster_section_cohp(MSection):
         ''')
 
     x_lobster_cohp_translations = Quantity(
-        type=np.dtype(np.int8),
+        type=np.dtype(np.int32),
         shape=['x_lobster_number_of_cohp_pairs', 3],
         description='''
         Vector connecting the unit-cell of the first atom with the one of the second atom
@@ -216,7 +216,7 @@ class x_lobster_section_coop(MSection):
         ''')
 
     x_lobster_coop_translations = Quantity(
-        type=np.dtype(np.int8),
+        type=np.dtype(np.int32),
         shape=['x_lobster_number_of_coop_pairs', 3],
         description='''
         Vector connecting the unit-cell of the first atom with the one of the second atom
