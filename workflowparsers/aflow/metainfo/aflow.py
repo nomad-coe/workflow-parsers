@@ -518,7 +518,7 @@ class System(simulation.system.System):
         ''')
 
     x_aflow_Wyckoff_letters_orig = Quantity(
-        type=np.dtype('U'),
+        type=np.dtype(np.int32),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description='''
         ''')
@@ -530,7 +530,7 @@ class System(simulation.system.System):
         ''')
 
     x_aflow_Wyckoff_site_symmetries_orig = Quantity(
-        type=np.dtype('U'),
+        type=np.dtype(np.int32),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description='''
         ''')
@@ -656,7 +656,7 @@ class System(simulation.system.System):
         ''')
 
     x_aflow_Wyckoff_letters = Quantity(
-        type=np.dtype('U'),
+        type=np.dtype(np.int32),
         shape=['x_aflow_nspecies', 1],
         description='''
         ''')
@@ -668,7 +668,7 @@ class System(simulation.system.System):
         ''')
 
     x_aflow_Wyckoff_site_symmetries = Quantity(
-        type=np.dtype('U'),
+        type=np.dtype(np.int32),
         shape=['x_aflow_nspecies', 1],
         description='''
         ''')

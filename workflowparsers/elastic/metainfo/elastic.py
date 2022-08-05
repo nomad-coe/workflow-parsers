@@ -118,7 +118,7 @@ class Method(simulation.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_number_of_deformations'))
 
 #     x_elastic_deformation_types = Quantity(
-#         type=np.dtype('U'),
+#         type=np.dtype(np.int32),
 #         shape=['x_elastic_number_of_deformations', 6],
 #         description='''
 #         deformation types
@@ -167,7 +167,7 @@ class Method(simulation.method.Method):
 #     m_def = Section(validate=False, extends_base_section=True)
 
 #     x_elastic_2nd_order_constants_notation_matrix = Quantity(
-#         type=np.dtype('U'),
+#         type=np.dtype(np.int32),
 #         shape=[6, 6],
 #         description='''
 #         Symmetry of the second-order elastic constant matrix in Voigt notation
