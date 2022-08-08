@@ -7,6 +7,7 @@ This is a collection of the NOMAD parsers for the following workflow engines.
 6. [MaterialsProject](https://www.materialsproject.org/)
 7. [Phonopy](https://phonopy.github.io/phonopy/)
 8. [QuantumExpressoPhonon](https://www.quantum-espresso.org)
+9. [QuantumExpressoEPW](https://www.quantum-espresso.org)
 
 Each of the parsers will read the relevant input and output files and provide all information in
 NOMAD's unified Metainfo based Archive format.
