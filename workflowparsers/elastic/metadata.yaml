@@ -1,7 +1,7 @@
 codeLabel: ElaStic
 codeLabelStyle: 'capitals: E, S. This is part of the exciting project'
 codeName: elastic
-codeUrl: http://exciting-code.org/elastic
+codeUrl: http://exciting.wikidot.com/elastic
 parserDirName: dependencies/workflow/workflowparsers/elastic/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 parserSpecific: ''
