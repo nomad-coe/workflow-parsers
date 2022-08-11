@@ -1,5 +1,5 @@
-codeLabel: Phonopy
-codeLabelStyle: 'Capitals: P'
+codeLabel: phonopy
+codeLabelStyle: 'all in lower case'
 codeName: phonopy
 codeUrl: https://phonopy.github.io/phonopy/
 parserDirName: dependencies/workflow/workflowparsers/phonopy/
