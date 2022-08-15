@@ -1,6 +1,7 @@
 codeLabel: phonopy
 codeLabelStyle: 'all in lower case'
 codeName: phonopy
+codeCategory: Workflow manager
 codeUrl: https://phonopy.github.io/phonopy/
 parserDirName: dependencies/workflow/workflowparsers/phonopy/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git

@@ -1,6 +1,7 @@
 codeLabel: FHI-vibes
 codeLabelStyle: 'Capitals: FHI, the rest in lowercase; use dash.'
 codeName: fhi-vibes
+codeCategory: Workflow manager
 codeUrl: https://vibes.fhi-berlin.mpg.de/
 parserDirName: dependencies/workflow/workflowparsers/fhi-vibes/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git

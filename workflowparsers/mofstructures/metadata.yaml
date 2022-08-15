@@ -1,6 +1,7 @@
 codeLabel: MOFStructures
 codeLabelStyle: 'Capitals: M, O, F, S'
 codeName: mofstructures
+codeCategory: Workflow manager
 parserDirName: dependencies/workflow/workflowparsers/mofstructures
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
 parserSpecific: ''
