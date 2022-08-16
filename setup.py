@@ -17,15 +17,19 @@
 #
 from setuptools import setup, find_packages
 
+
 def main():
     setup(
         name='workflowparsers',
         version='1.0',
-        description='Collection of NOMAD parsers for worfklow engines.',
+        description='Collection of NOMAD parsers for workflow engines.',
         author='The NOMAD Authors',
         license='APACHE 2.0',
         packages=find_packages(exclude=['tests']),
-        install_requires=['nomad-lab'])
+        install_requires=['nomad-lab'],
+        include_package_data=True,
+        package_data={'': ['*/metadata.yaml']},
+    )
 
 
 if __name__ == '__main__':
