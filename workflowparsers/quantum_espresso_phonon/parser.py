@@ -259,9 +259,12 @@ class QuantumEspressoPhononParser:
 
             sec_system = sec_run.m_create(System)
             sec_atoms = sec_system.m_create(Atoms)
+            if calculation.get('crystal_axes') is not None:
+                sec_atoms.lattice_vectors = calculation.crystal_axes * calculation.get('alat', 1) * ureg.bohr
             if calculation.get('cartesian_axes') is not None:
                 sec_atoms.labels = calculation.cartesian_axes[0]
-                sec_atoms.positions = calculation.cartesian_axes[1] * calculation.get('alat', 1)
+                sec_atoms.positions = calculation.cartesian_axes[1] * calculation.get('alat', 1) * ureg.bohr
+            sec_atoms.periodic = [True, True, True]
 
             system_keys = [
                 'bravais_lattice_index', 'lattice_parameter', 'unit_cell_volume',
@@ -276,8 +279,9 @@ class QuantumEspressoPhononParser:
                 setattr(sec_method, f'x_qe_phonon_{key}', calculation.get(key))
 
             # vibrational frequencies
-            sec_calc.vibrational_frequencies.append(
-                VibrationalFrequencies(value=calculation.frequencies * (1 / ureg.cm)))
+            if calculation.frequencies is not None:
+                sec_calc.vibrational_frequencies.append(
+                    VibrationalFrequencies(value=calculation.frequencies * (1 / ureg.cm)))
 
             # specs and results of dynamical matrix calculation
             if calculation.dynamical_matrix is not None:
@@ -304,7 +308,7 @@ class QuantumEspressoPhononParser:
                     smearing_map = {'Methfessel-Paxton': 'methfessel-paxton'}
                     sec_method.electronic = Electronic(smearing=Smearing(
                         kind=smearing_map.get(calculation.dynamical_matrix.smearing[0]),
-                        width=calculation.dynamical_matrix.smearing[1]))
+                        width=(calculation.dynamical_matrix.smearing[1] * ureg.Ry).to_base_units().magnitude))
 
                 sec_method.x_qe_phonon_n_kpoints = calculation.dynamical_matrix.n_kpoints
                 sec_method.x_qe_phonon_alpha_ewald = calculation.dynamical_matrix.alpha_ewald
