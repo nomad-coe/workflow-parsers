@@ -1,7 +1,8 @@
 codeLabel: ASR
 codeLabelStyle: all in capitals
-codeName: atomicsimulationrecipes
+codeName: asr
 codeCategory: Workflow manager
+status: production
 codeUrl: https://asr.readthedocs.io/en/latest/index.html
 parserDirName: dependencies/workflow/workflowparsers/asr/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git

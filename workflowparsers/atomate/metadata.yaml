@@ -1,7 +1,8 @@
 codeLabel: Atomate
 codeLabelStyle: 'Capitals: A'
-codeName: materialsproject
+codeName: atomate
 codeCategory: Workflow manager
+status: production
 codeUrl: https://www.atomate.org/
 parserDirName: dependencies/workflow/workflowparsers/mp/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git

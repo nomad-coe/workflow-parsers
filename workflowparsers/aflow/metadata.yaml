@@ -1,7 +1,8 @@
 codeLabel: AFLOW
 codeLabelStyle: all capitals
-codeName: abinit
+codeName: aflow
 codeCategory: Workflow manager
+status: production
 codeUrl: http://www.aflowlib.org/
 parserDirName: dependencies/workflow/workflowparsers/aflow/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
