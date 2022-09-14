@@ -2,6 +2,7 @@ codeLabel: LOBSTER
 codeLabelStyle: All in capitals
 codeName: lobster
 codeCategory: Workflow manager
+status: production
 codeUrl: http://schmeling.ac.rwth-aachen.de/cohp/
 parserDirName: dependencies/workflow/workflowparsers/lobster/
 parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
