@@ -327,7 +327,7 @@ class QuantumEspressoEPWParser:
 
         start_time = self.mainfile_parser.start_time
         if start_time is not None:
-            date = datetime.strptime(start_time.replace(' ', ''), '%w%b%Y%H:%M:%S')
+            date = datetime.strptime(start_time.replace(' ', ''), '%d%b%Y%H:%M:%S')
             sec_run.time_run = TimeRun(date_start=(date - datetime.utcfromtimestamp(0)).total_seconds())
 
         sec_method = sec_run.m_create(Method)
