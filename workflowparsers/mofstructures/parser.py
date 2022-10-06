@@ -105,7 +105,7 @@ class MOFStructuresParser:
                 metadata_data = data.get(EntryArchive.metadata.name, None)
                 # delete metadata
                 if metadata_data is not None:
-                    del data[EntryArchive.metadata.name]
+                    del(data[EntryArchive.metadata.name])
 
             except Exception:
                 self.logger.error('Error parsing archive for MOF structure.')
