@@ -71,6 +71,7 @@ class MainfileParser(TextParser):
         self._quantities = [
             Quantity('program_version', r'Program EPW v\.([\d\.]+)', dtype=str),
             Quantity('start_time', r'starts on +(\w+) +at +([\d: ]+)', flatten=False, dtype=str),
+            Quantity('restart', r'RESTART \- (RESTART)', dtype=str),
             Quantity(
                 'bravais_lattice_index',
                 r'bravais\-lattice index *= *(\d+)', dtype=np.int32
@@ -326,7 +327,7 @@ class QuantumEspressoEPWParser:
 
         start_time = self.mainfile_parser.start_time
         if start_time is not None:
-            date = datetime.strptime(start_time.replace(' ', ''), '%w%b%Y%H:%M:%S')
+            date = datetime.strptime(start_time.replace(' ', ''), '%d%b%Y%H:%M:%S')
             sec_run.time_run = TimeRun(date_start=(date - datetime.utcfromtimestamp(0)).total_seconds())
 
         sec_method = sec_run.m_create(Method)
@@ -359,37 +360,45 @@ class QuantumEspressoEPWParser:
         method_keys = [
             'n_ws_vectors_electrons', 'n_ws_vectors_phonons', 'n_ws_vectors_electron_phonon',
             'n_max_cores', 'use_ws', 'q_mesh', 'n_q_mesh', 'k_mesh', 'n_k_mesh',
-            'n_max_kpoints_per_pool', 'kinetic_energy_cutoff', 'charge_density_cutoff',
-            'convergence_threshold', 'exchange_correlation', 'n_kpoints', 'gaussian_broadening',
-            'n_gauss'
+            'n_max_kpoints_per_pool', 'gaussian_broadening', 'n_gauss'
         ]
         for key in method_keys:
             setattr(sec_method, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
-        sec_system = sec_run.m_create(System)
-        sec_atoms = sec_system.m_create(Atoms)
-        alat = self.mainfile_parser.lattice_parameter
-        lattice_vectors = self.mainfile_parser.lattice_vectors
-        if lattice_vectors is not None:
-            sec_atoms.lattice_vectors = np.dot(lattice_vectors, alat)
+        # If this is a continuation (restart) run, not all fields have meaningful values so skip those
+        # in such case.
+        if self.mainfile_parser.get('restart') is None:
+            method_keys = [
+                'kinetic_energy_cutoff', 'charge_density_cutoff',
+                'convergence_threshold', 'exchange_correlation', 'n_kpoints'
+            ]
+            for key in method_keys:
+                setattr(sec_method, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
-        cartesian_axes = self.mainfile_parser.cartesian_axes
-        if cartesian_axes is not None:
-            sec_atoms.labels = cartesian_axes[0]
-            sec_atoms.positions = np.dot(cartesian_axes[2], alat)
+            sec_system = sec_run.m_create(System)
+            sec_atoms = sec_system.m_create(Atoms)
+            alat = self.mainfile_parser.lattice_parameter
+            lattice_vectors = self.mainfile_parser.lattice_vectors
+            if lattice_vectors is not None:
+                sec_atoms.lattice_vectors = np.dot(lattice_vectors, alat)
+
+            cartesian_axes = self.mainfile_parser.cartesian_axes
+            if cartesian_axes is not None:
+                sec_atoms.labels = cartesian_axes[0]
+                sec_atoms.positions = np.dot(cartesian_axes[2], alat)
+
+            system_keys = [
+                'bravais_lattice_index', 'lattice_parameter', 'unit_cell_volume', 'n_atoms_cell',
+                'n_atomic_types'
+            ]
+            for key in system_keys:
+                setattr(sec_system, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
         for q_point in self.mainfile_parser.get('irreducible_q_point', []):
             sec_q_point = sec_system.m_create(x_qe_epw_irreducible_q_point)
             sec_q_point.x_qe_epw_n_symmetries = q_point. n_symmetries
             sec_q_point.x_qe_epw_n_q_star = q_point.n_q_star
             sec_q_point.x_qe_epw_q_star = np.reshape(q_point.q_star, (q_point.n_q_star, 4)).T[1:4].T
-
-        system_keys = [
-            'bravais_lattice_index', 'lattice_parameter', 'unit_cell_volume', 'n_atoms_cell',
-            'n_atomic_types'
-        ]
-        for key in system_keys:
-            setattr(sec_system, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
         sec_calc = sec_run.m_create(Calculation)
         sec_calc.energy = Energy(fermi=self.mainfile_parser.e_fermi)
