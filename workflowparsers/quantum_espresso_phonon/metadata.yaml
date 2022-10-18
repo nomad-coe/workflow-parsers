@@ -1,0 +1,11 @@
+codeLabel: QuantumEspressPhonon
+codeLabelStyle: 'Capitals: Q, E, P'
+codeName: quantumespressophonon
+codeCategory: Workflow manager
+status: production
+codeUrl: https://www.quantum-espresso.org
+parserDirName: dependencies/workflow/workflowparsers/quantumespressophonon
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: ''

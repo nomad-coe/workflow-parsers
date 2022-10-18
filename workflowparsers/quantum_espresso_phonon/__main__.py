@@ -16,13 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .aflow.parser import AFLOWParser
-from .asr.parser import ASRParser
-from .elastic.parser import ElasticParser
-from .fhivibes.parser import FHIVibesParser
-from .lobster.parser import LobsterParser
-from .atomate.parser import AtomateParser
-from .phonopy.parser import PhonopyParser
-from .mofstructures.parser import MOFStructuresParser
-from .quantum_espresso_phonon import QuantumEspressoPhononParser
-from .quantum_espresso_epw import QuantumEspressoEPWParser
+import sys
+import json
+import logging
+
+from nomad.utils import configure_logging
+from nomad.datamodel import EntryArchive
+from workflowparsers.quantum_espresso_phonon import QuantumEspressoPhononParser
+
+if __name__ == "__main__":
+    configure_logging(console_log_level=logging.DEBUG)
+    archive = EntryArchive()
+    QuantumEspressoPhononParser().parse(sys.argv[1], archive, logging)
+    json.dump(archive.m_to_dict(), sys.stdout, indent=2)
