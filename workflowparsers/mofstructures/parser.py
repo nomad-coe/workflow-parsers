@@ -140,7 +140,7 @@ class MOFStructuresParser:
             system.x_mof_crystal_system = metadata.get('Crystal_system')
             system.x_mof_hall_symbol = metadata.get('Hall_symbol')
             system.x_mof_charge = metadata.get('charge')
-            system.x_mof_is_rod = metadata.get('Is_rod')
+            system.x_mof_is_rod = metadata.get('Is_rod') == 'yes'
             system.x_mof_is_paddlewheel = metadata.get('is_paddlewheel')
             system.x_mof_is_ferrocene = metadata.get('is_ferrocene')
             system.x_mof_is_paddle_water = metadata.get('is_Paddle_water')
