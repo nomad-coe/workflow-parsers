@@ -27,7 +27,7 @@ from nomad.datamodel.metainfo.simulation.method import (
     Method, AtomParameters, Electronic, Smearing)
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import (
-    Calculation, Energy, EnergyEntry, VibrationalFrequencies
+    Calculation, VibrationalFrequencies
 )
 
 from .metainfo.quantum_espresso_phonon import (
