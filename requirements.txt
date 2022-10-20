@@ -5,6 +5,7 @@ pycodestyle==2.8.0
 pytest==3.10.0
 pytest-timeout==1.4.2
 pytest-cov==2.7.1
+astroid==2.5.1
 lxml==4.7.1
 asr==0.4.1
 xarray==0.20.2
