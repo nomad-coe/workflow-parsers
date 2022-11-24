@@ -19,7 +19,7 @@
 import numpy as np            # pylint: disable=unused-import
 import typing                 # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
+    Datetime, MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference
 )
 
@@ -1058,7 +1058,7 @@ class Calculation(simulation.calculation.Calculation):
         ''')
 
     x_aflow_aflowlib_date = Quantity(
-        type=np.dtype(np.float64),
+        type=Datetime,
         shape=['x_aflow_nspecies'],
         description='''
         ''')
