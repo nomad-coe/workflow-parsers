@@ -89,3 +89,31 @@ def test_all(parser):
             thermo = workflow.thermodynamics
             assert thermo.stability.formation_energy.magnitude == approx(0)
             assert thermo.stability.is_stable
+
+    # TODO currently, workflow2 is not repeating
+    assert archive.workflow2.method.energy_stress_calculator == 'VASP'
+    assert archive.workflow2.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
+    assert archive.workflow2.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
+    assert archive.workflow2.results.poisson_ratio_hill == approx(0.20424545172250694)
+    assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)
+
+    # assert archive.workflow2.results.energies[5].magnitude == approx(-8.33261753e-19)
+    # assert archive.workflow2.results.volumes[-4].magnitude == approx(2.43493103e-29)
+    # assert len(archive.workflow2.results.eos_fit) == 8
+
+    # for fit in archive.workflow2.results.eos_fit:
+    #     if fit.function_name == 'mie_gruneisen':
+    #         assert fit.fitted_energies[10].magnitude == approx(-8.62595192e-19)
+    #     elif fit.function_name == 'vinet':
+    #         assert fit.bulk_modulus_derivative == approx(4.986513157963165)
+    #     elif fit.function_name == 'birch_euler':
+    #         assert fit.equilibrium_energy.magnitude == approx(-8.69065241e-19)
+    #     elif fit.function_name == 'murnaghan':
+    #         assert fit.equilibrium_volume.magnitude == approx(2.04781109e-29)
+    #     elif fit.function_name == 'pack_evans_james':
+    #         assert fit.bulk_modulus.magnitude == approx(8.67365485e+10)
+
+    # assert archive.workflow2.results.stability.formation_energy.magnitude == approx(0)
+    # assert archive.workflow2.results.is_stable
+
+    # assert archive.workflow2.method.with_non_analytic_correction

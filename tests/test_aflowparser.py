@@ -67,6 +67,13 @@ def test_aflowlib(parser):
     assert sec_elastic.elastic_constants_matrix_second_order[0][1].magnitude == approx(7.45333e+10)
     assert sec_elastic.bulk_modulus_voigt.magnitude == approx(1.50939e+11)
     assert sec_elastic.pugh_ratio_hill == approx(0.298965)
+    # TODO currently workflow2 is not a repeating section
+    # assert archive.workflow2.results.n_deformations == 3
+    # assert archive.workflow2.results.strain_maximum == pytest.approx(0.01)
+    # assert archive.workflow2.results.n_strains == 8
+    # assert archive.workflow2.results.elastic_constants_matrix_second_order[0][1].magnitude == approx(7.45333e+10)
+    # assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(1.50939e+11)
+    # assert archive.workflow2.results.pugh_ratio_hill == approx(0.298965)
 
     run = archive.run[2]
     assert len(run.system) == len(run.calculation) == 28
@@ -109,6 +116,8 @@ def test_aflowin(parser):
     sec_phonon = sec_workflow.phonon
     assert sec_phonon.qpoints[9249][0] == approx(-4.7619047619e-02)
     assert sec_phonon.group_velocity[234][2][0].magnitude == approx(-133.348333)
+    assert archive.workflow2.results.qpoints[9249][0] == approx(-4.7619047619e-02)
+    assert archive.workflow2.results.group_velocity[234][2][0].magnitude == approx(-133.348333)
 
     sec_thermo = sec_workflow.thermodynamics
     assert sec_thermo.temperature[161].magnitude == approx(1610)
@@ -116,3 +125,8 @@ def test_aflowin(parser):
     assert sec_thermo.helmholtz_free_energy[108].magnitude == approx(-6.4052878e-20)
     assert sec_thermo.entropy[10].magnitude == approx(4.96817858e-24)
     assert sec_thermo.heat_capacity_c_v[35].magnitude == approx(6.72704591e-23)
+    assert archive.workflow2.results.temperature[161].magnitude == approx(1610)
+    assert archive.workflow2.results.internal_energy[190].magnitude == approx(1.58571787e-19)
+    assert archive.workflow2.results.helmholtz_free_energy[108].magnitude == approx(-6.4052878e-20)
+    assert archive.workflow2.results.entropy[10].magnitude == approx(4.96817858e-24)
+    assert archive.workflow2.results.heat_capacity_c_v[35].magnitude == approx(6.72704591e-23)
