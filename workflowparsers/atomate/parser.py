@@ -138,7 +138,7 @@ class AtomateParser:
     def parse_thermo(self, data):
         sec_workflow = self.archive.m_create(Workflow)
         workflow = self.archive.workflow2
-        workflow = workflow if workflow else workflow2.Thermodynamics(results=workflow2.ThermodynamicsResults)
+        workflow = workflow if workflow else workflow2.Thermodynamics(results=workflow2.ThermodynamicsResults())
         sec_workflow.type = 'thermodynamics'
         sec_thermo = sec_workflow.m_create(Thermodynamics)
         sec_stability = sec_thermo.m_create(Stability)
