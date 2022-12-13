@@ -138,11 +138,14 @@ class AtomateParser:
     def parse_thermo(self, data):
         sec_workflow = self.archive.m_create(Workflow)
         workflow = self.archive.workflow2
-        workflow = workflow if workflow else workflow2.Thermodynamics(results=workflow2.ThermodynamicsResults())
+        if not workflow:
+            workflow = workflow2.Thermodynamics()
+        if not workflow.results:
+            workflow.results = workflow2.ThermodynamicsResults()
         sec_workflow.type = 'thermodynamics'
         sec_thermo = sec_workflow.m_create(Thermodynamics)
         sec_stability = sec_thermo.m_create(Stability)
-        sec_stability2 = workflow.results.m_create(workflow2.Stability)
+        sec_stability2 = workflow2.Stability()
         sec_stability.formation_energy = data.get(
             'formation_energy_per_atom', 0) * data.get('nsites', 1) * ureg.eV
         sec_stability2.formation_energy = data.get(
@@ -159,6 +162,7 @@ class AtomateParser:
                 sec_decomposition2.formula = system.get('formula')
                 sec_decomposition.fraction = system.get('amount')
                 sec_decomposition2.fraction = system.get('amount')
+        workflow.results.stability = sec_stability2
         self.archive.workflow2 = workflow
 
     def parse_phonon(self, data):
