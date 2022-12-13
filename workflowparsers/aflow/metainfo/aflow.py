@@ -1058,7 +1058,7 @@ class Calculation(simulation.calculation.Calculation):
         ''')
 
     x_aflow_aflowlib_date = Quantity(
-        type=Datetime,
+        type=str,
         shape=['x_aflow_nspecies'],
         description='''
         ''')
