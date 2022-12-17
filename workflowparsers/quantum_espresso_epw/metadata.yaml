@@ -1,6 +1,6 @@
 codeLabel: QuantumEspressoEPW
 codeLabelStyle: 'Capitals: Q, E, E, P, W'
-codeName: quantumespressophonon
+codeName: quantumespressoepw
 codeCategory: Workflow manager
 status: production
 codeUrl: https://www.quantum-espresso.org
