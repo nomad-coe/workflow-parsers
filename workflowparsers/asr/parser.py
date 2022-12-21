@@ -37,6 +37,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Energy, EnergyEntry, Forces, ForcesEntry,
     Stress, StressEntry)
 from nomad.datamodel.metainfo.workflow import Workflow
+from nomad.datamodel.metainfo.simulation import workflow as workflow2
 from .metainfo.asr import (
     x_asr_resources, x_asr_metadata,
     x_asr_run_specification, x_asr_parameters, x_asr_code, x_asr_codes, x_asr_dependencies,
@@ -81,6 +82,7 @@ class ASRRecord:
         workflow = self._archive.m_create(Workflow)
         workflow.type = 'geometry_optimization'
         workflow.run_ref = self._archive.run[-1]
+        self.archive.workflow2 = workflow2.GeometryOptimization()
 
         calc = self._archive.run[-1].m_create(Calculation)
         calc.system_ref = self._archive.run[-1].system[-1]
@@ -99,6 +101,7 @@ class ASRRecord:
         workflow = self._archive.m_create(Workflow)
         workflow.type = 'phonon'
         workflow.run_ref = self._archive.run[-1]
+        self.archive.workflow2 = workflow2.Phonon()
 
         bands = self.record.result.data.get('omega_kl')
 

@@ -39,6 +39,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Dos, DosValues, Thermodynamics
 )
 from nomad.datamodel.metainfo.workflow import Workflow, Phonon
+from nomad.datamodel.metainfo.simulation import workflow as workflow2
 
 from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import
 
@@ -478,6 +479,14 @@ class PhonopyParser:
         sec_phonon.n_imaginary_frequencies = n_imaginary
         if phonopy_obj.nac_params:
             sec_phonon.with_non_analytic_correction = True
+
+        workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
+        workflow.method.force_calculator = self.calculator
+        workflow.method.mesh_density = np.prod(self.properties.mesh) / vol
+        workflow.results.n_imaginary_frequencies = n_imaginary
+        if phonopy_obj.nac_params:
+            workflow.method.with_non_analytic_correction = True
+        self.archive.workflow2 = workflow
 
         self.parse_ref()
 

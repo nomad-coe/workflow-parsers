@@ -37,6 +37,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Thermodynamics, Energy, EnergyEntry, Stress, StressEntry, Forces, ForcesEntry
 )
 from nomad.datamodel.metainfo.workflow import Workflow
+from nomad.datamodel.metainfo.simulation import workflow as workflow2
 from .metainfo.fhi_vibes import x_fhi_vibes_section_attributes,\
     x_fhi_vibes_section_metadata, x_fhi_vibes_section_atoms, x_fhi_vibes_section_MD,\
     x_fhi_vibes_section_calculator, x_fhi_vibes_section_calculator_parameters,\
@@ -347,16 +348,20 @@ class FHIVibesParser:
 
         if 'MD' in metadata:
             self.calculation_type = 'molecular_dynamics'
+            self.archive.workflow2 = workflow2.MolecularDynamics()
         elif 'relaxation' in metadata:
             self.calculation_type = 'geometry_optimization'
+            self.archive.workflow2 = workflow2.GeometryOptimization()
         elif 'Phonopy' in metadata:
             self.calculation_type = 'phonon'
+            self.archive.workflow2 = workflow2.Phonon()
         else:
             # the single point workflow in vibes means multiple separate calculations on
             # on same material (stoichiometry, number of atoms) but may differ on
             # on structure (lattice, positions). This means we need to create separate
             # section runs
             self.calculation_type = 'single_point'
+            self.archive.workflow2 = workflow2.SinglePoint()
 
         if self.calculation_type == 'single_point':
             for _ in range(self.n_frames):
