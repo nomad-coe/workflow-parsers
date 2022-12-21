@@ -34,7 +34,7 @@ def parser():
 
 def test_all(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/mp/mp-149/mp-149_materials.json', archive, None)
+    parser.parse('tests/data/atomate/mp-149/mp-149_materials.json', archive, None)
 
     run = archive.run[0]
     assert run.program.name == 'MaterialsProject'
