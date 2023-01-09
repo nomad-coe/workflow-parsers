@@ -104,11 +104,31 @@ class FHIVibesParser:
             'heat_flux': ureg.amu / ureg.fs ** 3, 'heat_flux_harmonic': ureg.amu / ureg.fs ** 3,
             'heat_flux_0_harmonic': ureg.amu / ureg.fs ** 3, 'mass': ureg.amu, 'length': ureg.angstrom, 'time': ureg.fs}
 
+        self._frame_rate = None
+        # max cumulative number of atoms for all parsed trajectories to calculate sampling rate
+        self._cum_max_atoms = 1000000
+        # mas number of frames takes precedent over maximum number of atoms
+        self._max_frames = 100
+
+    @property
+    def frame_rate(self):
+        if self._frame_rate is None:
+            n_atoms = len(self.parser.get('attrs').get('symbols', []))
+
+            if n_atoms == 0 or self.n_frames == 0:
+                self._frame_rate = 1
+            else:
+                cum_atoms = n_atoms * self.n_frames
+                self._frame_rate = 1 if cum_atoms <= self._cum_max_atoms else cum_atoms // self._cum_max_atoms
+            if self.n_frames // self._frame_rate > self._max_frames:
+                self._frame_rate = self.n_frames // self._max_frames
+        return self._frame_rate
+
     @property
     def n_frames(self):
         if self.calculation_type == 'phonon':
             return 1
-        return len(self.parser.get('positions'))
+        return len(self.parser.get('positions', []))
 
     def parse_configurations(self):
 
@@ -176,9 +196,17 @@ class FHIVibesParser:
 
             return sec_scc
 
-        sec_atrr = self.archive.run[-1].method[-1].x_fhi_vibes_section_attributes[-1]
-        timestep = sec_atrr.x_fhi_vibes_attributes_timestep
+        sec_scc = None
+        try:
+            sec_atrr = self.archive.run[-1].method[-1].x_fhi_vibes_section_attributes[-1]
+            timestep = sec_atrr.x_fhi_vibes_attributes_timestep
+        except Exception:
+            timestep = 0
+
         for n_frame in range(self.n_frames):
+            if (n_frame % self.frame_rate) > 0:
+                continue
+
             if self.calculation_type == 'single_point':
                 sec_run = self.archive.run[n_frame]
                 # we can only do this for single point where we have separate section_runs
@@ -196,7 +224,7 @@ class FHIVibesParser:
         # force constants
         for key in ['force_constants', 'force_constants_remapped']:
             val = self.parser.get(key, unit=self._units.get('force_constants'))
-            if val is not None:
+            if val is not None and sec_scc:
                 setattr(sec_scc, 'x_fhi_vibes_%s' % key, val)
 
     def parse_method(self, n_run):
@@ -364,16 +392,18 @@ class FHIVibesParser:
             self.archive.workflow2 = workflow2.SinglePoint()
 
         if self.calculation_type == 'single_point':
-            for _ in range(self.n_frames):
+            for n_frame in range(self.n_frames):
+                if (n_frame % self.frame_rate) > 0:
+                    continue
                 self.archive.m_create(Run)
         else:
             self.archive.m_create(Run)
 
         for n_run, sec_run in enumerate(self.archive.run):
-            sec_run.program = Program(name='FHI-vibes', version=metadata['vibes']['version'])
+            sec_run.program = Program(name='FHI-vibes', version=metadata.get('vibes', dict()).get('version'))
 
             self.parse_method(n_run)
-            if metadata['calculator']['calculator'].lower() == 'aims':
+            if metadata.get('calculator', dict()).get('calculator').lower() == 'aims':
                 sec_run.method[-1].basis_set.append(BasisSet(type='numeric AOs'))
 
         # TODO For single_point, we can only have workflow for one vibes single point frame
@@ -382,6 +412,6 @@ class FHIVibesParser:
         # the idea of vibes single point but I do not like it.
         sec_workflow = self.archive.m_create(Workflow)
         sec_workflow.type = self.calculation_type
-        sec_workflow.calculator = metadata['calculator']['calculator']
+        sec_workflow.calculator = metadata.get('calculator', dict()).get('calculator')
 
         self.parse_configurations()

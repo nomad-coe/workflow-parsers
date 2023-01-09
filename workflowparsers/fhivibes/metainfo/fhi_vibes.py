@@ -611,6 +611,13 @@ class x_fhi_vibes_section_attributes(MSection):
         -
         ''')
 
+    x_fhi_vibes_attributes_volume = Quantity(
+        type=np.dtype(np.float64),
+        shape=[],
+        description='''
+        -
+        ''')
+
     x_fhi_vibes_attributes_sigma = Quantity(
         type=np.dtype(np.float64),
         shape=[],

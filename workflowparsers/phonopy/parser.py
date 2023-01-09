@@ -254,6 +254,9 @@ class PhonopyParser:
 
         try:
             phonopy_obj = phonopy.load(self.mainfile)
+        except Exception:
+            self.logger.error('Error loading phonopy file.')
+            phonopy_obj = None
         finally:
             os.chdir(cwd)
 
