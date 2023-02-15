@@ -19,6 +19,7 @@
 import os
 import numpy as np
 import logging
+import json
 import phonopy
 from phonopy.units import THzToEv
 from phonopy.structure.atoms import PhonopyAtoms
@@ -40,6 +41,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
 )
 from nomad.datamodel.metainfo.workflow import Workflow, Phonon
 from nomad.datamodel.metainfo.simulation import workflow as workflow2
+from nomad.datamodel import EntryArchive
 
 from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import
 
@@ -211,7 +213,7 @@ class ControlParser(TextParser):
             Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac)]
 
 
-def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None, logger=None, **kwargs):
+def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None, filename=None, logger=None, **kwargs):
     '''
     Executes Phonopy starting from a phonopy object and write the results on a nomad archive.
     '''
@@ -282,6 +284,7 @@ def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None,
         # expansion_order = 2
 
     logger = logger if logger is not None else logging
+    archive = archive if archive else EntryArchive()
 
     pbc = np.array((1, 1, 1), bool)
 
@@ -397,6 +400,12 @@ def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None,
             logger.error('Could not resolve referenced calculations.', exc_info=e, path=path)
     archive.workflow[0].workflows_ref = workflows_ref
 
+    if filename:
+        with open(filename, 'w') as f:
+            json.dump(archive.m_to_dict(), f, indent=4)
+
+    return archive
+
 
 class PhonopyParser:
     level = 1
@@ -508,7 +517,7 @@ class PhonopyParser:
             self.logger.error('Error running phonopy.')
             return
 
-        phonopy_obj_to_archive(phonopy_obj, self.calculator, self.references, archive, logger)
+        phonopy_obj_to_archive(phonopy_obj, self.calculator, references=self.references, archive=archive, logger=logger)
 
     def after_normalization(self, archive, logger=None) -> None:
         # Overwrite the result method with method details taken from the first referenced
