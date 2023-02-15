@@ -489,6 +489,14 @@ class PhonopyParser:
         workflow.results.n_imaginary_frequencies = n_imaginary
         if phonopy_obj.nac_params:
             workflow.method.with_non_analytic_correction = True
+        workflow.inputs = [
+            workflow2.Link(name='input calculation', section=f'../upload/archive/mainfile/{ref}#/run/0/calculation/0')
+            for ref in self.references]
+        workflow.outputs = [
+            workflow2.Link(name='phonon results', section=f'/workflow2/results')
+        ]
+        workflow.tasks = [workflow2.Task(
+            name='phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
         self.archive.workflow2 = workflow
 
         self.parse_ref()
