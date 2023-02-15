@@ -1,0 +1,11 @@
+codeLabel: QuantumEspressoXSpectra
+codeLabelStyle: 'Capitals: Q, E, X, S'
+codeName: quantumespressoxspectra
+codeCategory: Workflow manager
+status: production
+codeUrl: https://www.quantum-espresso.org
+parserDirName: dependencies/workflow/workflowparsers/quantumespressoxspectra
+parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+parserSpecific: ''
+preamble: ''
+tableOfFiles: ''
