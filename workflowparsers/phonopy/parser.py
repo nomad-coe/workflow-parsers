@@ -211,6 +211,193 @@ class ControlParser(TextParser):
             Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac)]
 
 
+def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None, logger=None, **kwargs):
+    '''
+    Executes Phonopy starting from a phonopy object and write the results on a nomad archive.
+    '''
+    def parse_bandstructure():
+        freqs, bands, bands_labels = properties.get_bandstructure()
+        if freqs is None:
+            return
+
+        # convert THz to eV
+        freqs = freqs * THzToEv
+
+        # convert eV to J
+        freqs = (freqs * ureg.eV).to('joules').magnitude
+
+        sec_scc = archive.run[0].calculation[0]
+
+        sec_k_band = sec_scc.m_create(BandStructure, Calculation.band_structure_phonon)
+
+        for i in range(len(freqs)):
+            sec_k_band_segment = sec_k_band.m_create(BandEnergies)
+            sec_k_band_segment.kpoints = bands[i]
+            sec_k_band_segment.endpoints_labels = [str(label) for label in bands_labels[i]]
+            sec_k_band_segment.energies = [freqs[i]]
+
+    def parse_dos():
+        f, dos = properties.get_dos()
+
+        # convert THz to eV to Joules
+        f = f * THzToEv
+        f = (f * ureg.eV).to('joules').magnitude
+
+        sec_scc = archive.run[0].calculation[0]
+        sec_dos = sec_scc.m_create(Dos, Calculation.dos_phonon)
+        sec_dos.energies = f
+        sec_dos_values = sec_dos.m_create(DosValues, Dos.total)
+        sec_dos_values.value = dos
+
+    def parse_thermodynamical_properties():
+        T, fe, _, cv = properties.get_thermodynamical_properties()
+
+        n_atoms = len(phonopy_obj.unitcell)
+        n_atoms_supercell = len(phonopy_obj.supercell)
+
+        fe = fe / n_atoms
+
+        # The thermodynamic properties are reported by phonopy for the base
+        # system. Since the values in the metainfo are stored per the referenced
+        # system, we need to multiple by the size factor between the base system
+        # and the supersystem used in the calculations.
+        cv = cv * (n_atoms_supercell / n_atoms)
+
+        # convert to SI units
+        fe = (fe * ureg.eV).to('joules').magnitude
+
+        cv = (cv * ureg.eV / ureg.K).to('joules/K').magnitude
+
+        sec_run = archive.run[0]
+        sec_scc = sec_run.calculation[0]
+
+        for n, Tn in enumerate(T):
+            sec_thermo_prop = sec_scc.m_create(Thermodynamics)
+            sec_thermo_prop.temperature = Tn
+            sec_thermo_prop.vibrational_free_energy_at_constant_volume = fe[n]
+            sec_thermo_prop.heat_capacity_c_v = cv[n]
+
+        # TODO create a taylor_expansion workflow?
+        # sampling_method = 'taylor_expansion'
+        # expansion_order = 2
+
+    logger = logger if logger is not None else logging
+
+    pbc = np.array((1, 1, 1), bool)
+
+    unit_cell = phonopy_obj.unitcell.get_cell()
+    unit_pos = phonopy_obj.unitcell.get_positions()
+    unit_sym = np.array(phonopy_obj.unitcell.get_chemical_symbols())
+
+    super_cell = phonopy_obj.supercell.get_cell()
+    super_pos = phonopy_obj.supercell.get_positions()
+    super_sym = np.array(phonopy_obj.supercell.get_chemical_symbols())
+
+    unit_cell = (unit_cell * ureg.angstrom).to('meter').magnitude
+    unit_pos = (unit_pos * ureg.angstrom).to('meter').magnitude
+
+    super_cell = (super_cell * ureg.angstrom).to('meter').magnitude
+    super_pos = (super_pos * ureg.angstrom).to('meter').magnitude
+
+    try:
+        displacement = np.linalg.norm(phonopy_obj.displacements[0][1:])
+        displacement = displacement * ureg.angstrom
+    except Exception:
+        displacement = None
+
+    supercell_matrix = phonopy_obj.supercell_matrix
+    sym_tol = phonopy_obj.symmetry.tolerance
+
+    sec_run = archive.m_create(Run)
+    sec_run.program = Program(name='Phonopy', version=phonopy.__version__)
+
+    sec_system_unit = sec_run.m_create(System)
+    sec_atoms = sec_system_unit.m_create(Atoms)
+    sec_atoms.periodic = pbc
+    sec_atoms.labels = unit_sym
+    sec_atoms.positions = unit_pos
+    sec_atoms.lattice_vectors = unit_cell
+
+    sec_system = sec_run.m_create(System)
+    sec_system.sub_system_ref = sec_system_unit
+    sec_system.systems_ref = [sec_system_unit]
+    sec_atoms = sec_system.m_create(Atoms)
+    sec_atoms.periodic = pbc
+    sec_atoms.labels = super_sym
+    sec_atoms.positions = super_pos
+    sec_atoms.lattice_vectors = super_cell
+    sec_atoms.supercell_matrix = supercell_matrix
+    sec_system.x_phonopy_original_system_ref = sec_system_unit
+
+    sec_method = sec_run.m_create(Method)
+    # TODO I put this so as to have a recognizable section method, but metainfo
+    # should be expanded to include phonon related method parameters
+    sec_method.electronic = Electronic(method='DFT')
+    sec_method.x_phonopy_symprec = sym_tol
+    if displacement is not None:
+        sec_method.x_phonopy_displacement = displacement
+
+    try:
+        force_constants = phonopy_obj.get_force_constants()
+        force_constants = (force_constants * ureg.eV / ureg.angstrom ** 2).to('J/(m**2)').magnitude
+    except Exception:
+        logger.error('Error producing force constants.')
+        return
+
+    sec_scc = sec_run.m_create(Calculation)
+    sec_scc.system_ref = sec_system
+    sec_scc.method_ref = sec_method
+    sec_scc.hessian_matrix = force_constants
+
+    # run Phonopy
+    properties = PhononProperties(phonopy_obj, logger, **kwargs)
+
+    parse_bandstructure()
+    parse_dos()
+    parse_thermodynamical_properties()
+
+    # create workflow section
+    sec_workflow = archive.m_create(Workflow)
+    sec_workflow.workflow_type = 'phonon'
+    sec_phonon = sec_workflow.m_create(Phonon)
+    sec_phonon.force_calculator = calculator
+    vol = np.dot(unit_cell[0], np.cross(unit_cell[1], unit_cell[2]))
+    sec_phonon.mesh_density = np.prod(properties.mesh) / vol
+    n_imaginary = np.count_nonzero(properties.frequencies < 0)
+    sec_phonon.n_imaginary_frequencies = n_imaginary
+    if phonopy_obj.nac_params:
+        sec_phonon.with_non_analytic_correction = True
+
+    workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
+    workflow.method.force_calculator = calculator
+    workflow.method.mesh_density = np.prod(properties.mesh) / vol
+    workflow.results.n_imaginary_frequencies = n_imaginary
+    if phonopy_obj.nac_params:
+        workflow.method.with_non_analytic_correction = True
+    workflow.inputs = [
+        workflow2.Link(name='input calculation', section=f'../upload/archive/mainfile/{ref}#/run/0/calculation/0')
+        for ref in references]
+    workflow.outputs = [
+        workflow2.Link(name='phonon results', section=f'/workflow2/results')
+    ]
+    workflow.tasks = [workflow2.Task(
+        name='phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
+    archive.workflow2 = workflow
+
+    if hasattr(archive, 'm_context') and not archive.m_context:
+        logger.warning('Cannot resolve references to calculations without a context.')
+        return
+
+    workflows_ref = []
+    for path in references:
+        try:
+            archive = archive.m_context.resolve_archive(f'../upload/archive/mainfile/{path}')
+            workflows_ref.append(archive.workflow[0].m_copy())
+        except Exception as e:
+            logger.error('Could not resolve referenced calculations.', exc_info=e, path=path)
+    archive.workflow[0].workflows_ref = workflows_ref
+
+
 class PhonopyParser:
     level = 1
 
@@ -305,193 +492,23 @@ class PhonopyParser:
 
         self._phonopy_obj = phonopy_obj
 
-    def parse_bandstructure(self):
-        freqs, bands, bands_labels = self.properties.get_bandstructure()
-        if freqs is None:
-            return
-
-        # convert THz to eV
-        freqs = freqs * THzToEv
-
-        # convert eV to J
-        freqs = (freqs * ureg.eV).to('joules').magnitude
-
-        sec_scc = self.archive.run[0].calculation[0]
-
-        sec_k_band = sec_scc.m_create(BandStructure, Calculation.band_structure_phonon)
-
-        for i in range(len(freqs)):
-            sec_k_band_segment = sec_k_band.m_create(BandEnergies)
-            sec_k_band_segment.kpoints = bands[i]
-            sec_k_band_segment.endpoints_labels = [str(label) for label in bands_labels[i]]
-            sec_k_band_segment.energies = [freqs[i]]
-
-    def parse_dos(self):
-        f, dos = self.properties.get_dos()
-
-        # convert THz to eV to Joules
-        f = f * THzToEv
-        f = (f * ureg.eV).to('joules').magnitude
-
-        sec_scc = self.archive.run[0].calculation[0]
-        sec_dos = sec_scc.m_create(Dos, Calculation.dos_phonon)
-        sec_dos.energies = f
-        sec_dos_values = sec_dos.m_create(DosValues, Dos.total)
-        sec_dos_values.value = dos
-
-    def parse_thermodynamical_properties(self):
-        T, fe, _, cv = self.properties.get_thermodynamical_properties()
-
-        n_atoms = len(self.phonopy_obj.unitcell)
-        n_atoms_supercell = len(self.phonopy_obj.supercell)
-
-        fe = fe / n_atoms
-
-        # The thermodynamic properties are reported by phonopy for the base
-        # system. Since the values in the metainfo are stored per the referenced
-        # system, we need to multiple by the size factor between the base system
-        # and the supersystem used in the calculations.
-        cv = cv * (n_atoms_supercell / n_atoms)
-
-        # convert to SI units
-        fe = (fe * ureg.eV).to('joules').magnitude
-
-        cv = (cv * ureg.eV / ureg.K).to('joules/K').magnitude
-
-        sec_run = self.archive.run[0]
-        sec_scc = sec_run.calculation[0]
-
-        for n, Tn in enumerate(T):
-            sec_thermo_prop = sec_scc.m_create(Thermodynamics)
-            sec_thermo_prop.temperature = Tn
-            sec_thermo_prop.vibrational_free_energy_at_constant_volume = fe[n]
-            sec_thermo_prop.heat_capacity_c_v = cv[n]
-
-        # TODO create a taylor_expansion workflow?
-        # sampling_method = 'taylor_expansion'
-        # expansion_order = 2
-
-    def parse_ref(self):
-        if hasattr(self.archive, 'm_context') and not self.archive.m_context:
-            self.logger.warning('Cannot resolve references to calculations without a context.')
-            return
-
-        workflows_ref = []
-        for path in self.references:
-            try:
-                archive = self.archive.m_context.resolve_archive(f'../upload/archive/mainfile/{path}')
-                workflows_ref.append(archive.workflow[0].m_copy())
-            except Exception as e:
-                self.logger.error('Could not resolve referenced calculations.', exc_info=e, path=path)
-        self.archive.workflow[0].workflows_ref = workflows_ref
-
     def parse(self, filepath, archive, logger, **kwargs):
         self.mainfile = os.path.abspath(filepath)
         self.archive = archive
         self.logger = logger if logger is not None else logging
         self._kwargs.update(kwargs)
 
-        sec_run = self.archive.m_create(Run)
-        sec_run.program = Program(name='Phonopy', version=phonopy.__version__)
+        # get bandstructure configuration file
+        maindir = os.path.dirname(self.mainfile)
+        files = [f for f in os.listdir(maindir) if f.endswith('.conf')]
+        self._kwargs.update({'band_conf': os.path.join(maindir, files[0]) if files else None})
 
         phonopy_obj = self.phonopy_obj
         if phonopy_obj is None:
             self.logger.error('Error running phonopy.')
             return
 
-        pbc = np.array((1, 1, 1), bool)
-
-        unit_cell = phonopy_obj.unitcell.get_cell()
-        unit_pos = phonopy_obj.unitcell.get_positions()
-        unit_sym = np.array(phonopy_obj.unitcell.get_chemical_symbols())
-
-        super_cell = phonopy_obj.supercell.get_cell()
-        super_pos = phonopy_obj.supercell.get_positions()
-        super_sym = np.array(phonopy_obj.supercell.get_chemical_symbols())
-
-        unit_cell = (unit_cell * ureg.angstrom).to('meter').magnitude
-        unit_pos = (unit_pos * ureg.angstrom).to('meter').magnitude
-
-        super_cell = (super_cell * ureg.angstrom).to('meter').magnitude
-        super_pos = (super_pos * ureg.angstrom).to('meter').magnitude
-
-        try:
-            displacement = np.linalg.norm(phonopy_obj.displacements[0][1:])
-            displacement = displacement * ureg.angstrom
-        except Exception:
-            displacement = None
-
-        supercell_matrix = phonopy_obj.supercell_matrix
-        sym_tol = phonopy_obj.symmetry.tolerance
-
-        sec_system_unit = sec_run.m_create(System)
-        sec_atoms = sec_system_unit.m_create(Atoms)
-        sec_atoms.periodic = pbc
-        sec_atoms.labels = unit_sym
-        sec_atoms.positions = unit_pos
-        sec_atoms.lattice_vectors = unit_cell
-
-        sec_system = sec_run.m_create(System)
-        sec_system.sub_system_ref = sec_system_unit
-        sec_system.systems_ref = [sec_system_unit]
-        sec_atoms = sec_system.m_create(Atoms)
-        sec_atoms.periodic = pbc
-        sec_atoms.labels = super_sym
-        sec_atoms.positions = super_pos
-        sec_atoms.lattice_vectors = super_cell
-        sec_atoms.supercell_matrix = supercell_matrix
-        sec_system.x_phonopy_original_system_ref = sec_system_unit
-
-        sec_method = sec_run.m_create(Method)
-        # TODO I put this so as to have a recognizable section method, but metainfo
-        # should be expanded to include phonon related method parameters
-        sec_method.electronic = Electronic(method='DFT')
-        sec_method.x_phonopy_symprec = sym_tol
-        if displacement is not None:
-            sec_method.x_phonopy_displacement = displacement
-
-        try:
-            force_constants = phonopy_obj.get_force_constants()
-            force_constants = (force_constants * ureg.eV / ureg.angstrom ** 2).to('J/(m**2)').magnitude
-        except Exception:
-            self.logger.error('Error producing force constants.')
-            return
-
-        sec_scc = sec_run.m_create(Calculation)
-        sec_scc.system_ref = sec_system
-        sec_scc.method_ref = sec_method
-        sec_scc.hessian_matrix = force_constants
-
-        # get bandstructure configuration file
-        maindir = os.path.dirname(self.mainfile)
-        files = [f for f in os.listdir(maindir) if f.endswith('.conf')]
-        self._kwargs.update({'band_conf': os.path.join(maindir, files[0]) if files else None})
-        self.properties = PhononProperties(self.phonopy_obj, self.logger, **self._kwargs)
-
-        self.parse_bandstructure()
-        self.parse_dos()
-        self.parse_thermodynamical_properties()
-
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.workflow_type = 'phonon'
-        sec_phonon = sec_workflow.m_create(Phonon)
-        sec_phonon.force_calculator = self.calculator
-        vol = np.dot(unit_cell[0], np.cross(unit_cell[1], unit_cell[2]))
-        sec_phonon.mesh_density = np.prod(self.properties.mesh) / vol
-        n_imaginary = np.count_nonzero(self.properties.frequencies < 0)
-        sec_phonon.n_imaginary_frequencies = n_imaginary
-        if phonopy_obj.nac_params:
-            sec_phonon.with_non_analytic_correction = True
-
-        workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
-        workflow.method.force_calculator = self.calculator
-        workflow.method.mesh_density = np.prod(self.properties.mesh) / vol
-        workflow.results.n_imaginary_frequencies = n_imaginary
-        if phonopy_obj.nac_params:
-            workflow.method.with_non_analytic_correction = True
-        self.archive.workflow2 = workflow
-
-        self.parse_ref()
+        phonopy_obj_to_archive(phonopy_obj, self.calculator, self.references, archive, logger)
 
     def after_normalization(self, archive, logger=None) -> None:
         # Overwrite the result method with method details taken from the first referenced
