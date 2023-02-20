@@ -49,7 +49,7 @@ class MainfileParser(TextParser):
                 line = line.split()
                 if not line:
                     continue
-                labels.append(line[1])
+                labels.append(line[1].strip(r'+|-'))
                 positions.append(line[-4:-1])
             return labels, np.array(positions, np.dtype(np.float64))
 
@@ -378,7 +378,7 @@ class QuantumEspressoXSpectraParser:
             sec_method_core.starting_method_ref = sec_run.method[0]
         sec_core_hole = sec_method_core.m_create(CoreHole)
         sec_core_hole.mode = 'absorption'  # XSPECTRA can only handle XAS/XANES -> absorption
-        sec_core_hole.solver = self.mainfile_parser.xanes.get('algorithm', '')
+        sec_core_hole.solver = self.mainfile_parser.xanes.get('algorithm', [])[0]
         # TODO talk with devs to get the edge info
         # sec_core_hole.edge
         if sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('gamma_mode') == 'constant':
@@ -412,7 +412,7 @@ class QuantumEspressoXSpectraParser:
 
         sec_run = self.archive.m_create(Run)
         sec_run.program = Program(
-            name='Quantum Espresso XSpectra', version=self.mainfile_parser.get('program_version', ''))
+            name='Quantum ESPRESSO XSPECTRA', version=self.mainfile_parser.get('program_version', ''))
 
         start_time = self.mainfile_parser.start_time
         if start_time is not None:

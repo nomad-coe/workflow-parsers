@@ -33,4 +33,43 @@ def parser():
 
 def test_1(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/quantum_espresso_xspectra/xanes.out', archive, None)
+    parser.parse('tests/data/quantum_espresso_xspectra/ms-10734/Spectra-1-1-1/0/dipole1/xanes.out', archive, None)
+
+    sec_run = archive.run[0]
+    assert sec_run.m_xpath('x_qe_xspectra_input')
+
+    # Program
+    assert sec_run.program.name == 'Quantum ESPRESSO XSPECTRA'
+    assert sec_run.program.version == '6.7MaX'
+
+    # System
+    sec_system = sec_run.system[0]
+    assert sec_system.x_qe_xspectra_bravais_lattice_index == 0
+    assert sec_system.x_qe_xspectra_unit_cell_volume.magnitude == approx(7.381107151717e-28)
+    assert sec_system.x_qe_xspectra_n_atoms_cell == 72
+    assert sec_system.atoms.labels[0] == 'Ti'
+    assert sec_system.atoms.labels[4] == 'O'
+    assert sec_system.atoms.positions[0][0].magnitude == approx(9.69004966e-12)
+
+    # Method
+    sec_method = sec_run.method
+    assert len(sec_method) == 2
+    assert sec_method[0].m_xpath('electronic') and sec_method[0].m_xpath('atom_parameters')
+    assert sec_method[0].m_xpath('photon')
+    assert sec_method[0].photon[0].multipole_type == 'dipole'
+    sec_core_hole = sec_method[1].core_hole[0]
+    assert sec_core_hole.solver == 'Lanczos'
+    assert sec_core_hole.mode == 'absorption'
+    assert sec_core_hole.broadening.magnitude == approx(0.89)
+
+    # Calculation
+    sec_scc = sec_run.calculation
+    assert len(sec_scc) == 1
+    assert sec_scc[0].system_ref == sec_system
+    assert sec_scc[0].method_ref == sec_method[1]
+    assert sec_scc[0].m_xpath('spectra')
+    sec_spectra = sec_scc[0].spectra[0]
+    assert sec_spectra.type == 'XANES'
+    assert sec_spectra.n_energies == 400
+    assert sec_spectra.excitation_energies[22].magnitude == approx(-1.6523701378886513e-18)
+    assert sec_spectra.intensities[22] == approx(-4.126638362437578e-12)
