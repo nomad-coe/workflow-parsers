@@ -307,14 +307,14 @@ class QuantumEspressoXSpectraParser:
         sec_run = self.archive.run[-1]
         sec_system = sec_run.m_create(System)
         sec_atoms = sec_system.m_create(Atoms)
-        alat = self.mainfile_parser.get('alat', 1)
+        alat = self.mainfile_parser.get('lattice_parameter', 1)
         crystal_axes = self.mainfile_parser.crystal_axes
         if crystal_axes is not None:
-            sec_atoms.lattice_vectors = crystal_axes * alat * ureg.bohr
+            sec_atoms.lattice_vectors = crystal_axes * alat.magnitude * ureg.bohr
         cartesian_axes = self.mainfile_parser.cartesian_axes
         if cartesian_axes is not None:
             sec_atoms.labels = self.mainfile_parser.cartesian_axes[0]
-            sec_atoms.positions = self.mainfile_parser.cartesian_axes[1] * alat * ureg.bohr
+            sec_atoms.positions = self.mainfile_parser.cartesian_axes[1] * alat.magnitude * ureg.bohr
         sec_atoms.periodic = [True, True, True]
 
         system_keys = [
