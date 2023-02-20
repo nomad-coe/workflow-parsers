@@ -55,13 +55,7 @@ class MainfileParser(TextParser):
 
         def to_val(val_in):
             val = [v.strip().lower() for v in val_in.strip().split(':')]
-            if val[0] == 'cut_occ_states':
-                val[1] = bool(val[1])
-            elif val[0] == 'using':
-                val[0] = 'xgamma'
-            # transform to float
-            if val[0] != 'cut_occ_states' and val[0] != 'gamma_mode':
-                val[1] = float(val[1])
+            val[1] = val[1] == 'true' if val[1] in ['true', 'false'] else val[1]
             return val
 
         self._quantities = [
@@ -90,7 +84,7 @@ class MainfileParser(TextParser):
                         sub_parser=TextParser(quantities=[Quantity(
                             'key_val',
                             r'(\w+) *\[*.*\]*(\:) *(\S+)',
-                            repeats=True, str_operation=to_val, convert=False)]))
+                            repeats=True, str_operation=to_val)]))
                 ])
             ),
             Quantity(
@@ -293,6 +287,10 @@ class MainfileParser(TextParser):
                             Quantity(
                                 'energy_core_level',
                                 rf'Core level energy \[eV\]: *{re_f}', dtype=np.float64, unit='eV'
+                            ),
+                            Quantity(
+                                'file',
+                                r'Cross-section successfully written in (\S+)'
                             )
                         ])
                     )
@@ -389,9 +387,9 @@ class QuantumEspressoXSpectraParser:
 
     def parse_scc(self):
         sec_run = self.archive.run[-1]
-        xanes_file = [f for f in os.listdir(self.maindir) if f.endswith('dat')]  # one .dat file per entry
-        if len(xanes_file) > 0:
-            self.xanesdata_parser.mainfile = os.path.join(self.maindir, xanes_file[0])
+        xanes_file = self.mainfile_parser.xanes.get('step_2', {}).get('file')
+        if xanes_file:
+            self.xanesdata_parser.mainfile = os.path.join(self.maindir, xanes_file)
             data = self.xanesdata_parser.data
 
             sec_scc = sec_run.m_create(Calculation)
