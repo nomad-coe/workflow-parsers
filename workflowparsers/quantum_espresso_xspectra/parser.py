@@ -53,6 +53,17 @@ class MainfileParser(TextParser):
                 positions.append(line[-4:-1])
             return labels, np.array(positions, np.dtype(np.float64))
 
+        def to_val(val_in):
+            val = [v.strip().lower() for v in val_in.strip().split(':')]
+            if val[0] == 'cut_occ_states':
+                val[1] = bool(val[1])
+            elif val[0] == 'using':
+                val[0] = 'xgamma'
+            # transform to float
+            if val[0] != 'cut_occ_states' and val[0] != 'gamma_mode':
+                val[1] = float(val[1])
+            return val
+
         self._quantities = [
             Quantity('program_version', r'Program XSpectra v.(\S+)', dtype=str),
             Quantity('start_time', r'starts on +(\w+) at (.+)', flatten=False, dtype=str),
@@ -78,11 +89,8 @@ class MainfileParser(TextParser):
                         rf'main plot parameters\:\s+([\s\S]+?){re_n} *{re_n}',
                         sub_parser=TextParser(quantities=[Quantity(
                             'key_val',
-                            r'(\w+) *\[*.*\]*(\:) *(.+)',
-                            repeats=True, str_operation=lambda x: x.strip().split(':'),
-                            convert=False
-                        )])
-                    )
+                            r'(\w+) *\[*.*\]*(\:) *(\S+)',
+                            repeats=True, str_operation=to_val, convert=False)]))
                 ])
             ),
             Quantity(
@@ -119,8 +127,7 @@ class MainfileParser(TextParser):
             ),
             Quantity(
                 'lattice_parameter', rf'lattice parameter \(alat\) *= *({re_f}) *a\.u\.',
-                dtype=np.float64, unit=ureg.bohr
-            ),
+                dtype=np.float64),
             Quantity(
                 'unit_cell_volume',
                 rf'unit\-cell volume *= *({re_f}) \(a\.u\.\)\^3',
@@ -286,10 +293,6 @@ class MainfileParser(TextParser):
                             Quantity(
                                 'energy_core_level',
                                 rf'Core level energy \[eV\]: *{re_f}', dtype=np.float64, unit='eV'
-                            ),
-                            Quantity(
-                                'file',
-                                r'Cross-section successfully written in (\S+)'
                             )
                         ])
                     )
@@ -307,10 +310,10 @@ class QuantumEspressoXSpectraParser:
         sec_run = self.archive.run[-1]
         sec_system = sec_run.m_create(System)
         sec_atoms = sec_system.m_create(Atoms)
-        alat = self.mainfile_parser.get('lattice_parameter', 1)
+        alat = self.mainfile_parser.get('lattice_parameter', 1) * ureg.bohr
         crystal_axes = self.mainfile_parser.crystal_axes
         if crystal_axes is not None:
-            sec_atoms.lattice_vectors = crystal_axes * alat.magnitude * ureg.bohr
+            sec_atoms.lattice_vectors = crystal_axes * alat.magnitude
         cartesian_axes = self.mainfile_parser.cartesian_axes
         if cartesian_axes is not None:
             sec_atoms.labels = self.mainfile_parser.cartesian_axes[0]
@@ -382,13 +385,13 @@ class QuantumEspressoXSpectraParser:
         # TODO talk with devs to get the edge info
         # sec_core_hole.edge
         if sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('gamma_mode') == 'constant':
-            sec_core_hole.broadening = sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('using')
+            sec_core_hole.broadening = sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('xgamma')
 
     def parse_scc(self):
         sec_run = self.archive.run[-1]
-        xanes_file = [f for f in os.listdir(self.maindir) if f.endswith('dat')][0]  # 1 .dat file per entry
+        xanes_file = [f for f in os.listdir(self.maindir) if f.endswith('dat')]  # one .dat file per entry
         if len(xanes_file) > 0:
-            self.xanesdata_parser.mainfile = os.path.join(self.maindir, xanes_file)
+            self.xanesdata_parser.mainfile = os.path.join(self.maindir, xanes_file[0])
             data = self.xanesdata_parser.data
 
             sec_scc = sec_run.m_create(Calculation)
@@ -401,6 +404,10 @@ class QuantumEspressoXSpectraParser:
             sec_spectra.excitation_energies = data[:, 0] * ureg.eV
             unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
             sec_spectra.intensities = scipy.constants.fine_structure * data[:, 1] / (data[:, 0] * unit_cell_volume)
+
+            for key, val in self.mainfile_parser.xanes.get('step_2', {}).items():
+                if key != 'file':
+                    setattr(sec_spectra, f'x_qe_xspectra_{key}', val)
 
     def parse(self, filepath, archive, logger):
         self.logger = logging.getLogger(__name__) if logger is None else logger
@@ -424,20 +431,7 @@ class QuantumEspressoXSpectraParser:
             sec_input = sec_run.m_create(x_qe_xspectra_input)
             for key, val in input.items():
                 if key == 'x_qe_xspectra_main_plot_parameters':
-                    val_json = {}
-                    for v in val.get('key_val', []):
-                        v0 = v[0].strip()
-                        v1 = v[1].strip()
-                        if v0 == 'cut_occ_states':
-                            v1 = v1 == 'TRUE'
-                        elif v0 == 'gamma_mode':
-                            pass
-                        elif v0 == 'xe0':
-                            v1 = np.float64(v1.split('(')[0])
-                        else:
-                            v1 = np.float64(v1)
-                        val_json[v0] = v1
-                    val = val_json
+                    val = {v[0].strip(): v[1] for v in val.get('key_val', [])}
                 setattr(sec_input, key, val)
 
         # System

@@ -49,7 +49,7 @@ def test_1(parser):
     assert sec_system.x_qe_xspectra_n_atoms_cell == 72
     assert sec_system.atoms.labels[0] == 'Ti'
     assert sec_system.atoms.labels[4] == 'O'
-    assert sec_system.atoms.positions[0][0].magnitude == approx(9.69004966e-12)
+    assert sec_system.atoms.positions[0][0].magnitude == approx(1.8823018373897882e-10)
 
     # Method
     sec_method = sec_run.method

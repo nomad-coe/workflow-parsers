@@ -212,3 +212,42 @@ class AtomParameters(simulation.method.AtomParameters):
         shape=['x_qe_xspectra_n_q_coefficients'],
         description='''
         ''')
+
+
+class Spectra(simulation.calculation.Spectra):
+
+    m_def = Section(validate=False, extends_base_section=True)
+
+    x_qe_xspectra_energy_zero = Quantity(
+        type=np.float64,
+        unit='eV',
+        description='''
+        ''')
+
+    x_qe_xspectra_xemin = Quantity(
+        type=np.float64,
+        unit='eV',
+        description='''
+        ''')
+
+    x_qe_xspectra_xemax = Quantity(
+        type=np.float64,
+        unit='eV',
+        description='''
+        ''')
+
+    x_qe_xspectra_xnepoint = Quantity(
+        type=np.float64,
+        description='''
+        ''')
+
+    x_qe_xspectra_broadening_parameter = Quantity(
+        type=np.float64,
+        description='''
+        ''')
+
+    x_qe_xspectra_energy_core_level = Quantity(
+        type=np.float64,
+        unit='eV',
+        description='''
+        ''')
