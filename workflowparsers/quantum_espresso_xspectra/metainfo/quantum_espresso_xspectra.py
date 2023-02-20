@@ -19,8 +19,7 @@
 import numpy as np            # pylint: disable=unused-import
 
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
-    Reference, JSON
+    MSection, Package, Quantity, Section, SubSection, JSON
 )
 from nomad.datamodel.metainfo import simulation
 
@@ -37,14 +36,14 @@ class x_qe_xspectra_input(MSection):
         description='''
         ''')
 
-    x_qe_x_spectra_xepsilon = Quantity(
+    x_qe_xspectra_xepsilon = Quantity(
         type=np.float64,
         shape=[3],
         description='''
         ''')
 
     x_qe_xspectra_xonly_plot = Quantity(
-        type=str,
+        type=bool,
         description='''
         ''')
 
@@ -211,62 +210,5 @@ class AtomParameters(simulation.method.AtomParameters):
     x_qe_xspectra_l = Quantity(
         type=np.dtype(np.float64),
         shape=['x_qe_xspectra_n_q_coefficients'],
-        description='''
-        ''')
-
-
-
-class Spectra(simulation.calculation.Spectra):
-
-    m_def = Section(validate=False, extends_base_section=True)
-
-    x_qe_xspectra_n_spectra = Quantity(
-        type=np.int32,
-        description='''
-        ''')
-
-    x_qe_xspectra_energy = Quantity(
-        type=np.dtype(np.float64),
-        shape=['x_qe_xspectra_n_spectra'],
-        description='''
-        ''')
-
-    x_qe_xspectra_sigma = Quantity(
-        type=np.dtype(np.float64),
-        shape=['x_qe_xspectra_n_spectra'],
-        description='''
-        ''')
-
-    x_qe_xspectra_energy_zero = Quantity(
-        type=np.float64,
-        unit='eV',
-        description='''
-        ''')
-
-    x_qe_xspectra_xemin = Quantity(
-        type=np.float64,
-        unit='eV',
-        description='''
-        ''')
-
-    x_qe_xspectra_xemax = Quantity(
-        type=np.float64,
-        unit='eV',
-        description='''
-        ''')
-
-    x_qe_xspectra_xnepoint = Quantity(
-        type=np.float64,
-        description='''
-        ''')
-
-    x_qe_xspectra_broadening_parameter = Quantity(
-        type=np.float64,
-        description='''
-        ''')
-
-    x_qe_xspectra_energy_core_level = Quantity(
-        type=np.float64,
-        unit='eV',
         description='''
         ''')

@@ -1,8 +1,10 @@
-This is a NOMAD parser for [Quantum Espresso XSpectra](https://www.quantum-espresso.org/). It will read Quantum Espresso XSpectra input and
+This is a NOMAD parser for [QuantumESPRESSOXSpectra](https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt). It will read QuantumESPRESSOXSpectra input and
 output files and provide all information in NOMAD's unified Metainfo based Archive format.
 
-For Quantum Espresso XSpectra please provide at least the files from this table if applicable to your
-calculations (remember that you can provide more files if you want):
+For QuantumESPRESSOXSpectra please provide at least the files from this table, if applicable
+(remember that you always can provide additional files if you want):
 
-
-
+| Input Filename | Description |
+| --- | --- |
+| `*.out` | **Mainfile:** text output file |
+| `*.dat` | output data file with the Absorption Spectra |
