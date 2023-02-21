@@ -383,7 +383,7 @@ class QuantumEspressoXSpectraParser:
         # TODO talk with devs to get the edge info
         # sec_core_hole.edge
         if sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('gamma_mode') == 'constant':
-            sec_core_hole.broadening = sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('xgamma')
+            sec_core_hole.broadening = sec_run.x_qe_xspectra_input.x_qe_xspectra_main_plot_parameters.get('using')
 
     def parse_scc(self):
         sec_run = self.archive.run[-1]
