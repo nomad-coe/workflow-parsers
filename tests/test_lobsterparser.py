@@ -464,6 +464,44 @@ def test_HfV(parser):
         eV_to_J(-0.50035))
 
 
+def test_QE_Ni(parser):
+    """
+    Check that basic info is parsed properly when LOBSTER is run on top
+    of Quantum Espresso calculations.
+    """
+
+    archive = EntryArchive()
+    parser.parse('tests/data/lobster/Ni/lobsterout', archive, logging)
+
+    run = archive.run[0]
+
+    # QE system parsing
+    system = run.system
+    assert len(system) == 1
+    assert all([a == b for a, b in zip(system[0].atoms.labels, ['Ni'])])
+    assert all([a == b for a, b in zip(system[0].atoms.periodic,
+               [True, True, True])])
+    assert len(system[0].atoms.positions) == 1
+    assert all([a == b for a, b in zip(system[0].atoms.positions[0],
+               [0, 0, 0])])
+
+    method = run.method
+    assert len(method) == 1
+    assert method[0].x_lobster_code == "Quantum Espresso"
+    assert method[0].basis_set[0].name == "Bunge"
+
+    assert len(run.calculation) == 1
+    scc = run.calculation[0]
+    assert len(scc.x_lobster_abs_total_spilling) == 2
+    assert scc.x_lobster_abs_total_spilling[0] == approx(36.14)
+    assert scc.x_lobster_abs_total_spilling[1] == approx(36.11)
+    assert len(scc.x_lobster_abs_charge_spilling) == 2
+    assert scc.x_lobster_abs_charge_spilling[0] == approx(4.02)
+    assert scc.x_lobster_abs_charge_spilling[1] == approx(3.37)
+
+    assert run.clean_end is True
+
+
 def test_failed_case(parser):
     """
     Check that we also handle gracefully a case where the lobster ends very early.
