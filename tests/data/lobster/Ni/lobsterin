@@ -1,0 +1,10 @@
+cohpstartenergy -17
+cohpendenergy 10
+COHPSteps 200
+cohpgenerator from 1.0 to 4.0
+
+skipCOBI
+skipCOOP
+skipGrossPopulation
+skipMadelungEnergy
+

@@ -19,7 +19,7 @@
 import datetime
 import numpy as np
 import ase.io
-from os import path
+import os
 
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
@@ -68,7 +68,7 @@ def parse_ICOXPLIST(fname, scc, method):
                  )
     ])
 
-    if not path.isfile(fname):
+    if not os.path.isfile(fname):
         return
     icoxplist_parser.mainfile = fname
     icoxplist_parser.parse()
@@ -121,7 +121,7 @@ def parse_COXPCAR(fname, scc, method, logger):
                  repeats=True)
     ])
 
-    if not path.isfile(fname):
+    if not os.path.isfile(fname):
         return
     coxpcar_parser.mainfile = fname
     coxpcar_parser.parse()
@@ -204,7 +204,7 @@ def parse_CHARGE(fname, scc):
             'charges', r'\s*\d+\s+[A-Za-z]{1,2}\s+([-\d\.]+)\s+([-\d\.]+)\s*', repeats=True)
     ])
 
-    if not path.isfile(fname):
+    if not os.path.isfile(fname):
         return
     charge_parser.mainfile = fname
     charge_parser.parse()
@@ -255,7 +255,7 @@ def parse_DOSCAR(fname, run, logger):
         }
         return lm_dictionary.get(lm[1:])
 
-    if not path.isfile(fname):
+    if not os.path.isfile(fname):
         return
 
     energies = []
@@ -352,9 +352,9 @@ mainfile_parser = TextParser(quantities=[
     Quantity('datetime', r'starting on host \S* on (\d{4}-\d\d-\d\d\sat\s\d\d:\d\d:\d\d)\s[A-Z]{3,4}',
              repeats=False),
     Quantity('x_lobster_code',
-             r'detecting used PAW program... (.*)', repeats=False),
+             r'detecting used PAW program... (.*)', repeats=False, flatten=False),
     Quantity('x_lobster_basis',
-             r'setting up local basis functions...\s*((?:[a-zA-Z]{1,2}\s+\(.+\)(?:\s+\d\S+)+\s+)+)',
+             r'setting up local basis functions...\s*(?:WARNING.*\s*)*\s*((?:[a-zA-Z]{1,2}\s+\(.+\)(?:\s+\d\S+)+\s+)+)',
              repeats=False,
              sub_parser=TextParser(quantities=[
                  Quantity('x_lobster_basis_species',
@@ -378,7 +378,7 @@ class LobsterParser:
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         mainfile_parser.mainfile = mainfile
-        mainfile_path = path.dirname(mainfile)
+        mainfile_path = os.path.dirname(mainfile)
         mainfile_parser.parse()
 
         run = archive.m_create(Run)
@@ -398,11 +398,21 @@ class LobsterParser:
         if code is not None:
             if code == 'VASP':
                 try:
-                    structure = ase.io.read(mainfile_path + '/CONTCAR', format="vasp")
+                    contcar_path = os.path.join(mainfile_path, 'CONTCAR')
+                    structure = ase.io.read(contcar_path, format="vasp")
                 except FileNotFoundError:
                     logger.warning('Unable to parse structure info, no CONTCAR detected')
+            if code == 'Quantum Espresso':
+                for file in os.listdir(mainfile_path):
+                    # lobster requires the QE input to have *.scf.in suffix
+                    if file.endswith(".scf.in"):
+                        qe_input_file = os.path.join(mainfile_path, file)
+                        structure = ase.io.read(qe_input_file, format="espresso-in")
+                if 'structure' not in locals():
+                    logger.warning('Unable to parse structure info, no Quantum Espresso input detected')
             else:
                 logger.warning('Parsing of {} structure is not supported'.format(code))
+
         if 'structure' in locals():
             system = run.m_create(System)
             system.atoms = Atoms(
@@ -431,14 +441,7 @@ class LobsterParser:
             scc.x_lobster_abs_total_spilling = np.array(total_spilling)
             scc.x_lobster_abs_charge_spilling = np.array(charge_spilling)
 
-        method_keys = [
-            'x_lobster_code'
-        ]
-
-        for key in method_keys:
-            val = mainfile_parser.get(key)
-            if val is not None:
-                setattr(method, key, val)
+        method.x_lobster_code = code
 
         basis = mainfile_parser.get('x_lobster_basis')
         if basis is not None:
