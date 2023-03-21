@@ -402,7 +402,7 @@ class LobsterParser:
                     structure = ase.io.read(contcar_path, format="vasp")
                 except FileNotFoundError:
                     logger.warning('Unable to parse structure info, no CONTCAR detected')
-            if code == 'Quantum Espresso':
+            elif code == 'Quantum Espresso':
                 for file in os.listdir(mainfile_path):
                     # lobster requires the QE input to have *.scf.in suffix
                     if file.endswith(".scf.in"):
