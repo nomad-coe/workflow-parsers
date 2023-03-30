@@ -1,0 +1,26 @@
+code_category: Workflow manager
+code_homepage: https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt
+code_name: QuantumESPRESSOXSpectra
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: QuantumESPRESSOXSpectra
+  codeLabelStyle: 'Capitals: Q, ESPRESSO, X, S'
+  codeName: quantumespressoxspectra
+  codeUrl: https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt
+  parserDirName: dependencies/workflow/workflowparsers/quantumespressoxspectra
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: '| Input Filename | Description |
+
+    | --- | --- |
+
+    | `*.out` | **Mainfile:** text output file |
+
+    | `*.dat` | output data file with the Absorption Spectra |
+
+    '
+name: parsers/quantumespressoxspectra
+parser_class_name: workflowparsers.quantum_espresso_xspectra.parser.QuantumEspressoXSpectraParser
+python_package: workflowparsers.quantum_espresso_xspectra

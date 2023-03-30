@@ -1,0 +1,24 @@
+code_category: Workflow manager
+code_homepage: https://vibes.fhi-berlin.mpg.de/
+code_name: FHI-vibes
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: FHI-vibes
+  codeLabelStyle: 'Capitals: FHI, the rest in lowercase; use dash.'
+  codeName: fhi-vibes
+  codeUrl: https://vibes.fhi-berlin.mpg.de/
+  parserDirName: dependencies/workflow/workflowparsers/fhi-vibes/
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: '|Input Filename| Description|
+
+    |--- | --- |
+
+    |`<hdf_file>` | **Mainfile**, binary hdf file w/ ext .nc` |
+
+    '
+name: parsers/fhi-vibes
+parser_class_name: workflowparsers.fhivibes.parser.FHIVibesParser
+python_package: workflowparsers.fhivibes

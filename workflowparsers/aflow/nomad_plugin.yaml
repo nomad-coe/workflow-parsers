@@ -1,0 +1,28 @@
+code_category: Workflow manager
+code_homepage: http://www.aflowlib.org/
+code_name: AFLOW
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: AFLOW
+  codeLabelStyle: all capitals
+  codeName: aflow
+  codeUrl: http://www.aflowlib.org/
+  parserDirName: dependencies/workflow/workflowparsers/aflow/
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: '|Input Filename| Description|
+
+    |--- | --- |
+
+    |`aflowlib.json` | **Mainfile:** a json file containing the aflow output|
+
+    |`aflow.ael.out`| plain text, elastic outputs|
+
+    |`aflow.agl.out` | plain text, Debye model output|
+
+    '
+name: parsers/aflow
+parser_class_name: workflowparsers.aflow.parser.AFLOWParser
+python_package: workflowparsers.aflow

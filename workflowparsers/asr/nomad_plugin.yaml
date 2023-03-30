@@ -1,0 +1,24 @@
+code_category: Workflow manager
+code_homepage: https://asr.readthedocs.io/en/latest/index.html
+code_name: ASR
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: ASR
+  codeLabelStyle: all in capitals
+  codeName: asr
+  codeUrl: https://asr.readthedocs.io/en/latest/index.html
+  parserDirName: dependencies/workflow/workflowparsers/asr/
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: '|Input Filename| Description|
+
+    |--- | --- |
+
+    |`archive*.json` | **Mainfile:** a json file w/ **user-defined** name|
+
+    '
+name: parsers/asr
+parser_class_name: workflowparsers.asr.parser.ASRParser
+python_package: workflowparsers.asr

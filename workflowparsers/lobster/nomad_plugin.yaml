@@ -1,0 +1,23 @@
+code_category: Workflow manager
+code_homepage: http://schmeling.ac.rwth-aachen.de/cohp/
+code_name: LOBSTER
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: LOBSTER
+  codeLabelStyle: All in capitals
+  codeName: lobster
+  codeUrl: http://schmeling.ac.rwth-aachen.de/cohp/
+  parserDirName: dependencies/workflow/workflowparsers/lobster/
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  preamble: ''
+  status: production
+  tableOfFiles: '|Input Filename| Description|
+
+    |--- | --- |
+
+    |`lobsterout` | **Mainfile** in LOBSTER specific plain-text |
+
+    '
+name: parsers/lobster
+parser_class_name: workflowparsers.lobster.parser.LobsterParser
+python_package: workflowparsers.lobster
