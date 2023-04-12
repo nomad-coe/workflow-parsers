@@ -39,8 +39,9 @@ from nomad.datamodel.metainfo.simulation.system import (
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Dos, DosValues, Thermodynamics
 )
-from nomad.datamodel.metainfo.workflow import Workflow, Phonon
-from nomad.datamodel.metainfo.simulation import workflow as workflow2
+from nomad.datamodel.metainfo.simulation.workflow import (
+    Phonon, PhononMethod, PhononResults, Link, Task
+)
 from nomad.datamodel import EntryArchive
 
 from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import
@@ -362,45 +363,32 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     parse_thermodynamical_properties()
 
     # create workflow section
-    sec_workflow = archive.m_create(Workflow)
-    sec_workflow.workflow_type = 'phonon'
-    sec_phonon = sec_workflow.m_create(Phonon)
-    sec_phonon.force_calculator = phonopy_obj.calculator
     vol = np.dot(unit_cell[0], np.cross(unit_cell[1], unit_cell[2]))
-    sec_phonon.mesh_density = np.prod(properties.mesh) / vol
     n_imaginary = np.count_nonzero(properties.frequencies < 0)
-    sec_phonon.n_imaginary_frequencies = n_imaginary
-    if phonopy_obj.nac_params:
-        sec_phonon.with_non_analytic_correction = True
 
-    workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
-    workflow.method.force_calculator = phonopy_obj.calculator
+    workflow = Phonon(method=PhononMethod(), results=PhononResults())
+    workflow.method.force_calculator = calculator
     workflow.method.mesh_density = np.prod(properties.mesh) / vol
     workflow.results.n_imaginary_frequencies = n_imaginary
     if phonopy_obj.nac_params:
         workflow.method.with_non_analytic_correction = True
-    workflow.inputs = [
-        workflow2.Link(name='input calculation', section=f'../upload/archive/mainfile/{ref}#/run/0/calculation/0')
-        for ref in references]
-    workflow.outputs = [
-        workflow2.Link(name='phonon results', section=f'/workflow2/results')
-    ]
-    workflow.tasks = [workflow2.Task(
-        name='phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
-    archive.workflow2 = workflow
-
-    if hasattr(archive, 'm_context') and not archive.m_context:
-        logger.warning('Cannot resolve references to calculations without a context.')
-        return
-
-    workflows_ref = []
+    inputs = []
     for path in references:
         try:
             archive = archive.m_context.resolve_archive(f'../upload/archive/mainfile/{path}')
-            workflows_ref.append(archive.workflow[0].m_copy())
+            section = archive.run[0].calculation[0]
         except Exception as e:
+            section = None
             logger.error('Could not resolve referenced calculations.', exc_info=e, path=path)
-    archive.workflow[0].workflows_ref = workflows_ref
+        if section is not None:
+            inputs.append(Link(name='Input calculation', section=section))
+    workflow.inputs = inputs
+    workflow.outputs = [
+        Link(name='Phonon results', section=f'/workflow2/results')
+    ]
+    workflow.tasks = [Task(
+        name='Phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
+    archive.workflow = workflow
 
     if filename:
         with open(filename, 'w') as f:

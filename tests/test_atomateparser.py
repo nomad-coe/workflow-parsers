@@ -113,8 +113,22 @@ def test_all(parser):
     #         assert fit.equilibrium_volume.magnitude == approx(2.04781109e-29)
     #     elif fit.function_name == 'pack_evans_james':
     #         assert fit.bulk_modulus.magnitude == approx(8.67365485e+10)
+    # segment = run.calculation[-1].band_structure_phonon[0].segment
+    # assert len(segment) == 10
+    # assert segment[2].energies[0][7][3].magnitude == approx(7.33184304e-21)
+    # assert segment[5].kpoints[9][1] == approx(0.32692307692)
+    # assert segment[9].endpoints_labels == ['U', 'X']
+    # dos = run.calculation[-1].dos_phonon[0]
+    # assert dos.energies[20].magnitude == approx(3.49331979e-22)
+    # assert dos.total[0].value[35].magnitude == approx(1.27718386e+19)
+    # phonon = archive.workflow
+    # assert phonon.method.with_non_analytic_correction
+    # thermo = archive.workflow
+    # assert thermo.results.stability.formation_energy.magnitude == approx(0)
+    # assert thermo.results.stability.is_stable
 
-    # assert archive.workflow2.results.stability.formation_energy.magnitude == approx(0)
-    # assert archive.workflow2.results.is_stable
-
-    # assert archive.workflow2.method.with_non_analytic_correction
+    assert archive.workflow.method.energy_stress_calculator == 'VASP'
+    assert archive.workflow.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
+    assert archive.workflow.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
+    assert archive.workflow.results.poisson_ratio_hill == approx(0.20424545172250694)
+    assert archive.workflow.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)
