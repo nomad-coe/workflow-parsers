@@ -213,7 +213,7 @@ class ControlParser(TextParser):
             Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac)]
 
 
-def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None, filename=None, logger=None, **kwargs):
+def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=None, logger=None, **kwargs):
     '''
     Executes Phonopy starting from a phonopy object and write the results on a nomad archive.
     '''
@@ -363,7 +363,7 @@ def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None,
     sec_workflow = archive.m_create(Workflow)
     sec_workflow.workflow_type = 'phonon'
     sec_phonon = sec_workflow.m_create(Phonon)
-    sec_phonon.force_calculator = calculator
+    sec_phonon.force_calculator = phonopy_obj.calculator
     vol = np.dot(unit_cell[0], np.cross(unit_cell[1], unit_cell[2]))
     sec_phonon.mesh_density = np.prod(properties.mesh) / vol
     n_imaginary = np.count_nonzero(properties.frequencies < 0)
@@ -372,7 +372,7 @@ def phonopy_obj_to_archive(phonopy_obj, calculator, references=[], archive=None,
         sec_phonon.with_non_analytic_correction = True
 
     workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
-    workflow.method.force_calculator = calculator
+    workflow.method.force_calculator = phonopy_obj.calculator
     workflow.method.mesh_density = np.prod(properties.mesh) / vol
     workflow.results.n_imaginary_frequencies = n_imaginary
     if phonopy_obj.nac_params:
@@ -429,22 +429,15 @@ class PhonopyParser:
         self._filepath = os.path.abspath(val)
 
     @property
-    def calculator(self):
-        if 'control.in' in self.mainfile:
-            return 'fhi-aims'
-        elif self.mainfile.endswith('.yaml'):
-            return 'vasp'
-
-    @property
     def phonopy_obj(self):
         if self._phonopy_obj is None:
-            if self.calculator == 'fhi-aims':
+            if 'control.in' in self.mainfile:
                 self._build_phonopy_object_fhi_aims()
-            elif self.calculator == 'vasp':
-                self._build_phonopy_object_vasp()
+            elif self.mainfile.endswith('.yaml'):
+                self._build_phonopy_object_yaml()
         return self._phonopy_obj
 
-    def _build_phonopy_object_vasp(self):
+    def _build_phonopy_object_yaml(self):
         cwd = os.getcwd()
         os.chdir(os.path.dirname(self.mainfile))
 
@@ -468,7 +461,7 @@ class PhonopyParser:
             displacement = self.control_parser.get('displacement', 0.001)
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
             try:
-                phonopy_obj = phonopy.Phonopy(cell_obj, supercell_matrix, symprec=sym)
+                phonopy_obj = phonopy.Phonopy(cell_obj, supercell_matrix, symprec=sym, calculator='fhi-aims')
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
                 set_of_forces, relative_paths = read_forces_aims(supercells, logger=self.logger)
@@ -509,6 +502,7 @@ class PhonopyParser:
 
         # get bandstructure configuration file
         maindir = os.path.dirname(self.mainfile)
+        # TODO read band configuration from phonopy.yaml
         files = [f for f in os.listdir(maindir) if f.endswith('.conf')]
         self._kwargs.update({'band_conf': os.path.join(maindir, files[0]) if files else None})
 
@@ -517,7 +511,7 @@ class PhonopyParser:
             self.logger.error('Error running phonopy.')
             return
 
-        phonopy_obj_to_archive(phonopy_obj, self.calculator, references=self.references, archive=archive, logger=logger)
+        phonopy_obj_to_archive(phonopy_obj, references=self.references, archive=archive, logger=logger)
 
     def after_normalization(self, archive, logger=None) -> None:
         # Overwrite the result method with method details taken from the first referenced
