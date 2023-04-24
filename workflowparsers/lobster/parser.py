@@ -43,6 +43,14 @@ e = (1 * units.e).to_base_units().magnitude
 eV = (1 * units.eV).to_base_units().magnitude
 
 
+def get_lobster_file(filename):
+    for compression in ['', '.gz', '.bz2', '.xz']:
+        name = f'{filename}{compression}'
+        if os.path.isfile(name):
+            return name
+    return filename
+
+
 def parse_ICOXPLIST(fname, scc, method):
 
     def icoxp_line_split(string):
@@ -398,11 +406,11 @@ class LobsterParser:
         if code is not None:
             if code == 'VASP':
                 try:
-                    contcar_path = os.path.join(mainfile_path, 'CONTCAR')
+                    contcar_path = get_lobster_file(os.path.join(mainfile_path, 'CONTCAR'))
                     structure = ase.io.read(contcar_path, format="vasp")
                 except FileNotFoundError:
                     logger.warning('Unable to parse structure info, no CONTCAR detected')
-            if code == 'Quantum Espresso':
+            elif code == 'Quantum Espresso':
                 for file in os.listdir(mainfile_path):
                     # lobster requires the QE input to have *.scf.in suffix
                     if file.endswith(".scf.in"):
@@ -449,15 +457,15 @@ class LobsterParser:
             if species is not None:
                 method.basis_set.append(BasisSet(name=species[0][1]))
 
-        parse_ICOXPLIST(mainfile_path + '/ICOHPLIST.lobster', scc, 'h')
-        parse_ICOXPLIST(mainfile_path + '/ICOOPLIST.lobster', scc, 'o')
+        parse_ICOXPLIST(get_lobster_file(mainfile_path + '/ICOHPLIST.lobster'), scc, 'h')
+        parse_ICOXPLIST(get_lobster_file(mainfile_path + '/ICOOPLIST.lobster'), scc, 'o')
 
-        parse_COXPCAR(mainfile_path + '/COHPCAR.lobster', scc, 'h', logger)
-        parse_COXPCAR(mainfile_path + '/COOPCAR.lobster', scc, 'o', logger)
+        parse_COXPCAR(get_lobster_file(mainfile_path + '/COHPCAR.lobster'), scc, 'h', logger)
+        parse_COXPCAR(get_lobster_file(mainfile_path + '/COOPCAR.lobster'), scc, 'o', logger)
 
-        parse_CHARGE(mainfile_path + '/CHARGE.lobster', scc)
+        parse_CHARGE(get_lobster_file(mainfile_path + '/CHARGE.lobster'), scc)
 
-        parse_DOSCAR(mainfile_path + '/DOSCAR.lobster', run, logger)
+        parse_DOSCAR(get_lobster_file(mainfile_path + '/DOSCAR.lobster'), run, logger)
 
         if run.system:
             scc.system_ref = run.system[0]
