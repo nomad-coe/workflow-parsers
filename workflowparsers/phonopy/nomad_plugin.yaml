@@ -1,0 +1,18 @@
+code_category: Workflow manager
+code_homepage: https://phonopy.github.io/phonopy/
+code_name: phonopy
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: phonopy
+  codeLabelStyle: all in lower case
+  codeName: phonopy
+  codeUrl: https://phonopy.github.io/phonopy/
+  parserDirName: dependencies/workflow/workflowparsers/phonopy/
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: ''
+name: parsers/phonopy
+parser_class_name: workflowparsers.phonopy.parser.PhonopyParser
+python_package: workflowparsers.phonopy

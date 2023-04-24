@@ -1,0 +1,18 @@
+code_category: Workflow manager
+code_homepage: https://www.quantum-espresso.org
+code_name: QuantumEspressoEPW
+metadata:
+  codeCategory: Workflow manager
+  codeLabel: QuantumEspressoEPW
+  codeLabelStyle: 'Capitals: Q, E, E, P, W'
+  codeName: quantumespressoepw
+  codeUrl: https://www.quantum-espresso.org
+  parserDirName: dependencies/workflow/workflowparsers/quantum_espresso_epw
+  parserGitUrl: https://github.com/nomad-coe/workflow-parsers.git
+  parserSpecific: ''
+  preamble: ''
+  status: production
+  tableOfFiles: ''
+name: parsers/quantumespressoepw
+parser_class_name: workflowparsers.quantum_espresso_epw.parser.QuantumEspressoEPWParser
+python_package: workflowparsers.quantum_espresso_epw
