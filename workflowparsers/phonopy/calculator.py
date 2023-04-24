@@ -22,7 +22,7 @@ from fractions import Fraction
 
 from ase import lattice as aselattice
 from ase.cell import Cell
-from ase.dft.kpoints import special_paths, parse_path_string, get_special_points
+from ase.dft.kpoints import special_paths, parse_path_string, get_special_points, sc_special_points
 
 from phonopy.phonon.band_structure import BandStructure
 from phonopy.units import EvTokJmol, VaspToTHz
@@ -88,22 +88,23 @@ def read_kpath(filename):
     return generate_kpath_parameters(points, [labels], npoints)
 
 
-def generate_kpath_ase(cell, symprec):
+def generate_kpath_ase(cell, symprec, logger=None):
     try:
         lattice = aselattice.get_lattice_from_canonical_cell(Cell(cell))
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
-        paths = None
-        points = None
-    if paths is None:
+        logger.warning('Cannot resolve lattice paths for lattice.')
         paths = special_paths['orthorhombic']
+        points = sc_special_points['orthorhombic']
     if points is None:
         try:
             points = get_special_points(cell)
         except Exception:
             return []
 
+    if isinstance(paths, str):
+        paths = [list(path) for path in paths.split(',')]
     return generate_kpath_parameters(points, paths, 100)
 
 
@@ -136,7 +137,7 @@ class PhononProperties():
         if self.band_conf is not None:
             parameters = read_kpath(self.band_conf)
         else:
-            parameters = generate_kpath_ase(unit_cell, sym_tol)
+            parameters = generate_kpath_ase(unit_cell, sym_tol, self.logger)
         if not parameters:
             return None, None, None
 
