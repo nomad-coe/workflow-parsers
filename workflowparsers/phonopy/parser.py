@@ -367,7 +367,7 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     n_imaginary = np.count_nonzero(properties.frequencies < 0)
 
     workflow = Phonon(method=PhononMethod(), results=PhononResults())
-    workflow.method.force_calculator = calculator
+    workflow.method.force_calculator = phonopy_obj.calculator
     workflow.method.mesh_density = np.prod(properties.mesh) / vol
     workflow.results.n_imaginary_frequencies = n_imaginary
     if phonopy_obj.nac_params:
