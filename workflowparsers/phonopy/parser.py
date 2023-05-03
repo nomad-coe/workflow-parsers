@@ -26,7 +26,7 @@ from phonopy.structure.atoms import PhonopyAtoms
 
 from .calculator import PhononProperties
 
-import nomad.config
+from nomad import config
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.datamodel.metainfo.simulation.run import Run, Program
@@ -476,7 +476,7 @@ class PhonopyParser:
             try:
                 for path in relative_paths:
                     abs_path = "%s%s" % (prep_path[0], path)
-                    rel_path = abs_path.split(nomad.config.fs.staging + "/")[1].split("/", 3)[3]
+                    rel_path = abs_path.split(config.fs.staging + "/")[1].split("/", 3)[3]
                     self.references.append(rel_path)
             except Exception:
                 self.logger.warning("Could not resolve path to a referenced calculation within the upload.")
