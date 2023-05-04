@@ -127,8 +127,8 @@ def test_all(parser):
     # assert thermo.results.stability.formation_energy.magnitude == approx(0)
     # assert thermo.results.stability.is_stable
 
-    assert archive.workflow.method.energy_stress_calculator == 'VASP'
-    assert archive.workflow.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
-    assert archive.workflow.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
-    assert archive.workflow.results.poisson_ratio_hill == approx(0.20424545172250694)
-    assert archive.workflow.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)
+    assert archive.workflow2.method.energy_stress_calculator == 'VASP'
+    assert archive.workflow2.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
+    assert archive.workflow2.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
+    assert archive.workflow2.results.poisson_ratio_hill == approx(0.20424545172250694)
+    assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)

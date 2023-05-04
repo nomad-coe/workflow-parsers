@@ -508,7 +508,7 @@ class PhonopyParser:
         # calculation. The program name and version are kept.
         self.logger = logger if logger is not None else logging
         try:
-            first_referenced_calculation = archive.workflow[0].workflows_ref[0].calculations_ref[0]
+            first_referenced_calculation = archive.workflow2.results.calculations_ref[0]
             referenced_archive = first_referenced_calculation.m_root()
         except Exception:
             self.logger.warn('Error getting referenced calculation.')

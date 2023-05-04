@@ -84,7 +84,7 @@ class AtomateParser:
             workflow.results.bulk_modulus_voigt = source['k_voigt'] * ureg.GPa
         if source.get('k_vrh') is not None:
             workflow.results.bulk_modulus_hill = source['k_vrh'] * ureg.GPa
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
     def parse_eos(self, source):
         workflow = EquationOfState(
@@ -106,10 +106,10 @@ class AtomateParser:
                 sec_eos_fit.equilibrium_volume = result['V0'] * ureg.angstrom ** 3
             if result.get('eos_energies') is not None:
                 sec_eos_fit.fitted_energies = result['eos_energies'] * ureg.eV
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
     def parse_thermo(self, data):
-        workflow = self.archive.workflow
+        workflow = self.archive.workflow2
         if not workflow:
             workflow = Thermodynamics()
         if not workflow.results:
@@ -125,7 +125,7 @@ class AtomateParser:
                 sec_decomposition.formula = system.get('formula')
                 sec_decomposition.fraction = system.get('amount')
         workflow.results.stability = sec_stability
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
     def parse_phonon(self, data):
         # TODO is vasp always mp calculator?
@@ -163,7 +163,7 @@ class AtomateParser:
                 endpoints = []
 
         calc.system_ref = self.archive.run[-1].system[0]
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
         # TODO add eigendisplacements
 
