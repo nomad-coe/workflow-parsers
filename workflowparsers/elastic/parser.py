@@ -505,7 +505,7 @@ class ElasticParser:
                 self.logger.warn('Error getting strain and energy data')
                 return
 
-            sec_strain_diagram2 = self.archive.workflow.results.m_create(StrainDiagrams)
+            sec_strain_diagram2 = self.archive.workflow2.results.m_create(StrainDiagrams)
             sec_strain_diagram2.type = 'energy'
             sec_strain_diagram2.n_eta = len(strain[0])
             sec_strain_diagram2.eta = strain
@@ -518,7 +518,7 @@ class ElasticParser:
 
             for diagram_type in ['cross-validation', 'd2e']:
                 for fit_order in energy_fit[diagram_type][0].keys():
-                    sec_strain_diagram = self.archive.workflow.results.m_create(StrainDiagrams)
+                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                     sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
@@ -534,7 +534,7 @@ class ElasticParser:
                 stress_i = np.transpose(np.array(stress[diagram_type]), axes=(2, 0, 1))
 
                 for si in range(6):
-                    sec_strain_diagram = self.archive.workflow.results.m_create(StrainDiagrams)
+                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.stress_voigt_component = si + 1
                     sec_strain_diagram.n_eta = len(strain_i[0])
@@ -547,7 +547,7 @@ class ElasticParser:
                     if len(stress_fit[diagram_type][si]) == 0:
                         continue
                     for fit_order in stress_fit[diagram_type][si][0].keys():
-                        sec_strain_diagram = self.archive.workflow.results.m_create(StrainDiagrams)
+                        sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                         sec_strain_diagram.type = diagram_type
                         sec_strain_diagram.stress_voigt_component = si + 1
                         sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
@@ -556,7 +556,7 @@ class ElasticParser:
                         sec_strain_diagram.value = np.array(stress_fit[diagram_type][si][1][fit_order])
 
     def parse_elastic_constant(self):
-        sec_results = self.archive.workflow.results
+        sec_results = self.archive.workflow2.results
 
         order = self.info['order']
 
@@ -658,7 +658,7 @@ class ElasticParser:
         workflow.results.n_strains = self.info['n_strains']
         workflow.results.n_deformations = len(self.deformation_dirs)
         workflow.results.deformation_types = deformation_types
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
         self.parse_strain()
         self.parse_elastic_constant()

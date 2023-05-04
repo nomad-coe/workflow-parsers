@@ -46,8 +46,8 @@ def test_2nd(parser):
     sec_fit_parameters = sec_method.x_elastic_section_fitting_parameters[0]
     assert sec_fit_parameters.x_elastic_fitting_parameters_eta[0] == 0.05
 
-    assert archive.workflow.method.energy_stress_calculator == 'exciting'
-    results = archive.workflow.results
+    assert archive.workflow2.method.energy_stress_calculator == 'exciting'
+    results = archive.workflow2.results
     assert results.deformation_types[2][5] == '2eta'
     sec_strain = results.strain_diagrams
     assert len(sec_strain) == 7
@@ -93,7 +93,7 @@ def test_3rd(parser):
     # assert sec_strain[2].eta[1][3] == 0.07
     # assert sec_strain[3].value[8][7] == approx(2.06899957e-23)
 
-    results = archive.workflow.results
+    results = archive.workflow2.results
     assert results.elastic_constants_matrix_third_order[3][1][3].magnitude == approx(1.274e+10)
     assert results.elastic_constants_matrix_third_order[5][2][5].magnitude == approx(1.2825e+10)
     assert results.elastic_constants_matrix_third_order[0][0][1].magnitude == approx(-1.18334e+12)
