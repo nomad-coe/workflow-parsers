@@ -192,4 +192,4 @@ class MOFStructuresParser:
                 # TODO connect workflows
             except Exception:
                 self.logger.warn('Could not resolve referenced calculations.')
-            self.archive.workflow = workflow
+            self.archive.workflow2 = workflow

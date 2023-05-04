@@ -441,4 +441,4 @@ class QuantumEspressoXSpectraParser:
         self.parse_scc()
 
         # Workflow
-        archive.workflow = SinglePoint()
+        archive.workflow2 = SinglePoint()

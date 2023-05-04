@@ -80,7 +80,7 @@ class ASRRecord:
         result = self.record.result
         for image in result.images:
             self._parse_system(image)
-        self.archive.workflow = GeometryOptimization()
+        self.archive.workflow2 = GeometryOptimization()
 
         calc = self._archive.run[-1].m_create(Calculation)
         calc.system_ref = self._archive.run[-1].system[-1]
@@ -96,7 +96,7 @@ class ASRRecord:
         calc.stress = Stress(total=StressEntry(value=stress))
 
     def _parse_c2db_phonopy(self):
-        self.archive.workflow = Phonon()
+        self.archive.workflow2 = Phonon()
 
         bands = self.record.result.data.get('omega_kl')
 

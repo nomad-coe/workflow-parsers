@@ -229,7 +229,7 @@ class AFLOWParser:
         # sec_debye.thermal_expansion = thermal_properties[6] / ureg.K
         # sec_debye.bulk_modulus_static = thermal_properties[7] * ureg.GPa
         # sec_debye.bulk_modulus_isothermal = thermal_properties[8] * ureg.GPa
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
     def parse_ael(self):
         sec_run = self.archive.m_create(Run)
@@ -270,7 +270,7 @@ class AFLOWParser:
             workflow.results.compliance_matrix_second_order = np.reshape(
                 self.ael_parser.ael_compliance_tensor, (6, 6))
 
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
     def parse_apl(self):
         sec_run = self.archive.m_create(Run)
@@ -354,7 +354,7 @@ class AFLOWParser:
             sec_thermo.results.entropy = apl_thermo[4] * ureg.boltzmann_constant
             sec_thermo.results.heat_capacity_c_v = apl_thermo[5] * ureg.boltzmann_constant
 
-        self.archive.workflow = workflow
+        self.archive.workflow2 = workflow
 
         # TODO parse systems for each displacements
 

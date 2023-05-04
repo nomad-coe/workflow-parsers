@@ -388,7 +388,7 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     ]
     workflow.tasks = [Task(
         name='Phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
-    archive.workflow = workflow
+    archive.workflow2 = workflow
 
     if filename:
         with open(filename, 'w') as f:
