@@ -23,6 +23,7 @@ import os
 
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
+from nomad.parsing.parsers import _compressions
 from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
 from nomad.datamodel.metainfo.simulation.system import (
     System, Atoms)
@@ -44,8 +45,9 @@ eV = (1 * units.eV).to_base_units().magnitude
 
 
 def get_lobster_file(filename):
-    for compression in ['', '.gz', '.bz2', '.xz']:
-        name = f'{filename}{compression}'
+    compressions = [''] + [v[0] for v in _compressions.values()]
+    for compression in compressions:
+        name = f'{filename}.{compression}'
         if os.path.isfile(name):
             return name
     return filename
@@ -275,7 +277,10 @@ def parse_DOSCAR(fname, run, logger):
     n_dos = 0
     atomic_numbers = []
     lms = []
-    with open(fname) as f:
+    with open(fname, 'rb') as f:
+        compression, open_compressed = _compressions.get(f.read(3), (None, open))
+
+    with open_compressed(fname) as f:
         for i, line in enumerate(f):
             if i == 0:
                 n_atoms = int(line.split()[0])
@@ -283,6 +288,12 @@ def parse_DOSCAR(fname, run, logger):
                 _ = float(line.split()[0]) * units.angstrom**3
             if i == 5:
                 n_dos = int(line.split()[2])
+            if compression:
+                try:
+                    line = line.decode('utf-8')
+                except Exception:
+                    break
+
             if 'Z=' in line:
                 atom_index += 1
                 atom_projected_dos_values.append([])
