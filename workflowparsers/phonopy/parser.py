@@ -139,7 +139,7 @@ def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
                 break
             except Exception:
                 pass
-        return output
+        return output, f
 
     def is_equal(reference, calculated):
         if len(reference) != len(calculated):
@@ -171,7 +171,8 @@ def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
             calculated_supercell = read_aims_output(filename)
         else:
             # try reading out files
-            calculated_supercell = get_aims_output_file(directory)
+            calculated_supercell, filename = get_aims_output_file(directory)
+            filename = os.path.join(directory, filename)
 
         # compare if calculated cell really corresponds to supercell
         if not is_equal(reference_supercell, calculated_supercell):
