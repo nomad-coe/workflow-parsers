@@ -57,7 +57,7 @@ def test_1(parser):
     assert sec_method[0].m_xpath('electronic') and sec_method[0].m_xpath('atom_parameters')
     assert sec_method[0].m_xpath('photon')
     assert sec_method[0].photon[0].multipole_type == 'dipole'
-    sec_core_hole = sec_method[1].core_hole[0]
+    sec_core_hole = sec_method[1].core_hole
     assert sec_core_hole.solver == 'Lanczos'
     assert sec_core_hole.mode == 'absorption'
     assert sec_core_hole.broadening.magnitude == approx(0.89)
