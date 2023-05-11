@@ -151,11 +151,12 @@ def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
         if (abs(reference.get_cell() - calculated.get_cell()) > tolerance).any():
             logger.warning('Inconsistent cell.')
             return False
-        ref_pos = reference.get_scaled_positions()
-        cal_pos = calculated.get_scaled_positions()
-        # wrap to bounding cell
-        ref_pos %= 1.0
-        cal_pos %= 1.0
+        # get normalized positions, wrapped to the bounding cell
+        ref_pos = reference.get_scaled_positions() % 1.
+        cal_pos = calculated.get_scaled_positions() % 1.
+        # resolve coordinates at the boundary
+        ref_pos = np.where(ref_pos != 1., ref_pos, 0.)
+        cal_pos = np.where(cal_pos != 1., cal_pos, 0.)
         if (abs(ref_pos - cal_pos) > tolerance).any():
             logger.warning('Inconsistent positions.')
             return False
@@ -176,7 +177,7 @@ def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
 
         # compare if calculated cell really corresponds to supercell
         if not is_equal(reference_supercell, calculated_supercell):
-            logger.error('Supercells do  not match')
+            logger.error('Supercells do not match')
 
         forces = np.array(calculated_supercell.get_forces())
         drift_force = forces.sum(axis=0)
