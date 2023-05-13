@@ -464,7 +464,7 @@ class LobsterParser:
 
         if (basis := mainfile_parser.get('x_lobster_basis')) is not None:
             if (species := basis.get('x_lobster_basis_species')) is not None:
-                method.electronic_model = [
+                method.electrons_representation = [
                     BasisSetContainer(
                         type='atom-centered orbitals',  # https://pubs.acs.org/doi/pdf/10.1021/j100135a014
                         scope=['wavefunction'],  # https://pubs.acs.org/doi/pdf/10.1021/jp202489s

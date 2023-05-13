@@ -252,7 +252,7 @@ class AtomateParser:
                     ],
                 )
             ]
-            sec_method.electronic_model = sec_em
+            sec_method.electrons_representation = sec_em
 
         self.archive.run[-1].calculation[0].method_ref = sec_method
 

@@ -74,7 +74,7 @@ def test_Fe(parser):
     method = run.method
     assert len(method) == 1
     assert method[0].x_lobster_code == "VASP"
-    assert method[0].electronic_model[0].basis_set[0].type == "pbeVaspFit2015"
+    assert method[0].electrons_representation[0].basis_set[0].type == "pbeVaspFit2015"
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -249,7 +249,7 @@ def test_NaCl(parser):
     method = run.method
     assert len(method) == 1
     assert method[0].x_lobster_code == "VASP"
-    assert method[0].electronic_model[0].basis_set[0].type == "pbeVaspFit2015"
+    assert method[0].electrons_representation[0].basis_set[0].type == "pbeVaspFit2015"
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -419,7 +419,7 @@ def test_HfV(parser):
 
     # method
     method = run.method
-    assert method[0].electronic_model[0].basis_set[0].type == "Koga"
+    assert method[0].electrons_representation[0].basis_set[0].type == "Koga"
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -488,7 +488,7 @@ def test_QE_Ni(parser):
     method = run.method
     assert len(method) == 1
     assert method[0].x_lobster_code == "Quantum Espresso"
-    assert method[0].electronic_model[0].basis_set[0].type == "Bunge"
+    assert method[0].electrons_representation[0].basis_set[0].type == "Bunge"
 
     assert len(run.calculation) == 1
     scc = run.calculation[0]

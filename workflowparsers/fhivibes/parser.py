@@ -404,7 +404,7 @@ class FHIVibesParser:
 
             self.parse_method(n_run)
             if metadata.get('calculator', dict()).get('calculator').lower() == 'aims':
-                sec_run.method[-1].electronic_model = [
+                sec_run.method[-1].electrons_representation = [
                     BasisSetContainer(
                         type='atom-centered orbitals',
                         scope=['wavefunction'],
