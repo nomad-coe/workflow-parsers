@@ -28,7 +28,7 @@ from nomad.parsing.file_parser import FileParser
 
 from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.method import (
-    Method, DFT, XCFunctional, Functional, BasisSet
+    Method, DFT, XCFunctional, Functional, BasisSet, BasisSetContainer,
 )
 from nomad.datamodel.metainfo.simulation.system import (
     System, Atoms
@@ -404,7 +404,18 @@ class FHIVibesParser:
 
             self.parse_method(n_run)
             if metadata.get('calculator', dict()).get('calculator').lower() == 'aims':
-                sec_run.method[-1].basis_set.append(BasisSet(type='numeric AOs'))
+                sec_run.method[-1].electrons_representation = [
+                    BasisSetContainer(
+                        type='atom-centered orbitals',
+                        scope=['wavefunction'],
+                        basis_set=[
+                            BasisSet(
+                                type='numeric AOs',
+                                scope=['full-electron'],
+                            )
+                        ]
+                    )
+                ]
 
         # TODO For single_point, we can only have workflow for one vibes single point frame
         # as workflow is not repeating in metainfo.

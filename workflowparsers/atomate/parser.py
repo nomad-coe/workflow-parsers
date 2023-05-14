@@ -29,7 +29,7 @@ from nomad.datamodel.metainfo.workflow import (
 from nomad.datamodel.metainfo.simulation import workflow as workflow2
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.method import (
-    Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetCellDependent)
+    Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetContainer,)
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Dos, DosValues, BandStructure, BandEnergies)
 from .metainfo.atomate import Composition, Symmetry
@@ -237,12 +237,22 @@ class AtomateParser:
         encut = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('ENCUT')
         prec = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('PREC')
         if encut is not None and prec is not None:
-            sec_basis = sec_method.m_create(BasisSet)
-            sec_basis.type = 'plane waves'
-            sec_basis_set_cell_dependent = sec_basis.m_create(BasisSetCellDependent)
-            sec_basis_set_cell_dependent.kind = 'plane waves'
-            prec = 1.3 if 'acc' in prec else 1.0
-            sec_basis_set_cell_dependent.planewave_cutoff = encut * prec * ureg.eV
+            encut_enhancement = 1.3 if 'acc' in prec else 1.0
+            cutoff = encut * encut_enhancement * ureg.eV
+            sec_em = [
+                BasisSetContainer(
+                    type='plane waves',
+                    scope = ['wavefunction'],
+                    basis_set=[
+                        BasisSet(
+                            type = 'plane waves',
+                            scope = ['valence'],
+                            cutoff = cutoff,
+                        ),
+                    ],
+                )
+            ]
+            sec_method.electrons_representation = sec_em
 
         self.archive.run[-1].calculation[0].method_ref = sec_method
 

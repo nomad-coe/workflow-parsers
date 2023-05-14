@@ -28,7 +28,7 @@ from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
 from nomad.datamodel.metainfo.simulation.system import (
     System, Atoms)
 from nomad.datamodel.metainfo.simulation.method import (
-    Method, Electronic, BasisSet)
+    Method, Electronic, BasisSet, BasisSetContainer,)
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Dos, DosValues, Charges)
 
@@ -373,7 +373,7 @@ mainfile_parser = TextParser(quantities=[
     Quantity('x_lobster_code',
              r'detecting used PAW program... (.*)', repeats=False, flatten=False),
     Quantity('x_lobster_basis',
-             r'setting up local basis functions...\s*(?:WARNING.*\s*)*\s*((?:[a-zA-Z]{1,2}\s+\(.+\)(?:\s+\d\S+)+\s+)+)',
+             r'setting up local basis functions\.\.\.\s*(?:WARNING.*\s*)*\s*((?:[a-zA-Z]{1,2}\s+\(.+\)(?:\s+\d\S+)+\s+)+)',
              repeats=False,
              sub_parser=TextParser(quantities=[
                  Quantity('x_lobster_basis_species',
@@ -462,11 +462,20 @@ class LobsterParser:
 
         method.x_lobster_code = code
 
-        basis = mainfile_parser.get('x_lobster_basis')
-        if basis is not None:
-            species = basis.get('x_lobster_basis_species')
-            if species is not None:
-                method.basis_set.append(BasisSet(name=species[0][1]))
+        if (basis := mainfile_parser.get('x_lobster_basis')) is not None:
+            if (species := basis.get('x_lobster_basis_species')) is not None:
+                method.electrons_representation = [
+                    BasisSetContainer(
+                        type='atom-centered orbitals',  # https://pubs.acs.org/doi/pdf/10.1021/j100135a014
+                        scope=['wavefunction'],  # https://pubs.acs.org/doi/pdf/10.1021/jp202489s
+                        basis_set=[
+                            BasisSet(
+                                type=species[0][1],  # https://www.nature.com/articles/s41524-019-0208-x
+                                scope=['full-electron'],
+                            )
+                        ]
+                    )
+                ]
 
         parse_ICOXPLIST(get_lobster_file(mainfile_path + '/ICOHPLIST.lobster'), scc, 'h')
         parse_ICOXPLIST(get_lobster_file(mainfile_path + '/ICOOPLIST.lobster'), scc, 'o')

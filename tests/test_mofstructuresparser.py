@@ -20,7 +20,7 @@ import pytest
 import logging
 
 from nomad.datamodel import EntryArchive
-from workflowparsers import MOFStructuresParser
+from workflowparsers.mofstructures.parser import MOFStructuresParser
 
 
 @pytest.fixture(scope='module')
