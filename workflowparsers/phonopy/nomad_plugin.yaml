@@ -16,3 +16,4 @@ metadata:
 name: parsers/phonopy
 parser_class_name: workflowparsers.phonopy.parser.PhonopyParser
 python_package: workflowparsers.phonopy
+level: 1  
