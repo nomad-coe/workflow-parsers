@@ -91,12 +91,9 @@ def test_Fe(parser):
     assert cohp.x_lobster_cohp_distances[19].magnitude == approx(
         A_to_m(2.831775))
     assert np.shape(cohp.x_lobster_cohp_translations) == (20, 3)
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[0], [0, 0, -1])])
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[13], [0, 0, 0])])
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[19], [0, 0, 1])])
+    assert (cohp.x_lobster_cohp_translations[0] == [0, 0, -1]).all()
+    assert (cohp.x_lobster_cohp_translations[13] == [0, 0, 0]).all()
+    assert (cohp.x_lobster_cohp_translations[19] == [0, 0, 1]).all()
     assert np.shape(cohp.x_lobster_integrated_cohp_at_fermi_level) == (2, 20)
     assert cohp.x_lobster_integrated_cohp_at_fermi_level[0, 0].magnitude == approx(
         eV_to_J(-0.08672))
@@ -143,12 +140,9 @@ def test_Fe(parser):
     assert coop.x_lobster_coop_distances[19].magnitude == approx(
         A_to_m(2.831775))
     assert np.shape(coop.x_lobster_coop_translations) == (20, 3)
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[0], [0, 0, -1])])
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[13], [0, 0, 0])])
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[19], [0, 0, 1])])
+    assert (coop.x_lobster_coop_translations[0] == [0, 0, -1]).all()
+    assert (coop.x_lobster_coop_translations[13] == [0, 0, 0]).all()
+    assert (coop.x_lobster_coop_translations[19] == [0, 0, 1]).all()
     assert np.shape(coop.x_lobster_integrated_coop_at_fermi_level) == (2, 20)
     assert coop.x_lobster_integrated_coop_at_fermi_level[0, 0].magnitude == approx(
         eV_to_J(-0.06882))
@@ -263,12 +257,9 @@ def test_NaCl(parser):
     assert cohp.x_lobster_cohp_distances[47].magnitude == approx(A_to_m(2.82550))
     assert cohp.x_lobster_cohp_distances[71].magnitude == approx(A_to_m(3.99586))
     assert np.shape(cohp.x_lobster_cohp_translations) == (72, 3)
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[0], [-1, 0, 0])])
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[54], [0, -1, 0])])
-    assert all([a == b for a, b in zip(
-        cohp.x_lobster_cohp_translations[71], [0, 1, 0])])
+    assert (cohp.x_lobster_cohp_translations[0] == [-1, 0, 0]).all()
+    assert (cohp.x_lobster_cohp_translations[54] == [0, -1, 0]).all()
+    assert (cohp.x_lobster_cohp_translations[71] == [0, 1, 0]).all()
     assert np.shape(cohp.x_lobster_integrated_cohp_at_fermi_level) == (1, 72)
     assert cohp.x_lobster_integrated_cohp_at_fermi_level[0, 0].magnitude == approx(
         eV_to_J(-0.02652))
@@ -308,12 +299,9 @@ def test_NaCl(parser):
     assert coop.x_lobster_coop_distances[12].magnitude == approx(A_to_m(2.82550))
     assert coop.x_lobster_coop_distances[71].magnitude == approx(A_to_m(3.99586))
     assert np.shape(coop.x_lobster_coop_translations) == (72, 3)
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[0], [-1, 0, 0])])
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[13], [0, 1, 0])])
-    assert all([a == b for a, b in zip(
-        coop.x_lobster_coop_translations[71], [0, 1, 0])])
+    assert (coop.x_lobster_coop_translations[0] == [-1, 0, 0]).all()
+    assert (coop.x_lobster_coop_translations[13] == [0, 1, 0]).all()
+    assert (coop.x_lobster_coop_translations[71] == [0, 1, 0]).all()
     assert np.shape(coop.x_lobster_integrated_coop_at_fermi_level) == (1, 72)
     assert coop.x_lobster_integrated_coop_at_fermi_level[0, 0].magnitude == approx(
         eV_to_J(-0.00519))
@@ -412,10 +400,8 @@ def test_HfV(parser):
     system = run.system
     assert len(system) == 1
     assert len(system[0].atoms.species) == 12
-    assert all([a == b for a, b in zip(system[0].atoms.species,
-               [72, 72, 72, 72, 23, 23, 23, 23, 23, 23, 23, 23])])
-    assert all([a == b for a, b in zip(system[0].atoms.periodic,
-               [True, True, True])])
+    assert (system[0].atoms.species == [72, 72, 72, 72, 23, 23, 23, 23, 23, 23, 23, 23]).all()
+    assert system[0].atoms.periodic == [True, True, True]
 
     # method
     method = run.method
@@ -478,12 +464,10 @@ def test_QE_Ni(parser):
     # QE system parsing
     system = run.system
     assert len(system) == 1
-    assert all([a == b for a, b in zip(system[0].atoms.labels, ['Ni'])])
-    assert all([a == b for a, b in zip(system[0].atoms.periodic,
-               [True, True, True])])
+    assert system[0].atoms.labels == ['Ni']
+    assert system[0].atoms.periodic == [True, True, True]
     assert len(system[0].atoms.positions) == 1
-    assert all([a == b for a, b in zip(system[0].atoms.positions[0],
-               [0, 0, 0])])
+    assert (system[0].atoms.positions[0].magnitude == [0, 0, 0]).all()
 
     method = run.method
     assert len(method) == 1

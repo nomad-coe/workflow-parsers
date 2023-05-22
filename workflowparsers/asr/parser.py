@@ -215,8 +215,8 @@ def asr_to_archives(directory: str, recipes: List[str] = None):
     nomad archive format.
     '''
     # record can only be fetched on the directory
+    cwd = os.getcwd()
     try:
-        cwd = os.getcwd()
         os.chdir(directory)
         cache = get_cache()
 
