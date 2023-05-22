@@ -26,7 +26,7 @@ from phonopy.structure.atoms import PhonopyAtoms
 
 from .calculator import PhononProperties
 
-from nomad import config # type: ignore
+from nomad import config  # type: ignore
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
 from nomad.datamodel.metainfo.simulation.run import Run, Program
