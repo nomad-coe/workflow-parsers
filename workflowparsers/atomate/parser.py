@@ -242,12 +242,12 @@ class AtomateParser:
             sec_em = [
                 BasisSetContainer(
                     type='plane waves',
-                    scope = ['wavefunction'],
+                    scope=['wavefunction'],
                     basis_set=[
                         BasisSet(
-                            type = 'plane waves',
-                            scope = ['valence'],
-                            cutoff = cutoff,
+                            type='plane waves',
+                            scope=['valence'],
+                            cutoff=cutoff,
                         ),
                     ],
                 )
