@@ -69,7 +69,7 @@ def test_aflowlib(parser):
     assert len(run.system) == len(run.calculation) == 28
     assert run.system[3].atoms.positions[3][2].magnitude == approx(5.53515521e-10)
     assert run.calculation[19].thermodynamics[0].pressure.magnitude == (-1.6886e+09)
-    sec_thermo = archive.workflow.results
+    sec_thermo = archive.workflow2.results
     assert sec_thermo.temperature[12].magnitude == 120
     # assert sec_thermo.thermal_conductivity[18].magnitude == approx(4.924586)
     # assert sec_thermo.gruneisen_parameter[35] == approx(2.255801)
@@ -95,8 +95,8 @@ def test_aflowin(parser):
     assert sec_scc.band_structure_phonon[0].segment[3].kpoints[7][1] == approx(1.02984830)
     assert sec_scc.band_structure_phonon[0].segment[9].energies[0][10][3].magnitude == approx(1.92480691e-21)
 
-    assert archive.workflow.results.qpoints[9249][0] == approx(-4.7619047619e-02)
-    assert archive.workflow.results.group_velocity[234][2][0].magnitude == approx(-133.348333)
+    assert archive.workflow2.results.qpoints[9249][0] == approx(-4.7619047619e-02)
+    assert archive.workflow2.results.group_velocity[234][2][0].magnitude == approx(-133.348333)
 
     # TODO currently workflow is not a repeating section
     # assert archive.workflow.results.temperature[161].magnitude == approx(1610)
