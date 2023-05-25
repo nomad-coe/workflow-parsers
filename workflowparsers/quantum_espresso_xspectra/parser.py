@@ -397,15 +397,20 @@ class QuantumEspressoXSpectraParser:
             sec_scc.method_ref = sec_run.method[-1]
 
             sec_spectra = sec_scc.m_create(Spectra)
-            sec_spectra.type = self.mainfile_parser.input.get('x_qe_xspectra_calculation', '').split('_')[0].upper()
-            sec_spectra.n_energies = data.shape[0]
-            sec_spectra.excitation_energies = data[:, 0] * ureg.eV
-            unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
-            sec_spectra.intensities = scipy.constants.fine_structure * data[:, 1] / (data[:, 0] * unit_cell_volume)
-
             for key, val in self.mainfile_parser.xanes.get('step_2', {}).items():
                 if key != 'file':
                     setattr(sec_spectra, f'x_qe_xspectra_{key}', val)
+            sec_spectra.type = self.mainfile_parser.input.get('x_qe_xspectra_calculation', '').split('_')[0].upper()
+            sec_spectra.n_energies = data.shape[0]
+            energy_ref = 0.0 * ureg.eV
+            if self.mainfile_parser.xanes.get('step_2', {}) .get('energy_zero'):
+                energy_ref = self.mainfile_parser.xanes.get('step_2', {}).get('energy_zero')
+                sec_spectra.energy_zero_ref = - energy_ref  # TODO check this sign with devs
+            sec_spectra.excitation_energies = data[:, 0] * ureg.eV
+            unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
+            # TODO check with devs, not sure if this expression is correct or whether it is simply about renormalizing by the unit_cell_volume
+            # sec_spectra.intensities = scipy.constants.fine_structure * data[:, 1] / (energies * unit_cell_volume)
+            sec_spectra.intensities = data[:, 1] / unit_cell_volume
 
     def parse(self, filepath, archive, logger):
         self.logger = logging.getLogger(__name__) if logger is None else logger
