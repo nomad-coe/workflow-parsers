@@ -19,7 +19,6 @@
 import logging
 import os
 import numpy as np
-import scipy.constants
 from datetime import datetime
 
 from nomad.units import ureg
@@ -404,8 +403,8 @@ class QuantumEspressoXSpectraParser:
             sec_spectra.n_energies = data.shape[0]
             sec_spectra.excitation_energies = data[:, 0] * ureg.eV
             # TODO check with devs, not sure if this expression is correct or whether it is simply about renormalizing by the unit_cell_volume
-            unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
-            sec_spectra.intensities = data[:, 1] / unit_cell_volume
+            sec_spectra.intensities = data[:, 1]
+            # unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
             # sec_spectra.intensities = scipy.constants.fine_structure * data[:, 1] / (energies * unit_cell_volume)
 
     def parse(self, filepath, archive, logger):
