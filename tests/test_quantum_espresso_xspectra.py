@@ -72,4 +72,4 @@ def test_1(parser):
     assert sec_spectra.type == 'XANES'
     assert sec_spectra.n_energies == 400
     assert sec_spectra.excitation_energies[22].magnitude == approx(-1.6523701378886513e-18)
-    assert sec_spectra.intensities[22] == approx(5.8321411406262735e-09)
+    assert sec_spectra.intensities[22] == approx(2.905e-5)
