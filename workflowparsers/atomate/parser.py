@@ -274,6 +274,7 @@ class AtomateParser:
         # TODO handle multiple workflow sections
         workflow_files = [f for f in os.listdir(
             self.maindir) if f.endswith('.json') and f != os.path.basename(self.filepath)]
+        workflow_files.sort()
         for filename in workflow_files:
             try:
                 data = json.load(open(os.path.join(self.maindir, filename)))

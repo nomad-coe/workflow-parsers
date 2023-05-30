@@ -80,14 +80,13 @@ def test_all(parser):
     # dos = run.calculation[-1].dos_phonon[0]
     # assert dos.energies[20].magnitude == approx(3.49331979e-22)
     # assert dos.total[0].value[35].magnitude == approx(1.27718386e+19)
-    # phonon = archive.workflow
-    # assert phonon.method.with_non_analytic_correction
-    # thermo = archive.workflow
-    # assert thermo.results.stability.formation_energy.magnitude == approx(0)
-    # assert thermo.results.stability.is_stable
+    phonon = archive.workflow2
+    assert phonon.method.with_non_analytic_correction
+    assert phonon.results.stability.formation_energy.magnitude == approx(0)
+    assert phonon.results.stability.is_stable
 
-    assert archive.workflow2.method.energy_stress_calculator == 'VASP'
-    assert archive.workflow2.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
-    assert archive.workflow2.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
-    assert archive.workflow2.results.poisson_ratio_hill == approx(0.20424545172250694)
-    assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)
+    # assert archive.workflow2.method.energy_stress_calculator == 'VASP'
+    # assert archive.workflow2.results.elastic_constants_matrix_second_order[2][1].magnitude == approx(5.3e+10)
+    # assert archive.workflow2.results.compliance_matrix_second_order[1][0].magnitude == approx(-2.3e-09)
+    # assert archive.workflow2.results.poisson_ratio_hill == approx(0.20424545172250694)
+    # assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(8.30112837e+10)
