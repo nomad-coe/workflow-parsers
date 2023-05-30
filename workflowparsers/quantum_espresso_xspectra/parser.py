@@ -29,8 +29,7 @@ from nomad.datamodel.metainfo.simulation.method import (
 )
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import Calculation, Spectra
-from nomad.datamodel.metainfo.workflow import Workflow
-from nomad.datamodel.metainfo.simulation.workflow import SinglePoint as SinglePoint2
+from nomad.datamodel.metainfo.simulation.workflow import SinglePoint
 
 from .metainfo.quantum_espresso_xspectra import (
     x_qe_xspectra_input, x_qe_xspectra_n_parallel)
@@ -442,7 +441,4 @@ class QuantumEspressoXSpectraParser:
         self.parse_scc()
 
         # Workflow
-        sec_workflow = archive.m_create(Workflow)
-        sec_workflow.type = 'single_point'
-        workflow = SinglePoint2()
-        archive.workflow2 = workflow
+        archive.workflow2 = SinglePoint()

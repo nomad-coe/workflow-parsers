@@ -32,9 +32,10 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Thermodynamics, Dos, DosValues, BandStructure, BandEnergies)
 from nomad.datamodel.metainfo.simulation.method import Method
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.workflow import (
-    Workflow, Elastic, DebyeModel, Phonon, Thermodynamics as WorkflowThermodynamics)
-from nomad.datamodel.metainfo.simulation import workflow as workflow2
+from nomad.datamodel.metainfo.simulation.workflow import (
+    Elastic, ElasticMethod, ElasticResults, Phonon, PhononMethod, PhononResults,
+    Thermodynamics as WorkflowThermodynamics, ThermodynamicsResults
+)
 
 
 from .metainfo import m_env
@@ -206,11 +207,7 @@ class AFLOWParser:
         if thermal_properties is None:
             return
 
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.run_ref = sec_run
-        sec_workflow.type = 'debye_model'
-        sec_debye = sec_workflow.m_create(DebyeModel)
-        sec_thermo = sec_workflow.m_create(WorkflowThermodynamics)
+        workflow = WorkflowThermodynamics(results=ThermodynamicsResults())
 
         thermal_properties = np.reshape(thermal_properties, (len(thermal_properties) // 9, 9))
         thermal_properties = np.transpose(thermal_properties)
@@ -218,19 +215,21 @@ class AFLOWParser:
         energies = np.reshape(energies, (len(energies) // 9, 9))
         energies = np.transpose(energies)
 
-        sec_thermo.temperature = thermal_properties[0] * ureg.K
-        sec_thermo.gibbs_free_energy = energies[1] * ureg.eV
-        sec_thermo.vibrational_free_energy = energies[2] * ureg.meV
-        sec_thermo.vibrational_internal_energy = energies[3] * ureg.meV
-        sec_thermo.vibrational_entropy = energies[4] * ureg.meV / ureg.K
-        sec_thermo.heat_capacity_c_v = thermal_properties[4] * ureg.boltzmann_constant
-        sec_thermo.heat_capacity_c_p = thermal_properties[5] * ureg.boltzmann_constant
-        sec_debye.thermal_conductivity = thermal_properties[1] * ureg.watt / ureg.m * ureg.K
-        sec_debye.debye_temperature = thermal_properties[2] * ureg.K
-        sec_debye.gruneisen_parameter = thermal_properties[3]
-        sec_debye.thermal_expansion = thermal_properties[6] / ureg.K
-        sec_debye.bulk_modulus_static = thermal_properties[7] * ureg.GPa
-        sec_debye.bulk_modulus_isothermal = thermal_properties[8] * ureg.GPa
+        workflow.results.temperature = thermal_properties[0] * ureg.K
+        workflow.results.gibbs_free_energy = energies[1] * ureg.eV
+        workflow.results.vibrational_free_energy = energies[2] * ureg.meV
+        workflow.results.vibrational_internal_energy = energies[3] * ureg.meV
+        workflow.results.vibrational_entropy = energies[4] * ureg.meV / ureg.K
+        workflow.results.heat_capacity_c_v = thermal_properties[4] * ureg.boltzmann_constant
+        workflow.results.heat_capacity_c_p = thermal_properties[5] * ureg.boltzmann_constant
+        # TODO add these to metainfo def
+        # workflow.results.thermal_conductivity = thermal_properties[1] * ureg.watt / ureg.m * ureg.K
+        # sec_debye.debye_temperature = thermal_properties[2] * ureg.K
+        # sec_debye.gruneisen_parameter = thermal_properties[3]
+        # sec_debye.thermal_expansion = thermal_properties[6] / ureg.K
+        # sec_debye.bulk_modulus_static = thermal_properties[7] * ureg.GPa
+        # sec_debye.bulk_modulus_isothermal = thermal_properties[8] * ureg.GPa
+        self.archive.workflow2 = workflow
 
     def parse_ael(self):
         sec_run = self.archive.m_create(Run)
@@ -240,14 +239,7 @@ class AFLOWParser:
         self.parse_structures('AEL')
 
         self.ael_parser.mainfile = self.get_aflow_file('aflow.ael.out')
-        sec_workflow = self.archive.m_create(Workflow)
-        workflow = workflow2.Elastic(method=workflow2.ElasticMethod(), results=workflow2.ElasticResults())
-        sec_workflow.run_ref = sec_run
-        sec_workflow.type = 'elastic'
-        sec_elastic = sec_workflow.m_create(Elastic)
-        sec_elastic.energy_stress_calculator = 'vasp'
-        sec_elastic.calculation_method = 'stress'
-        sec_elastic.elastic_constants_order = 2
+        workflow = Elastic(method=ElasticMethod(), results=ElasticResults())
         workflow.method.energy_stress_calculator = 'vasp'
         workflow.method.calculation_method = 'stress'
         workflow.method.elastic_constants_order = 2
@@ -255,9 +247,6 @@ class AFLOWParser:
         paths = [d for d in self.aflow_data.get('files', []) if d.startswith('ARUN.AEL')]
         deforms = np.array([d.split('_')[-2:] for d in paths], dtype=np.dtype(np.float64))
         strains = [d[1] for d in deforms if d[0] == 1]
-        sec_elastic.n_deformations = int(max(np.transpose(deforms)[0]))
-        sec_elastic.n_strains = len(strains)
-        sec_elastic.strain_maximum = max(strains) - 1.0
         workflow.results.n_deformations = int(max(np.transpose(deforms)[0]))
         workflow.results.n_strains = len(strains)
         workflow.method.strain_maximum = max(strains) - 1.0
@@ -271,15 +260,14 @@ class AFLOWParser:
                 val = val * (ureg.m / ureg.s)
             elif 'temperature' in key:
                 val = val * ureg.K
-            setattr(sec_elastic, key, val)
             setattr(workflow.results, key, val)
 
         if self.ael_parser.ael_stiffness_tensor is not None:
-            sec_elastic.elastic_constants_matrix_second_order = np.reshape(
+            workflow.results.elastic_constants_matrix_second_order = np.reshape(
                 self.ael_parser.ael_stiffness_tensor, (6, 6)) * ureg.GPa
 
         if self.ael_parser.ael_compliance_tensor is not None:
-            sec_elastic.compliance_matrix_second_order = np.reshape(
+            workflow.results.compliance_matrix_second_order = np.reshape(
                 self.ael_parser.ael_compliance_tensor, (6, 6))
 
         self.archive.workflow2 = workflow
@@ -328,19 +316,13 @@ class AFLOWParser:
 
         self.apl_parser.mainfile = self.get_aflow_file('aflow.apl.thermodynamic_properties.out')
 
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.type = 'phonon'
-        sec_workflow.run_ref = sec_run
-        workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
+        workflow = Phonon(method=PhononMethod(), results=PhononResults())
 
-        sec_phonon = sec_workflow.m_create(Phonon)
-        sec_phonon.force_calculator = 'vasp'
         workflow.method.force_calculator = 'vasp'
         mesh = self.aflowin_parser.get('aflow_apl_dosmesh')
         if mesh is not None:
             try:
                 cell = Cell.fromcellpar(self.aflowin_parser.geometry)
-                sec_phonon.mesh_density = np.product([int(m) for m in mesh.split('x')]) / cell.volume
                 workflow.method.mesh_density = np.product([int(m) for m in mesh.split('x')]) / cell.volume
             except Exception:
                 pass
@@ -351,12 +333,9 @@ class AFLOWParser:
             try:
                 qpoints = self.apl_parser.apl_qpoints
                 qpoints = np.reshape(qpoints, (len(qpoints) // 4, 4))
-                sec_phonon.qpoints = np.transpose(np.transpose(qpoints)[1:])
                 group_velocity = np.reshape(
                     group_velocity, (len(qpoints), len(group_velocity) // len(qpoints)))
                 group_velocity = np.transpose(np.transpose(group_velocity)[1:])
-                sec_phonon.group_velocity = np.reshape(group_velocity, (
-                    len(group_velocity), len(group_velocity[0]) // 3, 3)) * ureg.kilometer / ureg.second
                 workflow.results.qpoints = np.transpose(np.transpose(qpoints)[1:])
                 workflow.results.group_velocity = np.reshape(group_velocity, (
                     len(group_velocity), len(group_velocity[0]) // 3, 3)) * ureg.kilometer / ureg.second
@@ -365,19 +344,15 @@ class AFLOWParser:
 
         self.apl_parser.mainfile = self.get_aflow_file('aflow.apl.thermodynamic_properties.out.xz')
         apl_thermo = self.apl_parser.get('apl_thermo')
+        # TODO handle multiple workflows
         if apl_thermo is not None:
             apl_thermo = np.transpose(np.reshape(apl_thermo, (len(apl_thermo) // 6, 6)))
-            sec_thermo = sec_workflow.m_create(WorkflowThermodynamics)
-            sec_thermo.temperature = apl_thermo[0] * ureg.kelvin
-            sec_thermo.internal_energy = apl_thermo[2] * ureg.millielectron_volt
-            sec_thermo.helmholtz_free_energy = apl_thermo[3] * ureg.millielectron_volt
-            sec_thermo.entropy = apl_thermo[4] * ureg.boltzmann_constant
-            sec_thermo.heat_capacity_c_v = apl_thermo[5] * ureg.boltzmann_constant
-            workflow.results.temperature = apl_thermo[0] * ureg.kelvin
-            workflow.results.internal_energy = apl_thermo[2] * ureg.millielectron_volt
-            workflow.results.helmholtz_free_energy = apl_thermo[3] * ureg.millielectron_volt
-            workflow.results.entropy = apl_thermo[4] * ureg.boltzmann_constant
-            workflow.results.heat_capacity_c_v = apl_thermo[5] * ureg.boltzmann_constant
+            sec_thermo = WorkflowThermodynamics(results=ThermodynamicsResults())
+            sec_thermo.results.temperature = apl_thermo[0] * ureg.kelvin
+            sec_thermo.results.internal_energy = apl_thermo[2] * ureg.millielectron_volt
+            sec_thermo.results.helmholtz_free_energy = apl_thermo[3] * ureg.millielectron_volt
+            sec_thermo.results.entropy = apl_thermo[4] * ureg.boltzmann_constant
+            sec_thermo.results.heat_capacity_c_v = apl_thermo[5] * ureg.boltzmann_constant
 
         self.archive.workflow2 = workflow
 

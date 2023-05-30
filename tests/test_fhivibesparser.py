@@ -37,7 +37,7 @@ def _test_singlepoint(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/singlepoint.nc', archive, None)
 
-    assert archive.workflow[0].type == 'single_point'
+    assert archive.workflow2.m_def.name == 'SinglePoint'
 
     sec_run = archive.run
     assert len(sec_run) == 10
@@ -73,7 +73,7 @@ def _test_relaxation(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/relaxation.nc', archive, None)
 
-    assert archive.workflow[0].type == 'geometry_optimization'
+    assert archive.workflow2.m_def.name == 'GeometryOptimization'
 
     assert len(archive.run) == 1
 
@@ -100,7 +100,7 @@ def _test_molecular_dynamics(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/molecular_dynamics.nc', archive, None)
 
-    assert archive.workflow[0].type == 'molecular_dynamics'
+    assert archive.workflow2.m_def.name == 'MolecularDynamics'
 
     sec_attrs = archive.run[0].method[0].x_fhi_vibes_section_attributes[0]
     sec_md = sec_attrs.x_fhi_vibes_section_attributes_metadata[0].x_fhi_vibes_section_metadata_MD[0]
@@ -123,7 +123,7 @@ def _test_phonon(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/phonopy.nc', archive, None)
 
-    assert archive.workflow[0].type == 'phonon'
+    assert archive.workflow2.m_def.name == 'Phonon'
 
     sec_attrs = archive.run[0].method[0].x_fhi_vibes_section_attributes[0]
     sec_phonon = sec_attrs.x_fhi_vibes_section_attributes_metadata[0].x_fhi_vibes_section_metadata_phonopy[0]

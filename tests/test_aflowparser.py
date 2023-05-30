@@ -36,7 +36,6 @@ def test_aflowlib(parser):
     parser.parse('tests/data/aflow/Ag1Co1O2_ICSD_246157/aflowlib.json', archive, None)
 
     assert len(archive.run) == 3
-    assert len(archive.workflow) == 2
 
     assert archive.run[0].program.version == 'aflow30847'
     assert archive.run[0].x_aflow_auid == 'aflow:fbc2cf03b9659c90'
@@ -58,34 +57,22 @@ def test_aflowlib(parser):
     assert run.system[21].atoms.lattice_vectors[0][1].magnitude == approx(-2.5241880209758e-10)
     assert run.calculation[15].energy.total.value.magnitude == approx(-6.9854741e-19)
     assert run.calculation[9].stress.total.value[2][2].magnitude == approx(-1.594e+08)
-    assert archive.workflow[0].run_ref == run
-    assert archive.workflow[0].type == 'elastic'
-    sec_elastic = archive.workflow[0].elastic
-    assert sec_elastic.n_deformations == 3
-    assert sec_elastic.strain_maximum == pytest.approx(0.01)
-    assert sec_elastic.n_strains == 8
-    assert sec_elastic.elastic_constants_matrix_second_order[0][1].magnitude == approx(7.45333e+10)
-    assert sec_elastic.bulk_modulus_voigt.magnitude == approx(1.50939e+11)
-    assert sec_elastic.pugh_ratio_hill == approx(0.298965)
-    # TODO currently workflow2 is not a repeating section
-    # assert archive.workflow2.results.n_deformations == 3
-    # assert archive.workflow2.results.strain_maximum == pytest.approx(0.01)
-    # assert archive.workflow2.results.n_strains == 8
-    # assert archive.workflow2.results.elastic_constants_matrix_second_order[0][1].magnitude == approx(7.45333e+10)
-    # assert archive.workflow2.results.bulk_modulus_voigt.magnitude == approx(1.50939e+11)
-    # assert archive.workflow2.results.pugh_ratio_hill == approx(0.298965)
+    # TODO currently workflow is not a repeating section
+    # assert archive.workflow.results.n_deformations == 3
+    # assert archive.workflow.results.strain_maximum == pytest.approx(0.01)
+    # assert archive.workflow.results.n_strains == 8
+    # assert archive.workflow.results.elastic_constants_matrix_second_order[0][1].magnitude == approx(7.45333e+10)
+    # assert archive.workflow.results.bulk_modulus_voigt.magnitude == approx(1.50939e+11)
+    # assert archive.workflow.results.pugh_ratio_hill == approx(0.298965)
 
     run = archive.run[2]
     assert len(run.system) == len(run.calculation) == 28
     assert run.system[3].atoms.positions[3][2].magnitude == approx(5.53515521e-10)
     assert run.calculation[19].thermodynamics[0].pressure.magnitude == (-1.6886e+09)
-    assert archive.workflow[1].run_ref == run
-    assert archive.workflow[1].type == 'debye_model'
-    sec_debye = archive.workflow[1].debye_model
-    sec_thermo = archive.workflow[1].thermodynamics
+    sec_thermo = archive.workflow2.results
     assert sec_thermo.temperature[12].magnitude == 120
-    assert sec_debye.thermal_conductivity[18].magnitude == approx(4.924586)
-    assert sec_debye.gruneisen_parameter[35] == approx(2.255801)
+    # assert sec_thermo.thermal_conductivity[18].magnitude == approx(4.924586)
+    # assert sec_thermo.gruneisen_parameter[35] == approx(2.255801)
     assert sec_thermo.heat_capacity_c_p[87].magnitude == approx(3.73438425e-22)
     assert sec_thermo.vibrational_free_energy[93].magnitude == approx(-4.13010555e-19)
 
@@ -95,7 +82,6 @@ def test_aflowin(parser):
     parser.parse('tests/data/aflow/MgO/aflow.in', archive, None)
 
     assert len(archive.run) == 2
-    assert len(archive.workflow) == 1
 
     assert archive.run[0].program.version == '3.2.1'
     sec_system = archive.run[0].system[0]
@@ -109,24 +95,12 @@ def test_aflowin(parser):
     assert sec_scc.band_structure_phonon[0].segment[3].kpoints[7][1] == approx(1.02984830)
     assert sec_scc.band_structure_phonon[0].segment[9].energies[0][10][3].magnitude == approx(1.92480691e-21)
 
-    sec_workflow = archive.workflow[0]
-    assert sec_workflow.type == 'phonon'
-    assert sec_workflow.run_ref == archive.run[1]
-
-    sec_phonon = sec_workflow.phonon
-    assert sec_phonon.qpoints[9249][0] == approx(-4.7619047619e-02)
-    assert sec_phonon.group_velocity[234][2][0].magnitude == approx(-133.348333)
     assert archive.workflow2.results.qpoints[9249][0] == approx(-4.7619047619e-02)
     assert archive.workflow2.results.group_velocity[234][2][0].magnitude == approx(-133.348333)
 
-    sec_thermo = sec_workflow.thermodynamics
-    assert sec_thermo.temperature[161].magnitude == approx(1610)
-    assert sec_thermo.internal_energy[190].magnitude == approx(1.58571787e-19)
-    assert sec_thermo.helmholtz_free_energy[108].magnitude == approx(-6.4052878e-20)
-    assert sec_thermo.entropy[10].magnitude == approx(4.96817858e-24)
-    assert sec_thermo.heat_capacity_c_v[35].magnitude == approx(6.72704591e-23)
-    assert archive.workflow2.results.temperature[161].magnitude == approx(1610)
-    assert archive.workflow2.results.internal_energy[190].magnitude == approx(1.58571787e-19)
-    assert archive.workflow2.results.helmholtz_free_energy[108].magnitude == approx(-6.4052878e-20)
-    assert archive.workflow2.results.entropy[10].magnitude == approx(4.96817858e-24)
-    assert archive.workflow2.results.heat_capacity_c_v[35].magnitude == approx(6.72704591e-23)
+    # TODO currently workflow is not a repeating section
+    # assert archive.workflow.results.temperature[161].magnitude == approx(1610)
+    # assert archive.workflow.results.internal_energy[190].magnitude == approx(1.58571787e-19)
+    # assert archive.workflow.results.helmholtz_free_energy[108].magnitude == approx(-6.4052878e-20)
+    # assert archive.workflow.results.entropy[10].magnitude == approx(4.96817858e-24)
+    # assert archive.workflow.results.heat_capacity_c_v[35].magnitude == approx(6.72704591e-23)

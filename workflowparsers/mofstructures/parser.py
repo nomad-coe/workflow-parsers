@@ -26,7 +26,7 @@ from nomad.datamodel import EntryArchive
 from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.system import System, Atoms, AtomsGroup
 from nomad.datamodel.metainfo.simulation.method import Method
-from nomad.datamodel.metainfo.workflow import Workflow
+from nomad.datamodel.metainfo.simulation.workflow import SinglePoint
 from workflowparsers.mofstructures.metainfo.mofstructures import x_mof_atoms
 
 
@@ -183,14 +183,13 @@ class MOFStructuresParser:
             sec_method = run.m_create(Method)
             sec_method.x_mof_metadata = metadata
 
-            workflow = self.archive.m_create(Workflow)
-            workflow.type = 'single_point'
-            workflow.run_ref = run
+            workflow = SinglePoint()
             # add path to external calculation
             path = f'mof_{name}_calculation.out'
             try:
                 archive_ref = archive.m_context.resolve_archive(f'../upload/archive/mainfile/{path}')
                 self.logger.info(f'reference archive {archive_ref.workflow[0].calculations_ref[0].energy.total.value}')
-                archive.workflow[-1].workflows_ref = [archive_ref.workflow[0]]
+                # TODO connect workflows
             except Exception:
                 self.logger.warn('Could not resolve referenced calculations.')
+            self.archive.workflow2 = workflow

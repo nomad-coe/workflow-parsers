@@ -28,8 +28,8 @@ from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.method import Method
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import Calculation
-from nomad.datamodel.metainfo.workflow import Workflow, Elastic, StrainDiagrams
-from nomad.datamodel.metainfo.simulation import workflow as workflow2
+from nomad.datamodel.metainfo.simulation.workflow import (
+    Elastic, ElasticMethod, ElasticResults, StrainDiagrams)
 
 from .metainfo.elastic import x_elastic_section_fitting_parameters
 
@@ -322,7 +322,7 @@ class ElasticParser:
                 eta[result[0]].append(result[1])
                 val[result[0]].append(result[2])
 
-        return eta, val
+        return [eta, val]
 
     def get_energy_fit(self):
         energy_fit = dict()
@@ -491,7 +491,6 @@ class ElasticParser:
         return elastic_constant
 
     def parse_strain(self):
-        sec_elastic = self.archive.workflow[0].elastic
         method = self.info['calculation_method'].lower()
 
         n_strains = self.info['n_strains']
@@ -506,12 +505,7 @@ class ElasticParser:
                 self.logger.warn('Error getting strain and energy data')
                 return
 
-            sec_strain_diagram = sec_elastic.m_create(StrainDiagrams)
-            sec_strain_diagram.type = 'energy'
-            sec_strain_diagram.n_eta = len(strain[0])
-            sec_strain_diagram.eta = strain
-            sec_strain_diagram.value = energy
-            sec_strain_diagram2 = self.archive.workflow2.results.m_create(workflow2.StrainDiagrams)
+            sec_strain_diagram2 = self.archive.workflow2.results.m_create(StrainDiagrams)
             sec_strain_diagram2.type = 'energy'
             sec_strain_diagram2.n_eta = len(strain[0])
             sec_strain_diagram2.eta = strain
@@ -524,18 +518,12 @@ class ElasticParser:
 
             for diagram_type in ['cross-validation', 'd2e']:
                 for fit_order in energy_fit[diagram_type][0].keys():
-                    sec_strain_diagram = sec_elastic.m_create(StrainDiagrams)
+                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                     sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
                     sec_strain_diagram.eta = energy_fit[diagram_type][0][fit_order]
                     sec_strain_diagram.value = energy_fit[diagram_type][1][fit_order]
-                    sec_strain_diagram2 = self.archive.workflow2.results.m_create(workflow2.StrainDiagrams)
-                    sec_strain_diagram2.type = diagram_type
-                    sec_strain_diagram2.polynomial_fit_order = int(fit_order[:-2])
-                    sec_strain_diagram2.n_eta = poly_fit.get(fit_order, None)
-                    sec_strain_diagram2.eta = energy_fit[diagram_type][0][fit_order]
-                    sec_strain_diagram2.value = energy_fit[diagram_type][1][fit_order]
 
         elif method == 'stress':
             strain, stress = self.get_strain_stress()
@@ -546,18 +534,12 @@ class ElasticParser:
                 stress_i = np.transpose(np.array(stress[diagram_type]), axes=(2, 0, 1))
 
                 for si in range(6):
-                    sec_strain_diagram = sec_elastic.m_create(StrainDiagrams)
+                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.stress_voigt_component = si + 1
                     sec_strain_diagram.n_eta = len(strain_i[0])
                     sec_strain_diagram.eta = strain_i
                     sec_strain_diagram.value = stress_i[si]
-                    sec_strain_diagram2 = self.archive.workflow2.results.m_create(workflow2.StrainDiagrams)
-                    sec_strain_diagram2.type = diagram_type
-                    sec_strain_diagram2.stress_voigt_component = si + 1
-                    sec_strain_diagram2.n_eta = len(strain_i[0])
-                    sec_strain_diagram2.eta = strain_i
-                    sec_strain_diagram2.value = stress_i[si]
 
             stress_fit = self.get_stress_fit()
             for diagram_type in ['cross-validation', 'dtn']:
@@ -565,51 +547,21 @@ class ElasticParser:
                     if len(stress_fit[diagram_type][si]) == 0:
                         continue
                     for fit_order in stress_fit[diagram_type][si][0].keys():
-                        sec_strain_diagram = sec_elastic.m_create(StrainDiagrams)
+                        sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
                         sec_strain_diagram.type = diagram_type
                         sec_strain_diagram.stress_voigt_component = si + 1
                         sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                         sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
                         sec_strain_diagram.eta = stress_fit[diagram_type][si][0][fit_order]
                         sec_strain_diagram.value = np.array(stress_fit[diagram_type][si][1][fit_order])
-                        sec_strain_diagram2 = self.archive.workflow2.results.m_create(workflow2.StrainDiagrams)
-                        sec_strain_diagram2.type = diagram_type
-                        sec_strain_diagram2.stress_voigt_component = si + 1
-                        sec_strain_diagram2.polynomial_fit_order = int(fit_order[:-2])
-                        sec_strain_diagram2.n_eta = poly_fit.get(fit_order, None)
-                        sec_strain_diagram2.eta = stress_fit[diagram_type][si][0][fit_order]
-                        sec_strain_diagram2.value = np.array(stress_fit[diagram_type][si][1][fit_order])
 
     def parse_elastic_constant(self):
-        sec_elastic = self.archive.workflow[0].elastic
         sec_results = self.archive.workflow2.results
 
         order = self.info['order']
 
         if order == 2:
             matrices, moduli, eigenvalues = self.get_elastic_constants_order2()
-            sec_elastic.elastic_constants_notation_matrix_second_order = matrices.get('voigt')
-            sec_elastic.elastic_constants_matrix_second_order = matrices.get('elastic_constant')
-            sec_elastic.compliance_matrix_second_order = matrices.get('compliance')
-
-            sec_elastic.bulk_modulus_voigt = moduli.get('B_V', moduli.get('K_V'))
-            sec_elastic.shear_modulus_voigt = moduli.get('G_V')
-
-            sec_elastic.bulk_modulus_reuss = moduli.get('B_R', moduli.get('K_R'))
-            sec_elastic.shear_modulus_reuss = moduli.get('G_R')
-
-            sec_elastic.bulk_modulus_hill = moduli.get('B_H', moduli.get('K_H'))
-            sec_elastic.shear_modulus_hill = moduli.get('G_H')
-
-            sec_elastic.young_modulus_voigt = moduli.get('E_V')
-            sec_elastic.poisson_ratio_voigt = moduli.get('nu_V')
-            sec_elastic.young_modulus_reuss = moduli.get('E_R')
-            sec_elastic.poisson_ratio_reuss = moduli.get('nu_R')
-            sec_elastic.young_modulus_hill = moduli.get('E_H')
-            sec_elastic.poisson_ratio_hill = moduli.get('nu_H')
-
-            sec_elastic.eigenvalues_elastic = eigenvalues
-
             sec_results.elastic_constants_notation_matrix_second_order = matrices.get('voigt')
             sec_results.elastic_constants_matrix_second_order = matrices.get('elastic_constant')
             sec_results.compliance_matrix_second_order = matrices.get('compliance')
@@ -635,7 +587,6 @@ class ElasticParser:
         elif order == 3:
             elastic_constant = self.get_elastic_constants_order3()
             if elastic_constant is not None:
-                sec_elastic.elastic_constants_matrix_third_order = elastic_constant * ureg.GPa
                 sec_results.elastic_constants_matrix_third_order = elastic_constant * ureg.GPa
 
     def init_parser(self):
@@ -697,21 +648,9 @@ class ElasticParser:
         sec_scc.method_ref = sec_method
         sec_scc.system_ref = sec_system
 
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.workflow_type = 'elastic'
-        sec_elastic = sec_workflow.m_create(Elastic)
-        sec_elastic.energy_stress_calculator = self.info['code_name']
-        sec_elastic.calculation_method = self.info['calculation_method'].lower()
-        sec_elastic.elastic_constants_order = self.info['order']
-        sec_elastic.strain_maximum = self.info['max_strain']
-        sec_elastic.n_strains = self.info['n_strains']
-
         deformation_types = self.get_deformation_types()
-        sec_elastic.n_deformations = len(self.deformation_dirs)
-        sec_elastic.deformation_types = deformation_types
-
-        workflow = workflow2.Elastic(
-            method=workflow2.ElasticMethod(), results=workflow2.ElasticResults())
+        workflow = Elastic(
+            method=ElasticMethod(), results=ElasticResults())
         workflow.method.energy_stress_calculator = self.info['code_name']
         workflow.method.calculation_method = self.info['calculation_method'].lower()
         workflow.method.elastic_constants_order = self.info['order']

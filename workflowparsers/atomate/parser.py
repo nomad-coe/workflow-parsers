@@ -23,10 +23,11 @@ import numpy as np
 
 from nomad.units import ureg
 from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.workflow import (
-    Workflow, Elastic, EquationOfState, EOSFit, Thermodynamics, Stability, Decomposition,
-    Phonon)
-from nomad.datamodel.metainfo.simulation import workflow as workflow2
+from nomad.datamodel.metainfo.simulation.workflow import (
+    Elastic, ElasticMethod, ElasticResults, EquationOfState, EquationOfStateMethod,
+    EquationOfStateResults, EOSFit, Thermodynamics, ThermodynamicsResults,
+    Stability, Decomposition, Phonon, PhononMethod, PhononResults
+)
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.method import (
     Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetContainer,)
@@ -51,127 +52,84 @@ class AtomateParser:
             self.logger.error('Failed to load json file.')
 
     def parse_elastic(self, source):
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.type = 'elastic'
-        sec_elastic = sec_workflow.m_create(Elastic)
-        workflow = workflow2.Elastic(method=workflow2.ElasticMethod(), results=workflow2.ElasticResults())
-        sec_elastic.energy_stress_calculator = 'VASP'
-        sec_elastic.calculation_method = 'stress'
+        workflow = Elastic(method=ElasticMethod(), results=ElasticResults())
         source = source.get('elasticity', source)
-        sec_elastic.elastic_constants_order = source.get('order', 2)
         workflow.method.energy_stress_calculator = 'VASP'
         workflow.method.calculation_method = 'stress'
         workflow.method.elastic_constants_order = source.get('order', 2)
 
         deformations = source.get('deformations')
         if deformations is not None:
-            sec_elastic.n_deformations = len(deformations)
             workflow.results.n_deformations = len(deformations)
 
         elastic_tensor = source.get('elastic_tensor')
         if elastic_tensor is not None:
-            sec_elastic.elastic_constants_matrix_second_order = elastic_tensor * ureg.GPa
             workflow.results.elastic_constants_matrix_second_order = elastic_tensor * ureg.GPa
 
         compliance_tensor = source.get('compliance_tensor')
         if compliance_tensor is not None:
-            sec_elastic.compliance_matrix_second_order = compliance_tensor * (1 / ureg.GPa)
             workflow.results.compliance_matrix_second_order = compliance_tensor * (1 / ureg.GPa)
 
         if source.get('g_reuss') is not None:
-            sec_elastic.shear_modulus_reuss = source['g_reuss'] * ureg.GPa
             workflow.results.shear_modulus_reuss = source['g_reuss'] * ureg.GPa
         if source.get('g_voigt') is not None:
-            sec_elastic.shear_modulus_voigt = source['g_voigt'] * ureg.GPa
             workflow.results.shear_modulus_voigt = source['g_voigt'] * ureg.GPa
         if source.get('g_vrh') is not None:
-            sec_elastic.shear_modulus_hill = source['g_vrh'] * ureg.GPa
             workflow.results.shear_modulus_hill = source['g_vrh'] * ureg.GPa
         if source.get('homogeneous_poisson') is not None:
-            sec_elastic.poisson_ratio_hill = source['homogeneous_poisson']
             workflow.results.poisson_ratio_hill = source['homogeneous_poisson']
         if source.get('k_reuss') is not None:
-            sec_elastic.bulk_modulus_reuss = source['k_reuss'] * ureg.GPa
             workflow.results.bulk_modulus_reuss = source['k_reuss'] * ureg.GPa
         if source.get('k_voigt') is not None:
-            sec_elastic.bulk_modulus_voigt = source['k_voigt'] * ureg.GPa
             workflow.results.bulk_modulus_voigt = source['k_voigt'] * ureg.GPa
         if source.get('k_vrh') is not None:
-            sec_elastic.bulk_modulus_hill = source['k_vrh'] * ureg.GPa
             workflow.results.bulk_modulus_hill = source['k_vrh'] * ureg.GPa
         self.archive.workflow2 = workflow
 
     def parse_eos(self, source):
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.type = 'equation_of_state'
-        workflow = workflow2.EquationOfState(
-            method=workflow2.EquationOfStateMethod(), results=workflow2.EquationOfStateResults())
-        sec_eos = sec_workflow.m_create(EquationOfState)
+        workflow = EquationOfState(
+            method=EquationOfStateMethod(), results=EquationOfStateResults())
         if source.get('volumes') is not None:
-            sec_eos.volumes = source['volumes'] * ureg.angstrom ** 3
             workflow.results.volumes = source['volumes'] * ureg.angstrom ** 3
         if source.get('energies') is not None:
-            sec_eos.energies = source['energies'] * ureg.eV
             workflow.results.energies = source['energies'] * ureg.eV
         for fit_function, result in source.get('eos', {}).items():
-            sec_eos_fit = sec_eos.m_create(EOSFit)
-            sec_eos_fit2 = workflow.results.m_create(workflow2.EOSFit)
+            sec_eos_fit = workflow.results.m_create(EOSFit)
             sec_eos_fit.function_name = fit_function
-            sec_eos_fit2.function_name = fit_function
             if result.get('B') is not None:
                 sec_eos_fit.bulk_modulus = result['B'] * ureg.eV / ureg.angstrom ** 3
-                sec_eos_fit2.bulk_modulus = result['B'] * ureg.eV / ureg.angstrom ** 3
             if result.get('C') is not None:
                 sec_eos_fit.bulk_modulus_derivative = result['C']
-                sec_eos_fit2.bulk_modulus_derivative = result['C']
             if result.get('E0') is not None:
                 sec_eos_fit.equilibrium_energy = result['E0'] * ureg.eV
-                sec_eos_fit2.equilibrium_energy = result['E0'] * ureg.eV
             if result.get('V0') is not None:
                 sec_eos_fit.equilibrium_volume = result['V0'] * ureg.angstrom ** 3
-                sec_eos_fit2.equilibrium_volume = result['V0'] * ureg.angstrom ** 3
             if result.get('eos_energies') is not None:
                 sec_eos_fit.fitted_energies = result['eos_energies'] * ureg.eV
-                sec_eos_fit2.fitted_energies = result['eos_energies'] * ureg.eV
         self.archive.workflow2 = workflow
 
     def parse_thermo(self, data):
-        sec_workflow = self.archive.m_create(Workflow)
         workflow = self.archive.workflow2
         if not workflow:
-            workflow = workflow2.Thermodynamics()
+            workflow = Thermodynamics()
         if not workflow.results:
-            workflow.results = workflow2.ThermodynamicsResults()
-        sec_workflow.type = 'thermodynamics'
-        sec_thermo = sec_workflow.m_create(Thermodynamics)
-        sec_stability = sec_thermo.m_create(Stability)
-        sec_stability2 = workflow2.Stability()
+            workflow.results = ThermodynamicsResults()
+        sec_stability = Stability()
         sec_stability.formation_energy = data.get(
             'formation_energy_per_atom', 0) * data.get('nsites', 1) * ureg.eV
-        sec_stability2.formation_energy = data.get(
-            'formation_energy_per_atom', 0) * data.get('nsites', 1) * ureg.eV
         sec_stability.delta_formation_energy = data.get('energy_above_hull', 0) * ureg.eV
-        sec_stability2.delta_formation_energy = data.get('energy_above_hull', 0) * ureg.eV
         sec_stability.is_stable = data.get('is_stable')
-        sec_stability2.is_stable = data.get('is_stable')
         if data.get('decomposes_to') is not None:
             for system in data.get('decomposes_to'):
                 sec_decomposition = sec_stability.m_create(Decomposition)
-                sec_decomposition2 = sec_stability2.m_create(workflow2.Decomposition)
                 sec_decomposition.formula = system.get('formula')
-                sec_decomposition2.formula = system.get('formula')
                 sec_decomposition.fraction = system.get('amount')
-                sec_decomposition2.fraction = system.get('amount')
-        workflow.results.stability = sec_stability2
+        workflow.results.stability = sec_stability
         self.archive.workflow2 = workflow
 
     def parse_phonon(self, data):
-        sec_workflow = self.archive.m_create(Workflow)
-        sec_workflow.type = 'phonon'
-        sec_phonon = sec_workflow.m_create(Phonon)
         # TODO is vasp always mp calculator?
-        sec_phonon.force_calculator = 'vasp'
-        workflow = workflow2.Phonon(method=workflow2.PhononMethod(), results=workflow2.PhononResults())
+        workflow = Phonon(method=PhononMethod(), results=PhononResults())
         workflow.method.force_calculator = 'vasp'
 
         calculations = self.archive.run[-1].calculation
@@ -184,7 +142,6 @@ class AtomateParser:
             sec_dos.total.append(DosValues(value=dos))
 
         if data.get('ph_bs') is not None:
-            sec_phonon.with_non_analytic_correction = data['ph_bs'].get('has_nac')
             workflow.method.with_non_analytic_correction = data['ph_bs'].get('has_nac')
             sec_bs = calc.m_create(BandStructure, Calculation.band_structure_phonon)
             bands = np.transpose(data['ph_bs']['bands'])
@@ -314,8 +271,10 @@ class AtomateParser:
         sec_calc.system_ref = sec_system
 
         # TODO should we use the MP api for workflow results?
+        # TODO handle multiple workflow sections
         workflow_files = [f for f in os.listdir(
             self.maindir) if f.endswith('.json') and f != os.path.basename(self.filepath)]
+        workflow_files.sort()
         for filename in workflow_files:
             try:
                 data = json.load(open(os.path.join(self.maindir, filename)))
