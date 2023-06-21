@@ -6,11 +6,10 @@ This is a collection of the NOMAD parsers for the following workflow codes:
 4. [ElaStic](http://exciting.wikidot.com/elastic)
 5. [FHI-vibes](https://vibes.fhi-berlin.mpg.de/)
 6. [LOBSTER](http://schmeling.ac.rwth-aachen.de/cohp/)
-7. [MOFStructures]()
-8. [phonopy](https://phonopy.github.io/phonopy/)
-9. [QuantumEspressoEPW](https://www.quantum-espresso.org)
-10. [QuantumEspressPhonon](https://www.quantum-espresso.org)
-11. [QuantumEspressoXSpectra](https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt)
+7. [phonopy](https://phonopy.github.io/phonopy/)
+8. [QuantumEspressoEPW](https://www.quantum-espresso.org)
+9. [QuantumEspressPhonon](https://www.quantum-espresso.org)
+10. [QuantumEspressoXSpectra](https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt)
 
 ## Preparing code input and output file for uploading to NOMAD
 
