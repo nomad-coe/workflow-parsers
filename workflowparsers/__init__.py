@@ -24,7 +24,6 @@
 # from .lobster.parser import LobsterParser
 # from .atomate.parser import AtomateParser
 # from .phonopy.parser import PhonopyParser
-# from .mofstructures.parser import MOFStructuresParser
 # from .quantum_espresso_phonon import QuantumEspressoPhononParser
 # from .quantum_espresso_epw import QuantumEspressoEPWParser
 # from .quantum_espresso_xspectra import QuantumEspressoXSpectraParser
