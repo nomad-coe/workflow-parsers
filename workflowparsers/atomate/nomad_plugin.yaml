@@ -24,3 +24,4 @@ metadata:
 name: parsers/atomate
 parser_class_name: workflowparsers.atomate.parser.AtomateParser
 python_package: workflowparsers.atomate
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/automate

@@ -16,4 +16,5 @@ metadata:
 name: parsers/phonopy
 parser_class_name: workflowparsers.phonopy.parser.PhonopyParser
 python_package: workflowparsers.phonopy
-level: 1  
+level: 1
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/phonopy

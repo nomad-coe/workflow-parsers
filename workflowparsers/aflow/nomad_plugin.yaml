@@ -26,3 +26,4 @@ metadata:
 name: parsers/aflow
 parser_class_name: workflowparsers.aflow.parser.AFLOWParser
 python_package: workflowparsers.aflow
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/aflow

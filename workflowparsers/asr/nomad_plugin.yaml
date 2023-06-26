@@ -22,3 +22,4 @@ metadata:
 name: parsers/asr
 parser_class_name: workflowparsers.asr.parser.ASRParser
 python_package: workflowparsers.asr
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/asr
