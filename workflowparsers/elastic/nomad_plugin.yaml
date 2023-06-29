@@ -16,3 +16,4 @@ metadata:
 name: parsers/elastic
 parser_class_name: workflowparsers.elastic.parser.ElasticParser
 python_package: workflowparsers.elastic
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/elastic

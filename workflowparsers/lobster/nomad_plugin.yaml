@@ -21,3 +21,4 @@ metadata:
 name: parsers/lobster
 parser_class_name: workflowparsers.lobster.parser.LobsterParser
 python_package: workflowparsers.lobster
+plugin_source_code_url: https://github.com/nomad-coe/workflow-parsers/tree/master/workflowparsers/lobster
