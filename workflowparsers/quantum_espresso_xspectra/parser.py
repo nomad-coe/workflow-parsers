@@ -403,6 +403,7 @@ class QuantumEspressoXSpectraParser:
             sec_spectra.excitation_energies = data[:, 0] * ureg.eV
             # TODO check with devs, not sure if this expression is correct or whether it is simply about renormalizing by the unit_cell_volume
             sec_spectra.intensities = data[:, 1]
+            sec_spectra.intensities_units = 'F*m^2/J'
             # unit_cell_volume = self.mainfile_parser.get('unit_cell_volume').magnitude  # in bohr^3
             # sec_spectra.intensities = scipy.constants.fine_structure * data[:, 1] / (energies * unit_cell_volume)
 
