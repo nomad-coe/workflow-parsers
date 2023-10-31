@@ -190,33 +190,32 @@ def test_Fe(parser):
     assert loewdin.value[1] == pytest.approx(0.0 * e, abs=1e-6)
 
     # DOSCAR.lobster total and integrated DOS
-    assert len(scc.dos_electronic) == 1
-    dos = scc.dos_electronic[0]
-    assert dos.n_energies == 201
-    assert len(dos.energies) == 201
-    assert dos.energies[0].magnitude == approx(eV_to_J(-10.06030))
-    assert dos.energies[16].magnitude == approx(eV_to_J(-9.01508))
-    assert dos.energies[200].magnitude == approx(eV_to_J(3.00503))
-    assert len(dos.total) == 2
-    assert np.shape(dos.total[1].value) == (201,)
-    assert dos.total[0].value[6] == pytest.approx(0.0, abs=1e-30)
-    assert dos.total[0].value[200].magnitude == approx(0.26779 / eV)
-    assert dos.total[1].value[195].magnitude == approx(0.37457 / eV)
-    assert np.shape(dos.total[0].value_integrated) == (201,)
-    assert dos.total[0].value_integrated[10] == approx(0.0 + 18)
-    assert dos.total[0].value_integrated[188] == approx(11.07792 + 18)
-    assert dos.total[1].value_integrated[200] == approx(10.75031 + 18)
+    assert len(scc.dos_electronic) == 2
+    dos_up = scc.dos_electronic[0]
+    dos_down = scc.dos_electronic[1]
+    assert dos_up.n_energies == 201
+    assert len(dos_up.energies) == 201
+    assert dos_up.energies[0].magnitude == approx(eV_to_J(-10.06030))
+    assert dos_up.energies[16].magnitude == approx(eV_to_J(-9.01508))
+    assert dos_up.energies[200].magnitude == approx(eV_to_J(3.00503))
+    assert len(dos_up.total) == 1 and len(dos_down.total) == 1
+    assert np.shape(dos_down.total[0].value) == (201,)
+    assert dos_up.total[0].value[6] == pytest.approx(0.0, abs=1e-30)
+    assert dos_up.total[0].value[200].magnitude == approx(0.26779 / eV)
+    assert dos_down.total[0].value[195].magnitude == approx(0.37457 / eV)
+    assert np.shape(dos_up.total[0].value_integrated) == (201,)
+    assert dos_up.total[0].value_integrated[10] == approx(0.0 + 18)
+    assert dos_up.total[0].value_integrated[188] == approx(11.07792 + 18)
+    assert dos_down.total[0].value_integrated[200] == approx(10.75031 + 18)
 
     # DOSCAR.lobster atom and lm-projected dos
-    assert len(dos.atom_projected) == 24
-    dos.atom_projected[0].atom_index == 0
-    dos.atom_projected[12].atom_index == 1
-    assert dos.atom_projected[1].m_kind == 'real_orbital'
-    assert (dos.atom_projected[7].lm == [2, 0]).all()
-    assert np.shape(dos.atom_projected[11].value) == (201,)
-    assert dos.atom_projected[5].value[190].magnitude == approx(0.21304 / eV)
-    assert dos.atom_projected[22].value[200].magnitude == approx(0.00784 / eV)
-    assert dos.atom_projected[13].value[35].magnitude == approx(0.01522 / eV)
+    assert len(dos_up.atom_projected) == 12 and len(dos_down.atom_projected) == 12
+    assert dos_up.atom_projected[0].atom_index == 0 and dos_up.atom_projected[6].atom_index == 1
+    assert dos_up.atom_projected[0].m_kind == 'real_orbital'
+    assert (dos_up.atom_projected[4].lm == [2, 1]).all()
+    assert np.shape(dos_up.atom_projected[11].value) == (201,)
+    assert dos_up.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.00909)
+    assert dos_down.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.29205)
 
 
 def test_NaCl(parser):

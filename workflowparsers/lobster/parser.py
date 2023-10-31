@@ -320,19 +320,20 @@ def parse_DOSCAR(fname, run, logger):
         return
 
     if len(dos_values) == n_dos:
-        dos = run.calculation[0].m_create(Dos, Calculation.dos_electronic)
-        dos.n_energies = n_dos
-        dos.energies = energies * units.eV
         value = list(zip(*dos_values))
+        n_spin_channels = len(value)
         n_electrons = sum(atomic_numbers)
         index = (np.abs(energies)).argmin()
         # integrated dos at the Fermi level should be the number of electrons
         n_valence_electrons = int(round(sum(integral_dos[index])))
         n_core_electrons = n_electrons - n_valence_electrons
         value_integrated = np.array(list(zip(*integral_dos))) + n_core_electrons / len(integral_dos[0])
-        for spin_i in range(len(value)):
+        for spin_i in range(n_spin_channels):
+            dos = run.calculation[0].m_create(Dos, Calculation.dos_electronic)
+            dos.n_energies = n_dos
+            dos.energies = energies * units.eV
+            dos.spin_channel = spin_i if n_spin_channels == 2 else None
             dos_total = dos.m_create(DosValues, Dos.total)
-            dos_total.spin = spin_i
             dos_total.value = value[spin_i] * (1 / units.eV)
             dos_total.value_integrated = value_integrated[spin_i]
     else:
@@ -358,9 +359,9 @@ def parse_DOSCAR(fname, run, logger):
             return
         for lm_i, lm in enumerate(lms[atom_i]):
             for spin_i in range(len(dos_values[lm_i])):
+                dos = run.calculation[0].dos_electronic[spin_i]
                 section_pdos = dos.m_create(DosValues, Dos.atom_projected)
                 section_pdos.atom_index = atom_i
-                section_pdos.spin = spin_i
                 section_pdos.m_kind = 'real_orbital'
                 section_pdos.lm = translate_lm(lm)
                 section_pdos.value = dos_values[lm_i][spin_i]
