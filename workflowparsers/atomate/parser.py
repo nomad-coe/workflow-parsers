@@ -23,11 +23,13 @@ import numpy as np
 
 from nomad.units import ureg
 from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.workflow import (
+from simulationworkflowschema import (
     Elastic, ElasticMethod, ElasticResults, EquationOfState, EquationOfStateMethod,
-    EquationOfStateResults, EOSFit, Thermodynamics, ThermodynamicsResults,
-    Stability, Decomposition, Phonon, PhononMethod, PhononResults
+    EquationOfStateResults, Thermodynamics, ThermodynamicsResults,
+    Phonon, PhononMethod, PhononResults
 )
+from simulationworkflowschema.equation_of_state import EOSFit
+from simulationworkflowschema.thermodynamics import Stability, Decomposition
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.method import (
     Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetContainer,)

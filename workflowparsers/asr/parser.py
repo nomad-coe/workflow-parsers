@@ -36,7 +36,7 @@ from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Energy, EnergyEntry, Forces, ForcesEntry,
     Stress, StressEntry)
-from nomad.datamodel.metainfo.simulation.workflow import (
+from simulationworkflowschema import (
     GeometryOptimization, Phonon
 )
 from .metainfo.asr import (

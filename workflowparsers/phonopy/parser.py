@@ -39,9 +39,10 @@ from nomad.datamodel.metainfo.simulation.system import (
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, BandStructure, BandEnergies, Dos, DosValues, Thermodynamics
 )
-from nomad.datamodel.metainfo.simulation.workflow import (
-    Phonon, PhononMethod, PhononResults, Link, Task
+from simulationworkflowschema import (
+    Phonon, PhononMethod, PhononResults
 )
+from nomad.datamodel.metainfo.workflow import Link, Task
 from nomad.datamodel import EntryArchive
 
 from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-import

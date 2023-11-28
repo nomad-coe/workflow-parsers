@@ -36,7 +36,7 @@ from nomad.datamodel.metainfo.simulation.system import (
 from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Thermodynamics, Energy, EnergyEntry, Stress, StressEntry, Forces, ForcesEntry
 )
-from nomad.datamodel.metainfo.simulation.workflow import (
+from simulationworkflowschema import (
     SinglePoint, GeometryOptimization, MolecularDynamics, Phonon
 )
 from .metainfo.fhi_vibes import x_fhi_vibes_section_attributes,\
