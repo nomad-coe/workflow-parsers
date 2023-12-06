@@ -32,7 +32,7 @@ from nomad.datamodel.metainfo.simulation.calculation import (
     Thermodynamics, Dos, DosValues, BandStructure, BandEnergies)
 from nomad.datamodel.metainfo.simulation.method import Method
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.workflow import (
+from simulationworkflowschema import (
     Elastic, ElasticMethod, ElasticResults, Phonon, PhononMethod, PhononResults,
     Thermodynamics as WorkflowThermodynamics, ThermodynamicsResults
 )

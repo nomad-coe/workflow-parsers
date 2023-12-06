@@ -28,9 +28,9 @@ from nomad.datamodel.metainfo.simulation.run import Run, Program
 from nomad.datamodel.metainfo.simulation.method import Method
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import Calculation
-from nomad.datamodel.metainfo.simulation.workflow import (
-    Elastic, ElasticMethod, ElasticResults, StrainDiagrams)
-
+from simulationworkflowschema import (
+    Elastic, ElasticMethod, ElasticResults)
+from simulationworkflowschema.elastic import StrainDiagrams
 from .metainfo.elastic import x_elastic_section_fitting_parameters
 
 
