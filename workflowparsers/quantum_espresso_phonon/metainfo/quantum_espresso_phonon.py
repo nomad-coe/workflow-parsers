@@ -22,7 +22,7 @@ from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, JSON
 )
-from nomad.datamodel.metainfo import simulation
+import runschema
 
 
 m_package = Package()
@@ -51,7 +51,7 @@ class x_qe_phonon_n_parallel(MSection):
         ''')
 
 
-class Method(simulation.method.Method):
+class Method(runschema.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -158,7 +158,7 @@ class Method(simulation.method.Method):
     x_qe_phonon_n_parallel_g_vectors = SubSection(sub_section=x_qe_phonon_n_parallel.m_def)
 
 
-class System(simulation.system.System):
+class System(runschema.system.System):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -276,14 +276,14 @@ class x_qe_phonon_representation(MSection):
     x_qe_phonon_scf_iteration = SubSection(sub_section=x_qe_phonon_scf_iteration.m_def, repeats=True)
 
 
-class Calculation(simulation.calculation.Calculation):
+class Calculation(runschema.calculation.Calculation):
 
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_phonon_representation = SubSection(sub_section=x_qe_phonon_representation.m_def)
 
 
-class AtomParameters(simulation.method.AtomParameters):
+class AtomParameters(runschema.method.AtomParameters):
 
     m_def = Section(validate=False, extends_base_section=True)
 

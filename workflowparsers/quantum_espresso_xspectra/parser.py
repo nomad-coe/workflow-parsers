@@ -23,12 +23,12 @@ from datetime import datetime
 
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity, DataTextParser
-from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
-from nomad.datamodel.metainfo.simulation.method import (
-    Method, AtomParameters, Electronic, Smearing, Photon, CoreHoleSpectra
+from runschema.run import Run, Program, TimeRun
+from runschema.method import (
+    Method, AtomParameters, Electronic, Smearing, Photon, CoreHole
 )
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.calculation import Calculation, Spectra
+from runschema.system import System, Atoms
+from runschema.calculation import Calculation, Spectra
 from simulationworkflowschema import SinglePoint
 
 from .metainfo.quantum_espresso_xspectra import (
@@ -304,8 +304,10 @@ class QuantumEspressoXSpectraParser:
 
     def parse_system(self):
         sec_run = self.archive.run[-1]
-        sec_system = sec_run.m_create(System)
-        sec_atoms = sec_system.m_create(Atoms)
+        sec_system = System()
+        sec_run.system.append(sec_system)
+        sec_atoms = Atoms()
+        sec_system.atoms = sec_atoms
         alat = self.mainfile_parser.get('lattice_parameter', 1)
         crystal_axes = self.mainfile_parser.crystal_axes
         if crystal_axes is not None:
@@ -326,7 +328,8 @@ class QuantumEspressoXSpectraParser:
         scf = self.mainfile_parser.scf
 
         sec_run = self.archive.run[-1]
-        sec_method = sec_run.m_create(Method)
+        sec_method = Method()
+        sec_run.method.append(sec_method)
 
         # Smearing
         smearing = self.mainfile_parser.smearing
@@ -339,7 +342,8 @@ class QuantumEspressoXSpectraParser:
         # Pseudopotentials
         # TODO should be here or in the DFT entry??
         for pseudopot in self.mainfile_parser.get('pseudopot', []):
-            sec_atom_parameters = sec_method.m_create(AtomParameters)
+            sec_atom_parameters = AtomParameters()
+            sec_method.atom_parameters.append(sec_atom_parameters)
             sec_atom_parameters.label = pseudopot.element
             sec_atom_parameters.n_valence_electrons = pseudopot.zval
             atom_keys = [
@@ -364,7 +368,8 @@ class QuantumEspressoXSpectraParser:
             setattr(sec_method, f'x_qe_xspectra_{key}', self.mainfile_parser.get(key))
 
         # Photon
-        sec_photon = sec_method.m_create(Photon)
+        sec_photon = Photon()
+        sec_method.photon.append(sec_photon)
         if self.mainfile_parser.input.get('x_qe_xspectra_calculation', '') == 'hpsi':
             self.logger.warning('Calculation ran in the debug option HPSI. Please, check your upload.')
             return
@@ -372,10 +377,12 @@ class QuantumEspressoXSpectraParser:
         sec_photon.polarization = self.mainfile_parser.input.get('x_qe_xspectra_xepsilon', [])
 
         # Core-hole
-        sec_method_core = sec_run.m_create(Method)
+        sec_method_core = Method()
+        sec_run.method.append(sec_method_core)
         if sec_run.m_xpath('method[0]'):
             sec_method_core.starting_method_ref = sec_run.method[0]
-        sec_core_hole = sec_method_core.m_create(CoreHoleSpectra)
+        sec_core_hole = CoreHole()
+        sec_method_core.core_hole = sec_core_hole
         sec_core_hole.mode = 'absorption'  # XSPECTRA can only handle XAS/XANES -> absorption
         sec_core_hole.solver = self.mainfile_parser.xanes.get('algorithm', [])[0]
         # TODO talk with devs to get the edge info
@@ -390,11 +397,13 @@ class QuantumEspressoXSpectraParser:
             self.xanesdata_parser.mainfile = os.path.join(self.maindir, xanes_file)
             data = self.xanesdata_parser.data
 
-            sec_scc = sec_run.m_create(Calculation)
+            sec_scc = Calculation()
+            sec_run.calculation.append(sec_scc)
             sec_scc.system_ref = sec_run.system[-1]
             sec_scc.method_ref = sec_run.method[-1]
 
-            sec_spectra = sec_scc.m_create(Spectra)
+            sec_spectra = Spectra()
+            sec_scc.spectra.append(sec_spectra)
             for key, val in self.mainfile_parser.xanes.get('step_2', {}).items():
                 if key != 'file':
                     setattr(sec_spectra, f'x_qe_xspectra_{key}', val)
@@ -415,7 +424,8 @@ class QuantumEspressoXSpectraParser:
 
         self.mainfile_parser.mainfile = self.filepath
 
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='Quantum ESPRESSO XSPECTRA', version=self.mainfile_parser.get('program_version', ''))
 
@@ -426,7 +436,8 @@ class QuantumEspressoXSpectraParser:
 
         input = self.mainfile_parser.input
         if input is not None:
-            sec_input = sec_run.m_create(x_qe_xspectra_input)
+            sec_input = x_qe_xspectra_input()
+            sec_run.x_qe_xspectra_input = sec_input
             for key, val in input.items():
                 if key == 'x_qe_xspectra_main_plot_parameters':
                     val = {v[0].strip(): v[1] for v in val.get('key_val', [])}

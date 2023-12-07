@@ -23,7 +23,7 @@ from nomad.metainfo import (  # pylint: disable=unused-import
     Reference, JSON
 )
 
-from nomad.datamodel.metainfo import simulation
+import runschema
 
 
 m_package = Package()
@@ -662,7 +662,7 @@ class x_fhi_vibes_section_attributes(MSection):
         repeats=True)
 
 
-class Method(simulation.method.Method):
+class Method(runschema.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -671,7 +671,7 @@ class Method(simulation.method.Method):
         repeats=True)
 
 
-class Calculation(simulation.calculation.Calculation):
+class Calculation(runschema.calculation.Calculation):
 
     m_def = Section(validate=False, extends_base_section=True)
 

@@ -22,11 +22,11 @@ import numpy as np
 
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.run import Run, Program
+from runschema.method import (
     Method, AtomParameters, Electronic, Smearing)
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.system import System, Atoms
+from runschema.calculation import (
     Calculation, VibrationalFrequencies
 )
 
@@ -240,14 +240,17 @@ class QuantumEspressoPhononParser:
 
         self.mainfile_parser.mainfile = self.filepath
 
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='Quantum Espresso Phonon', version=self.mainfile_parser.get('program_version', ''))
 
         for calculation in self.mainfile_parser.get('calculation', []):
-            sec_calc = sec_run.m_create(Calculation)
+            sec_calc = Calculation()
+            sec_run.calculation.append(sec_calc)
 
-            sec_method = sec_run.m_create(Method)
+            sec_method = Method()
+            sec_run.method.append(sec_method)
             n_parallel = calculation.get('n_parallel')
             if n_parallel is not None:
                 sec_method.x_qe_phonon_n_parallel_sticks = x_qe_phonon_n_parallel(
@@ -257,8 +260,10 @@ class QuantumEspressoPhononParser:
                     x_qe_phonon_n_parallel_min=n_parallel[0][3:], x_qe_phonon_n_parallel_max=n_parallel[1][3:],
                     x_qe_phonon_n_parallel_sum=n_parallel[2][3:])
 
-            sec_system = sec_run.m_create(System)
-            sec_atoms = sec_system.m_create(Atoms)
+            sec_system = System()
+            sec_run.system.append(sec_system)
+            sec_atoms = Atoms()
+            sec_system.atoms = sec_atoms
             if calculation.get('crystal_axes') is not None:
                 sec_atoms.lattice_vectors = calculation.crystal_axes * calculation.get('alat', 1) * ureg.bohr
             if calculation.get('cartesian_axes') is not None:
@@ -286,7 +291,8 @@ class QuantumEspressoPhononParser:
             # specs and results of dynamical matrix calculation
             if calculation.dynamical_matrix is not None:
                 for pseudopot in calculation.dynamical_matrix.get('pseudopot', []):
-                    sec_atom_parameters = sec_method.m_create(AtomParameters)
+                    sec_atom_parameters = AtomParameters()
+                    sec_method.atom_parameters.append(sec_atom_parameters)
                     sec_atom_parameters.label = pseudopot.element
                     sec_atom_parameters.n_valence_electrons = pseudopot.zval
                     atom_keys = [
@@ -317,13 +323,15 @@ class QuantumEspressoPhononParser:
                 sec_system.x_qe_phonon_point_group = calculation.dynamical_matrix.point_group
 
                 for representation in calculation.dynamical_matrix.get('representation', []):
-                    sec_representation = sec_calc.m_create(x_qe_phonon_representation)
+                    sec_representation = x_qe_phonon_representation()
+                    sec_calc.x_qe_phonon_representation = sec_representation
                     sec_representation.x_qe_phonon_number = representation.number
                     sec_representation.x_qe_phonon_modes = representation.modes
                     sec_representation.x_qe_phonon_converged = representation.converged
                     if representation.scf is not None:
                         for n, iter in enumerate(representation.scf.get('iter', [])):
-                            sec_scf = sec_representation.m_create(x_qe_phonon_scf_iteration)
+                            sec_scf = x_qe_phonon_scf_iteration()
+                            sec_representation.x_qe_phonon_scf_iteration.append(sec_scf)
                             sec_scf.x_qe_phonon_iter = iter
                             sec_scf.x_qe_phonon_total_cpu_time = representation.scf.total_cpu_time[n]
                             sec_scf.x_qe_phonon_time = representation.scf.time[n]

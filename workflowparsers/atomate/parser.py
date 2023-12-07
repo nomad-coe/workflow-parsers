@@ -22,7 +22,6 @@ import json
 import numpy as np
 
 from nomad.units import ureg
-from nomad.datamodel.metainfo.simulation.run import Run, Program
 from simulationworkflowschema import (
     Elastic, ElasticMethod, ElasticResults, EquationOfState, EquationOfStateMethod,
     EquationOfStateResults, Thermodynamics, ThermodynamicsResults,
@@ -30,10 +29,11 @@ from simulationworkflowschema import (
 )
 from simulationworkflowschema.equation_of_state import EOSFit
 from simulationworkflowschema.thermodynamics import Stability, Decomposition
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.run import Run, Program
+from runschema.system import System, Atoms
+from runschema.method import (
     Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetContainer,)
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.calculation import (
     Calculation, Dos, DosValues, BandStructure, BandEnergies)
 from .metainfo.atomate import Composition, Symmetry
 
@@ -96,7 +96,8 @@ class AtomateParser:
         if source.get('energies') is not None:
             workflow.results.energies = source['energies'] * ureg.eV
         for fit_function, result in source.get('eos', {}).items():
-            sec_eos_fit = workflow.results.m_create(EOSFit)
+            sec_eos_fit = EOSFit()
+            workflow.results.eos_fit.append(sec_eos_fit)
             sec_eos_fit.function_name = fit_function
             if result.get('B') is not None:
                 sec_eos_fit.bulk_modulus = result['B'] * ureg.eV / ureg.angstrom ** 3
@@ -123,7 +124,8 @@ class AtomateParser:
         sec_stability.is_stable = data.get('is_stable')
         if data.get('decomposes_to') is not None:
             for system in data.get('decomposes_to'):
-                sec_decomposition = sec_stability.m_create(Decomposition)
+                sec_decomposition = Decomposition()
+                sec_stability.decomposition.append(sec_decomposition)
                 sec_decomposition.formula = system.get('formula')
                 sec_decomposition.fraction = system.get('amount')
         workflow.results.stability = sec_stability
@@ -135,17 +137,23 @@ class AtomateParser:
         workflow.method.force_calculator = 'vasp'
 
         calculations = self.archive.run[-1].calculation
-        calc = calculations[-1] if calculations else self.archive.run[-1].m_create(Calculation)
+        if calculations:
+            calc = calculations[-1]
+        else:
+            calc = Calculation()
+            self.archive.run[-1].calculations.append(calc)
 
         if data.get('ph_dos') is not None:
-            sec_dos = calc.m_create(Dos, Calculation.dos_phonon)
+            sec_dos = Dos()
+            calc.dos_phonon.append(sec_dos)
             sec_dos.energies = data['ph_dos']['frequencies'] * ureg.THz * ureg.h
             dos = data['ph_dos']['densities'] * (1 / (ureg.THz * ureg.h))
             sec_dos.total.append(DosValues(value=dos))
 
         if data.get('ph_bs') is not None:
             workflow.method.with_non_analytic_correction = data['ph_bs'].get('has_nac')
-            sec_bs = calc.m_create(BandStructure, Calculation.band_structure_phonon)
+            sec_bs = BandStructure()
+            calc.band_structure_phonon.append(sec_bs)
             bands = np.transpose(data['ph_bs']['bands'])
             qpoints = data['ph_bs']['qpoints']
             labels = data['ph_bs']['labels_dict']
@@ -157,7 +165,8 @@ class AtomateParser:
                     endpoints.append(i)
                 if len(endpoints) < 2:
                     continue
-                sec_segment = sec_bs.m_create(BandEnergies)
+                sec_segment = BandEnergies()
+                sec_bs.segment.append(sec_segment)
                 energies = bands[endpoints[0]: endpoints[1] + 1]
                 sec_segment.energies = np.reshape(energies, (1, *np.shape(energies))) * ureg.THz * ureg.h
                 sec_segment.kpoints = qpoints[endpoints[0]: endpoints[1] + 1]
@@ -177,7 +186,8 @@ class AtomateParser:
             'PAW_PBE': ['GGA_X_PBE', 'GGA_C_PBE']
         }
 
-        sec_method = self.archive.run[-1].m_create(Method)
+        sec_method = Method()
+        self.archive.run[-1].method.append(sec_method)
         sec_xc_functional = XCFunctional()
         for potcar_type in data['calcs_reversed'][0].get('input', {}).get('potcar_type', []):
             for xc_functional in xc_func_mapping.get(potcar_type, []):
@@ -223,7 +233,8 @@ class AtomateParser:
 
         self.init_parser()
 
-        sec_run = archive.m_create(Run)
+        sec_run = Run()
+        archive.run.append(sec_run)
         sec_run.program = Program(name='MaterialsProject', version='1.0.0')
 
         #  TODO system should be referenced
@@ -232,8 +243,10 @@ class AtomateParser:
             labels = [site['label'] for site in structure.get('sites')]
             positions = [site['xyz'] for site in structure.get('sites')]
             cell = structure.get('lattice', {}).get('matrix')
-            sec_system = sec_run.m_create(System)
-            sec_atoms = sec_system.m_create(Atoms)
+            sec_system = System()
+            sec_run.system.append(sec_system)
+            sec_atoms = Atoms()
+            sec_system.atoms = sec_atoms
             if cell is not None:
                 sec_atoms.lattice_vectors = cell * ureg.angstrom
                 sec_atoms.periodic = [True, True, True]
@@ -252,7 +265,8 @@ class AtomateParser:
 
         symmetry = self.data.get('symmetry')
         if symmetry is not None:
-            sec_symmetry = sec_system.m_create(Symmetry)
+            sec_symmetry = Symmetry()
+            sec_system.x_mp_symmetry.append(sec_symmetry)
             for key, val in symmetry.items():
                 try:
                     setattr(sec_symmetry, 'x_mp_%s' % key, val)
@@ -269,7 +283,8 @@ class AtomateParser:
                 pass
 
         # temporary fix to go through workflow normalization
-        sec_calc = sec_run.m_create(Calculation)
+        sec_calc = Calculation()
+        sec_run.calculation.append(sec_calc)
         sec_calc.system_ref = sec_system
 
         # TODO should we use the MP api for workflow results?

@@ -23,14 +23,14 @@ from datetime import datetime
 
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
-from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.run import Run, Program, TimeRun
+from runschema.method import (
     Method, Electronic, KMesh, AtomParameters
 )
-from nomad.datamodel.metainfo.simulation.system import (
+from runschema.system import (
     System, Atoms
 )
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.calculation import (
     Calculation, Energy
 )
 from .metainfo.quantum_espresso_epw import (
@@ -320,7 +320,8 @@ class QuantumEspressoEPWParser:
 
         self.mainfile_parser.mainfile = self.filepath
 
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='Quantum Espresso EPW', version=self.mainfile_parser.get('program_version', ''))
 
@@ -329,7 +330,8 @@ class QuantumEspressoEPWParser:
             date = datetime.strptime(start_time.replace(' ', ''), '%d%b%Y%H:%M:%S')
             sec_run.time_run = TimeRun(date_start=(date - datetime.utcfromtimestamp(0)).total_seconds())
 
-        sec_method = sec_run.m_create(Method)
+        sec_method = Method()
+        sec_run.method.append(sec_method)
         sec_method.electronic = Electronic(n_electrons=self.mainfile_parser.n_electrons)
         g_cutoff_fft_grid = self.mainfile_parser.g_cutoff_fft_grid
         if g_cutoff_fft_grid is not None:
@@ -347,7 +349,8 @@ class QuantumEspressoEPWParser:
             sec_method.k_mesh = KMesh(points=k_points[0], weights=k_points[1])
 
         for pseudopot in self.mainfile_parser.get('pseudopot', []):
-            sec_atom_parameters = sec_method.m_create(AtomParameters)
+            sec_atom_parameters = AtomParameters()
+            sec_method.atom_parameters.append(sec_atom_parameters)
             sec_atom_parameters.label = pseudopot.element
             sec_atom_parameters.n_valence_electrons = pseudopot.zval
             atom_keys = [
@@ -374,8 +377,10 @@ class QuantumEspressoEPWParser:
             for key in method_keys:
                 setattr(sec_method, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
-            sec_system = sec_run.m_create(System)
-            sec_atoms = sec_system.m_create(Atoms)
+            sec_system = System()
+            sec_run.system.append(sec_system)
+            sec_atoms = Atoms()
+            sec_system.atoms = sec_atoms
             alat = self.mainfile_parser.lattice_parameter
             lattice_vectors = self.mainfile_parser.lattice_vectors
             if lattice_vectors is not None:
@@ -394,24 +399,28 @@ class QuantumEspressoEPWParser:
                 setattr(sec_system, f'x_qe_epw_{key}', self.mainfile_parser.get(key))
 
         for q_point in self.mainfile_parser.get('irreducible_q_point', []):
-            sec_q_point = sec_system.m_create(x_qe_epw_irreducible_q_point)
+            sec_q_point = x_qe_epw_irreducible_q_point()
+            sec_system.x_qe_epw_irreducible_q_point.append(sec_q_point)
             sec_q_point.x_qe_epw_n_symmetries = q_point. n_symmetries
             sec_q_point.x_qe_epw_n_q_star = q_point.n_q_star
             sec_q_point.x_qe_epw_q_star = np.reshape(q_point.q_star, (q_point.n_q_star, 4)).T[1:4].T
 
-        sec_calc = sec_run.m_create(Calculation)
+        sec_calc = Calculation()
+        sec_run.calculation.append(sec_calc)
         sec_calc.energy = Energy(fermi=self.mainfile_parser.e_fermi)
         sec_calc.x_qe_epw_e_fermi_coarse_grid = self.mainfile_parser.e_fermi_coarse_grid
         self_energy_migdal = self.mainfile_parser.self_energy_migdal_approximation
         if self_energy_migdal is not None:
-            sec_migdal = sec_calc.m_create(x_qe_epw_self_energy_migdal)
+            sec_migdal = x_qe_epw_self_energy_migdal()
+            sec_calc.x_qe_epw_self_energy_migdal = sec_migdal
             sec_migdal.x_qe_epw_fermi_surface_thickness = self_energy_migdal.fermi_surface_thickness
             sec_migdal.x_qe_epw_golden_rule_t = self_energy_migdal.golden_rule_t
             sec_migdal.x_qe_epw_gaussian_broadening = self_energy_migdal.gaussian_broadening
             sec_migdal.x_qe_epw_n_gauss = self_energy_migdal.n_gauss
             sec_migdal.x_qe_epw_dos_ef = self_energy_migdal.dos_ef
             for self_energy in self_energy_migdal.get('self_energy', []):
-                sec_self_energy = sec_migdal.m_create(x_qe_epw_self_energy)
+                sec_self_energy = x_qe_epw_self_energy()
+                sec_migdal.x_qe_epw_self_energy.append(sec_self_energy)
                 sec_self_energy.x_qe_epw_ismear = self_energy.ismear
                 sec_self_energy.x_qe_epw_iq = self_energy.iq
                 sec_self_energy.x_qe_epw_coord = self_energy.coord
@@ -430,14 +439,16 @@ class QuantumEspressoEPWParser:
 
         spectral_migdal = self.mainfile_parser.eliashberg_spectral_function_migdal_approximation
         if spectral_migdal is not None:
-            sec_migdal = sec_calc.m_create(x_qe_epw_eliashberg_spectral_function_migdal_approximation)
+            sec_migdal = x_qe_epw_eliashberg_spectral_function_migdal_approximation()
+            sec_calc.x_qe_epw_eliashberg_spectral_function_migdal_approximation = sec_migdal
             sec_migdal.x_qe_epw_lambda = spectral_migdal.get('lambda')
             sec_migdal.x_qe_epw_lambda_tr = spectral_migdal.lambda_tr
             sec_migdal.x_qe_epw_logavg = spectral_migdal.logavg
             sec_migdal.x_qe_epw_l_a2f = spectral_migdal.l_a2f
             sec_migdal.x_qe_epw_mu_tc = spectral_migdal.mu_tc
             for timing in spectral_migdal.get('timing', []):
-                sec_timing = sec_migdal.m_create(x_qe_epw_timimg)
+                sec_timing = x_qe_epw_timimg()
+                sec_migdal.x_qe_epw_timimg.append(sec_timing)
                 sec_timing.x_qe_epw_task = timing[0]
                 sec_timing.x_qe_epw_cpu_time = timing[1]
                 sec_timing.x_qe_epw_wall_time = timing[2]

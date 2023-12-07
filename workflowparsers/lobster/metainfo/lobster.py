@@ -21,13 +21,13 @@ import numpy as np
 from nomad.metainfo import (
     Section, Quantity, MSection, SubSection, SectionProxy, Package
 )
-from nomad.datamodel.metainfo import simulation
+import runschema
 
 
 m_package = Package()
 
 
-class Calculation(simulation.calculation.Calculation):
+class Calculation(runschema.calculation.Calculation):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -58,7 +58,7 @@ class Calculation(simulation.calculation.Calculation):
         repeats=True)
 
 
-class Method(simulation.method.Method):
+class Method(runschema.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 

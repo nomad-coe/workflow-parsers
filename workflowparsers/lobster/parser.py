@@ -24,12 +24,12 @@ import os
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
 from nomad.parsing.parsers import _compressions
-from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
-from nomad.datamodel.metainfo.simulation.system import (
+from runschema.run import Run, Program, TimeRun
+from runschema.system import (
     System, Atoms)
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.method import (
     Method, Electronic, BasisSet, BasisSetContainer,)
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.calculation import (
     Calculation, Dos, DosValues, Charges)
 
 from nomad.parsing.file_parser import TextParser, Quantity
@@ -97,9 +97,11 @@ def parse_ICOXPLIST(fname, scc, method):
         icoxp[-1] = list(tmp)
         if spin == 0:
             if method == 'o':
-                section = scc.m_create(x_lobster_section_coop)
+                section = x_lobster_section_coop()
+                scc.x_lobster_section_coop = section
             elif method == 'h':
-                section = scc.m_create(x_lobster_section_cohp)
+                section = x_lobster_section_cohp()
+                scc.x_lobster_section_cohp = section
 
             setattr(section, "x_lobster_number_of_co{}p_pairs".format(
                 method), len(list(a1)))
@@ -138,12 +140,14 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     if method == 'o':
         if not scc.x_lobster_section_coop:
-            section = scc.m_create(x_lobster_section_coop)
+            section = x_lobster_section_coop()
+            section.x_lobster_section_coop = section
         else:
             section = scc.x_lobster_section_coop
     elif method == 'h':
         if not scc.x_lobster_section_cohp:
-            section = scc.m_create(x_lobster_section_cohp)
+            section = x_lobster_section_cohp()
+            scc.x_lobster_section_cohp = section
         else:
             section = scc.x_lobster_section_cohp
 
@@ -221,11 +225,13 @@ def parse_CHARGE(fname, scc):
 
     charges = charge_parser.get('charges')
     if charges is not None:
-        sec_charges = scc.m_create(Charges)
+        sec_charges = Charges()
+        scc.charges.append(sec_charges)
         sec_charges.analysis_method = "mulliken"
         sec_charges.kind = "integrated"
         sec_charges.value = np.array(list(zip(*charges))[0]) * units.elementary_charge
-        sec_charges = scc.m_create(Charges)
+        sec_charges = Charges()
+        scc.charges.append(sec_charges)
         sec_charges.analysis_method = "loewdin"
         sec_charges.kind = "integrated"
         sec_charges.value = np.array(list(zip(*charges))[1]) * units.elementary_charge
@@ -241,7 +247,8 @@ def parse_DOSCAR(fname, run, logger):
         """
 
         if not run.system:
-            system = run.m_create(System)
+            system = System()
+            run.system.append(system)
             system.atoms = Atoms(species=atomic_numbers, periodic=[True, True, True])
 
     def translate_lm(lm):
@@ -329,11 +336,13 @@ def parse_DOSCAR(fname, run, logger):
         n_core_electrons = n_electrons - n_valence_electrons
         value_integrated = np.array(list(zip(*integral_dos))) + n_core_electrons / len(integral_dos[0])
         for spin_i in range(n_spin_channels):
-            dos = run.calculation[0].m_create(Dos, Calculation.dos_electronic)
+            dos = Dos()
+            run.calculation[0].dos_electronic.append(dos)
             dos.n_energies = n_dos
             dos.energies = energies * units.eV
             dos.spin_channel = spin_i if n_spin_channels == 2 else None
-            dos_total = dos.m_create(DosValues, Dos.total)
+            dos_total = DosValues()
+            dos.total.append(dos_total)
             dos_total.value = value[spin_i] * (1 / units.eV)
             dos_total.value_integrated = value_integrated[spin_i]
     else:
@@ -360,7 +369,8 @@ def parse_DOSCAR(fname, run, logger):
         for lm_i, lm in enumerate(lms[atom_i]):
             for spin_i in range(len(dos_values[lm_i])):
                 dos = run.calculation[0].dos_electronic[spin_i]
-                section_pdos = dos.m_create(DosValues, Dos.atom_projected)
+                section_pdos = DosValues()
+                dos.atom_projected.append(section_pdos)
                 section_pdos.atom_index = atom_i
                 section_pdos.m_kind = 'real_orbital'
                 section_pdos.lm = translate_lm(lm)
@@ -401,7 +411,8 @@ class LobsterParser:
         mainfile_path = os.path.dirname(mainfile)
         mainfile_parser.parse()
 
-        run = archive.m_create(Run)
+        run = Run()
+        archive.run.append(run)
 
         run.program = Program(
             name='LOBSTER',
@@ -434,7 +445,8 @@ class LobsterParser:
                 logger.warning('Parsing of {} structure is not supported'.format(code))
 
         if 'structure' in locals():
-            system = run.m_create(System)
+            system = System()
+            run.system.append(system)
             system.atoms = Atoms(
                 lattice_vectors=structure.get_cell() * units.angstrom,
                 labels=structure.get_chemical_symbols(),
@@ -446,8 +458,10 @@ class LobsterParser:
         else:
             run.clean_end = False
 
-        scc = run.m_create(Calculation)
-        method = run.m_create(Method)
+        scc = Calculation()
+        run.calculation.append(scc)
+        method = Method()
+        run.method.append(method)
         scc.method_ref = method
 
         spilling = mainfile_parser.get('spilling')
