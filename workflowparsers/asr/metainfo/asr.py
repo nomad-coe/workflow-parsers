@@ -3,7 +3,10 @@ import typing                 # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference, MEnum, JSON)
-import runschema
+import runschema.run  # pylint: disable=unused-import
+import runschema.calculation  # pylint: disable=unused-import
+import runschema.method  # pylint: disable=unused-import
+import runschema.system  # pylint: disable=unused-import
 
 
 m_package = Package(

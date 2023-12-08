@@ -21,7 +21,10 @@ import numpy as np
 from nomad.metainfo import (
     Section, Quantity, MSection, SubSection, SectionProxy, Package
 )
-import runschema
+import runschema.run  # pylint: disable=unused-import
+import runschema.calculation  # pylint: disable=unused-import
+import runschema.method  # pylint: disable=unused-import
+import runschema.system  # pylint: disable=unused-import
 
 
 m_package = Package()
