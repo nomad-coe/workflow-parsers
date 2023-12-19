@@ -25,7 +25,7 @@ from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity, DataTextParser
 from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
 from nomad.datamodel.metainfo.simulation.method import (
-    Method, AtomParameters, Electronic, Smearing, Photon, CoreHole
+    Method, AtomParameters, Electronic, Smearing, Photon, CoreHoleSpectra
 )
 from nomad.datamodel.metainfo.simulation.system import System, Atoms
 from nomad.datamodel.metainfo.simulation.calculation import Calculation, Spectra
@@ -375,7 +375,7 @@ class QuantumEspressoXSpectraParser:
         sec_method_core = sec_run.m_create(Method)
         if sec_run.m_xpath('method[0]'):
             sec_method_core.starting_method_ref = sec_run.method[0]
-        sec_core_hole = sec_method_core.m_create(CoreHole)
+        sec_core_hole = sec_method_core.m_create(CoreHoleSpectra)
         sec_core_hole.mode = 'absorption'  # XSPECTRA can only handle XAS/XANES -> absorption
         sec_core_hole.solver = self.mainfile_parser.xanes.get('algorithm', [])[0]
         # TODO talk with devs to get the edge info
