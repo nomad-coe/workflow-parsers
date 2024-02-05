@@ -38,7 +38,8 @@ tests = [
     'xarray==0.20.2',
     'phonopy==2.11.0',
     'h5py==3.6.0',
-    'typing-extensions==4.4.0'
+    'typing-extensions==4.4.0',
+    'ruff==0.1.4',
 ]
 
 
