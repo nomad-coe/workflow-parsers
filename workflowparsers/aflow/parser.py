@@ -26,12 +26,12 @@ from ase.io import vasp
 
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.run import Run, Program
+from runschema.calculation import (
     Calculation, Energy, EnergyEntry, Forces, ForcesEntry, Stress, StressEntry,
     Thermodynamics, Dos, DosValues, BandStructure, BandEnergies)
-from nomad.datamodel.metainfo.simulation.method import Method
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
+from runschema.method import Method
+from runschema.system import System, Atoms
 from simulationworkflowschema import (
     Elastic, ElasticMethod, ElasticResults, Phonon, PhononMethod, PhononResults,
     Thermodynamics as WorkflowThermodynamics, ThermodynamicsResults
@@ -172,8 +172,10 @@ class AFLOWParser:
             structures = []
 
         for structure in structures:
-            sec_calc = self.archive.run[-1].m_create(Calculation)
-            sec_thermo = sec_calc.m_create(Thermodynamics)
+            sec_calc = Calculation()
+            self.archive.run[-1].calculation.append(sec_calc)
+            sec_thermo = Thermodynamics()
+            sec_calc.thermodynamics.append(sec_thermo)
             if structure.get('energy') is not None:
                 sec_calc.energy = Energy(total=EnergyEntry(value=structure.get('energy') * ureg.eV))
             if structure.get('pressure') is not None:
@@ -181,7 +183,8 @@ class AFLOWParser:
             if structure.get('stress_tensor') is not None:
                 sec_calc.stress = Stress(total=StressEntry(value=structure.get('stress_tensor') * ureg.kbar))
             if structure.get('structure') is not None:
-                sec_system = self.archive.run[-1].m_create(System)
+                sec_system = System()
+                self.archive.run[-1].system.append(sec_system)
                 sec_system.atoms = Atoms()
                 struc = structure.get('structure')
                 sec_system.atoms.labels = [atom.get('name') for atom in struc.get('atoms', [])]
@@ -196,7 +199,8 @@ class AFLOWParser:
                 sec_system.atoms.positions = positions
 
     def parse_agl(self):
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
 
@@ -232,7 +236,8 @@ class AFLOWParser:
         self.archive.workflow2 = workflow
 
     def parse_ael(self):
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
 
@@ -273,10 +278,12 @@ class AFLOWParser:
         self.archive.workflow2 = workflow
 
     def parse_apl(self):
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
-        sec_scc = sec_run.m_create(Calculation)
+        sec_scc = Calculation()
+        sec_run.calculation.append(sec_scc)
 
         try:
             dos = np.transpose(
@@ -285,7 +292,8 @@ class AFLOWParser:
             dos = None
 
         if dos is not None:
-            sec_dos = sec_scc.m_create(Dos, Calculation.dos_phonon)
+            sec_dos = Dos()
+            sec_scc.dos_phonon.append(sec_dos)
             sec_dos.energies = dos[2] * ureg.millielectron_volt
             sec_dos.total.append(DosValues(value=dos[3] * (1 / ureg.millielectron_volt)))
 
@@ -307,9 +315,11 @@ class AFLOWParser:
             kpoints = None
 
         if kpoints is not None:
-            sec_bandstructure = sec_scc.m_create(BandStructure, Calculation.band_structure_phonon)
+            sec_bandstructure = BandStructure()
+            sec_scc.band_structure_phonon.append(sec_bandstructure)
             for n_segment in range(len(kpoints)):
-                sec_segment = sec_bandstructure.m_create(BandEnergies)
+                sec_segment = BandEnergies()
+                sec_bandstructure.segment.append(sec_segment)
                 sec_segment.kpoints = kpoints[n_segment]
                 sec_segment.energies = np.reshape(
                     bandstructure[n_segment], (1, *np.shape(bandstructure[n_segment]))) * ureg.millielectron_volt
@@ -368,7 +378,8 @@ class AFLOWParser:
 
         self.init_parser()
 
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
         sec_run.program = Program(
             name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
 
@@ -382,7 +393,8 @@ class AFLOWParser:
         # TODO The OUTCAR file will be read by the vasp parser and so the complete
         # metadata for both system and method should be filled in by vasp parser.
         # parse structure from aflow_data
-        sec_system = sec_run.m_create(System)
+        sec_system = System()
+        sec_run.system.append(sec_system)
         sec_system.atoms = Atoms()
         lattice_parameters = self.aflow_data.get('geometry')
         if lattice_parameters is not None:
@@ -440,17 +452,20 @@ class AFLOWParser:
             'delta_electronic_energy_convergence', 'delta_electronic_energy_threshold',
             'kpoints_relax', 'kpoints_static', 'n_kpoints_bands_path', 'kpoints_bands_path',
             'kpoints_bands_nkpts']
-        sec_method = sec_run.m_create(Method)
+        sec_method = Method()
+        sec_run.method.append(sec_method)
         for key in method_quantities:
             val = self.aflow_data.get(key)
             if val is not None:
                 setattr(sec_method, 'x_aflow_%s' % key, val)
 
         # parse basic calculation quantities from self.aflow_data
-        sec_scc = sec_run.m_create(Calculation)
+        sec_scc = Calculation()
+        sec_run.calculation.append(sec_scc)
         sec_scc.energy = Energy()
         sec_scc.forces = Forces()
-        sec_thermo = sec_scc.m_create(Thermodynamics)
+        sec_thermo = Thermodynamics()
+        sec_scc.thermodynamics.append(sec_thermo)
         if self.aflow_data.get('energy_cell') is not None:
             sec_scc.energy.total = EnergyEntry(value=self.aflow_data['energy_cell'] * ureg.eV)
         if self.aflow_data.get('forces') is not None:

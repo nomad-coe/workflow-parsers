@@ -31,9 +31,9 @@ except Exception:
 
 from nomad.units import ureg
 from nomad.datamodel import EntryArchive
-from nomad.datamodel.metainfo.simulation.run import Run, Program, TimeRun
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.run import Run, Program, TimeRun
+from runschema.system import System, Atoms
+from runschema.calculation import (
     Calculation, BandStructure, BandEnergies, Energy, EnergyEntry, Forces, ForcesEntry,
     Stress, StressEntry)
 from simulationworkflowschema import (
@@ -69,7 +69,8 @@ class ASRRecord:
         self._converted = False
 
     def _parse_system(self, atoms):
-        system = self._archive.run[-1].m_create(System)
+        system = System()
+        self.archive.run[-1].system.append(system)
         system.atoms = Atoms(
             positions=atoms.get_positions() * ureg.angstrom,
             lattice_vectors=atoms.get_cell().array * ureg.angstrom,
@@ -82,7 +83,8 @@ class ASRRecord:
             self._parse_system(image)
         self.archive.workflow2 = GeometryOptimization()
 
-        calc = self._archive.run[-1].m_create(Calculation)
+        calc = Calculation()
+        self._archive.run[-1].calculation.append(calc)
         calc.system_ref = self._archive.run[-1].system[-1]
         calc.energy = Energy(total=EnergyEntry(value=result.etot * ureg.eV))
         calc.forces = Forces(total=ForcesEntry(value=result.forces * ureg.eV / ureg.angstrom))
@@ -104,14 +106,17 @@ class ASRRecord:
         hisym_kpts = [list(p) for p in path.special_points.values()]
         labels = list(path.special_points.keys())
         endpoints = []
-        calc = self._archive.run[-1].m_create(Calculation)
-        bandstructure = calc.m_create(BandStructure, Calculation.band_structure_phonon)
+        calc = Calculation()
+        self._archive.run[-1].calculation.append(calc)
+        bandstructure = BandStructure()
+        calc.band_structure_phonon.append(bandstructure)
         for i, qpoint in enumerate(path.kpts):
             if list(qpoint) in hisym_kpts:
                 endpoints.append(i)
             if len(endpoints) < 2:
                 continue
-            sec_segment = bandstructure.m_create(BandEnergies)
+            sec_segment = BandEnergies()
+            bandstructure.segment.append(sec_segment)
             energies = bands[endpoints[0]: endpoints[1] + 1]
             sec_segment.energies = np.reshape(energies, (1, *np.shape(energies)))
             sec_segment.kpoints = path.kpts[endpoints[0]: endpoints[1] + 1]
@@ -119,14 +124,16 @@ class ASRRecord:
             endpoints = [i]
 
     def _parse_run(self):
-        run = self._archive.m_create(Run)
+        run = Run()
+        self._archive.run.append(run)
         run.program = Program(name='ASR', version=asr.__version__)
 
         if self.record.resources is not None:
             run.time_run = TimeRun(
                 date_start=self.record.resources.execution_start,
                 date_end=self.record.resources.execution_end)
-        resources = run.m_create(x_asr_resources)
+        resources = x_asr_resources()
+        run.x_asr_resources.append(resources)
         for key, val in self.record.resources.__dict__.items():
             try:
                 setattr(resources, 'x_asr_%s' % key, val)
@@ -134,7 +141,8 @@ class ASRRecord:
                 pass
 
         if self.record.metadata is not None:
-            metadata = run.m_create(x_asr_metadata)
+            metadata = x_asr_metadata()
+            run.x_asr_metadata.append(metadata)
             metadata.x_asr_created = (
                 self.record.metadata.created - datetime.datetime(1970, 1, 1)).total_seconds()
             metadata.x_asr_modified = (
@@ -154,7 +162,8 @@ class ASRRecord:
             # parse original system info
             atoms = self.record.run_specification.parameters.atoms
             self._parse_system(atoms)
-            run_spec = run.m_create(x_asr_run_specification)
+            run_spec = x_asr_run_specification()
+            run.x_asr_run_specification.append(run_spec)
             for key, val in self.record.run_specification.__dict__.items():
                 if hasattr(val, '__dict__'):
                     continue
@@ -162,7 +171,8 @@ class ASRRecord:
                     setattr(run_spec, 'x_asr_%s' % key, val)
                 except Exception:
                     pass
-            parameters = run_spec.m_create(x_asr_parameters)
+            parameters = x_asr_parameters()
+            run_spec.x_asr_parameters.append(parameters)
             for key, val in self.record.run_specification.parameters.__dict__.items():
                 if hasattr(val, '__dict__'):
                     continue
@@ -170,17 +180,21 @@ class ASRRecord:
                     setattr(parameters, 'x_asr_%s' % key, val)
                 except Exception:
                     pass
-            codes = run_spec.m_create(x_asr_codes)
+            codes = x_asr_codes()
+            run_spec.x_asr_codes.append(codes)
             for entry in self.record.run_specification.codes.codes:
-                code = codes.m_create(x_asr_code)
+                code = x_asr_code()
+                codes.x_asr_code.append(code)
                 code.x_asr_package = entry.package
                 code.x_asr_version = entry.version
                 code.x_asr_git_hash = entry.git_hash
 
         if self.record.dependencies is not None:
-            dependencies = run.m_create(x_asr_dependencies)
+            dependencies = x_asr_dependencies()
+            run.x_asr_dependencies.append(dependencies)
             for dep in self.record.dependencies.deps:
-                dependency = dependencies.m_create(x_asr_dependency)
+                dependency = x_asr_dependency()
+                dependencies.x_asr_dependency.append(dependency)
                 dependency.x_asr_uid = dep.uid
                 dependency.x_asr_revision = dep.revision
 

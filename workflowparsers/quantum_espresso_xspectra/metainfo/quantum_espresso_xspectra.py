@@ -21,7 +21,10 @@ import numpy as np            # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, Package, Quantity, Section, SubSection, JSON
 )
-from nomad.datamodel.metainfo import simulation
+import runschema.run  # pylint: disable=unused-import
+import runschema.calculation  # pylint: disable=unused-import
+import runschema.method  # pylint: disable=unused-import
+import runschema.system  # pylint: disable=unused-import
 
 
 m_package = Package()
@@ -96,14 +99,14 @@ class x_qe_xspectra_n_parallel(MSection):
         ''')
 
 
-class Run(simulation.run.Run):
+class Run(runschema.run.Run):
 
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_input = SubSection(sub_section=x_qe_xspectra_input.m_def)
 
 
-class Method(simulation.method.Method):
+class Method(runschema.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -118,7 +121,7 @@ class Method(simulation.method.Method):
     x_qe_xspectra_n_parallel_g_vectors = SubSection(sub_section=x_qe_xspectra_n_parallel.m_def)
 
 
-class System(simulation.system.System):
+class System(runschema.system.System):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -161,7 +164,7 @@ class System(simulation.system.System):
         ''')
 
 
-class AtomParameters(simulation.method.AtomParameters):
+class AtomParameters(runschema.method.AtomParameters):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -214,7 +217,7 @@ class AtomParameters(simulation.method.AtomParameters):
         ''')
 
 
-class Spectra(simulation.calculation.Spectra):
+class Spectra(runschema.calculation.Spectra):
 
     m_def = Section(validate=False, extends_base_section=True)
 

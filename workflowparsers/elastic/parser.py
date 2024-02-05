@@ -24,10 +24,10 @@ from ase import Atoms as aseAtoms
 from nomad.units import ureg
 from nomad.parsing.file_parser import Quantity, TextParser
 
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.method import Method
-from nomad.datamodel.metainfo.simulation.system import System, Atoms
-from nomad.datamodel.metainfo.simulation.calculation import Calculation
+from runschema.run import Run, Program
+from runschema.method import Method
+from runschema.system import System, Atoms
+from runschema.calculation import Calculation
 from simulationworkflowschema import (
     Elastic, ElasticMethod, ElasticResults)
 from simulationworkflowschema.elastic import StrainDiagrams
@@ -505,7 +505,8 @@ class ElasticParser:
                 self.logger.warn('Error getting strain and energy data')
                 return
 
-            sec_strain_diagram2 = self.archive.workflow2.results.m_create(StrainDiagrams)
+            sec_strain_diagram2 = StrainDiagrams()
+            self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram2)
             sec_strain_diagram2.type = 'energy'
             sec_strain_diagram2.n_eta = len(strain[0])
             sec_strain_diagram2.eta = strain
@@ -518,7 +519,8 @@ class ElasticParser:
 
             for diagram_type in ['cross-validation', 'd2e']:
                 for fit_order in energy_fit[diagram_type][0].keys():
-                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
+                    sec_strain_diagram = StrainDiagrams()
+                    self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                     sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
@@ -534,7 +536,8 @@ class ElasticParser:
                 stress_i = np.transpose(np.array(stress[diagram_type]), axes=(2, 0, 1))
 
                 for si in range(6):
-                    sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
+                    sec_strain_diagram = StrainDiagrams()
+                    self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.stress_voigt_component = si + 1
                     sec_strain_diagram.n_eta = len(strain_i[0])
@@ -547,7 +550,8 @@ class ElasticParser:
                     if len(stress_fit[diagram_type][si]) == 0:
                         continue
                     for fit_order in stress_fit[diagram_type][si][0].keys():
-                        sec_strain_diagram = self.archive.workflow2.results.m_create(StrainDiagrams)
+                        sec_strain_diagram = StrainDiagrams()
+                        self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
                         sec_strain_diagram.type = diagram_type
                         sec_strain_diagram.stress_voigt_component = si + 1
                         sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
@@ -616,16 +620,19 @@ class ElasticParser:
 
         self.init_parser()
 
-        sec_run = self.archive.m_create(Run)
+        sec_run = Run()
+        self.archive.run.append(sec_run)
 
         sec_run.program = Program(name='elastic', version='1.0')
 
-        sec_system = sec_run.m_create(System)
+        sec_system = System()
+        sec_run.system.append(sec_system)
 
         symbols_positions_cell = self.get_structure_info()
         volume = self.info['equilibrium_volume']
 
-        sec_atoms = sec_system.m_create(Atoms)
+        sec_atoms = Atoms()
+        sec_system.atoms = sec_atoms
         if symbols_positions_cell is not None:
             sec_atoms.labels = symbols_positions_cell[0]
             sec_atoms.positions = symbols_positions_cell[1]
@@ -634,14 +641,17 @@ class ElasticParser:
         sec_system.x_elastic_space_group_number = self.info['space_group_number']
         sec_system.x_elastic_unit_cell_volume = volume
 
-        sec_method = sec_run.m_create(Method)
+        sec_method = Method()
+        sec_run.method.append(sec_method)
 
-        sec_scc = sec_run.m_create(Calculation)
+        sec_scc = Calculation()
+        sec_run.calculation.append(sec_scc)
         sec_scc.calculations_path = self.get_references_to_calculations()
 
         fit_input = self.get_input()
         if fit_input is not None:
-            sec_fit_par = sec_method.m_create(x_elastic_section_fitting_parameters)
+            sec_fit_par = x_elastic_section_fitting_parameters()
+            sec_method.x_elastic_section_fitting_parameters.append(sec_fit_par)
             sec_fit_par.x_elastic_fitting_parameters_eta = fit_input[0]
             sec_fit_par.x_elastic_fitting_parameters_polynomial_order = fit_input[1]
 

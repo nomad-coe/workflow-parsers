@@ -22,7 +22,10 @@ from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference
 )
-from nomad.datamodel.metainfo import simulation
+import runschema.run  # pylint: disable=unused-import
+import runschema.calculation  # pylint: disable=unused-import
+import runschema.method  # pylint: disable=unused-import
+import runschema.system  # pylint: disable=unused-import
 
 
 m_package = Package()
@@ -36,7 +39,7 @@ class x_phonopy_input(MCategory):
     m_def = Category()
 
 
-class Method(simulation.method.Method):
+class Method(runschema.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -60,12 +63,12 @@ class Method(simulation.method.Method):
         categories=[x_phonopy_input])
 
 
-class System(simulation.system.System):
+class System(runschema.system.System):
 
     m_def = Section(validate=False, extends_base_section=True)
 
     x_phonopy_original_system_ref = Quantity(
-        type=simulation.system.System,
+        type=runschema.system.System,
         shape=[],
         description='''
         Original cell from which the supercell for the DFT calculations was constructed

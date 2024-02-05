@@ -26,14 +26,14 @@ import re
 from nomad.units import ureg
 from nomad.parsing.file_parser import FileParser
 
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.run import Run, Program
+from runschema.method import (
     Method, DFT, XCFunctional, Functional, BasisSet, BasisSetContainer,
 )
-from nomad.datamodel.metainfo.simulation.system import (
+from runschema.system import (
     System, Atoms
 )
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.calculation import (
     Calculation, Thermodynamics, Energy, EnergyEntry, Stress, StressEntry, Forces, ForcesEntry
 )
 from simulationworkflowschema import (
@@ -134,8 +134,10 @@ class FHIVibesParser:
     def parse_configurations(self):
 
         def parse_system(n_frame):
-            sec_system = sec_run.m_create(System)
-            sec_atoms = sec_system.m_create(Atoms)
+            sec_system = System()
+            sec_run.system.append(sec_system)
+            sec_atoms = Atoms()
+            sec_system.atoms = sec_atoms
             sec_atoms.labels = self.parser.get('attrs').get('symbols')
             sec_atoms.positions = self.parser.get('positions', unit=self._units.get('length'))[n_frame]
             sec_atoms.lattice_vectors = self.parser.get('cell', unit=self._units.get('length'))[n_frame]
@@ -146,17 +148,22 @@ class FHIVibesParser:
             return sec_system
 
         def parse_scc(n_frame):
-            sec_scc = sec_run.m_create(Calculation)
-            sec_thermo = sec_scc.m_create(Thermodynamics)
+            sec_scc = Calculation()
+            sec_run.calculation.append(sec_scc)
+            sec_thermo = Thermodynamics()
+            sec_scc.thermodynamics.append(sec_thermo)
 
             if self.calculation_type == 'molecular_dynamics':
                 sec_thermo.time_step = n_frame
                 # TODO metainfo should be in common
                 sec_scc.x_fhi_vibes_MD_time = n_frame * timestep
 
-            sec_energy = sec_scc.m_create(Energy)
-            sec_forces = sec_scc.m_create(Forces)
-            sec_stress = sec_scc.m_create(Stress)
+            sec_energy = Energy()
+            sec_scc.energy = sec_energy
+            sec_forces = Forces()
+            sec_scc.forces = sec_forces
+            sec_stress = Stress()
+            sec_scc.stress = sec_stress
             for key in ['kinetic', 'potential']:
                 val = self.parser.get('energy_%s' % key, unit=self._units.get('energy'))
                 if val is not None:
@@ -246,7 +253,8 @@ class FHIVibesParser:
                     return
                 name = '%s_%s_%s' % (
                     xc_functional_info.group(2), xc_type, xc_functional_info.group(1))
-                sec_xc_functional = sec_dft.m_create(XCFunctional)
+                sec_xc_functional = XCFunctional()
+                sec_dft.xc_functional = sec_xc_functional
                 functional = Functional(name=name)
                 if 'HYB' in name:
                     sec_xc_functional.hybrid.append(functional)
@@ -276,19 +284,23 @@ class FHIVibesParser:
 
         def parse_metadata():
             metadata = self.parser.get('attrs/raw_metadata')
-            sec_metadata = sec_attrs.m_create(x_fhi_vibes_section_metadata)
+            sec_metadata = x_fhi_vibes_section_metadata()
+            sec_attrs.x_fhi_vibes_section_attributes_metadata.append(sec_metadata)
             for key, val in metadata.items():
                 if key == 'MD':
-                    sec_md = sec_metadata.m_create(x_fhi_vibes_section_MD)
+                    sec_md = x_fhi_vibes_section_MD()
+                    sec_metadata.x_fhi_vibes_section_metadata_MD.append(sec_md)
                     for md_key in val.keys():
                         setattr(
                             sec_md, 'x_fhi_vibes_MD_%s' % md_key.replace('-', '_'),
                             val[md_key])
                 elif key == 'relaxation':
-                    sec_relaxation = sec_metadata.m_create(x_fhi_vibes_section_relaxation)
+                    sec_relaxation = x_fhi_vibes_section_relaxation()
+                    sec_metadata.x_fhi_vibes_section_relaxation.append(sec_relaxation)
                     for relaxation_key in val.keys():
                         if relaxation_key == 'kwargs':
-                            sec_kwargs = sec_relaxation.m_create(x_fhi_vibes_section_relaxation_kwargs)
+                            sec_kwargs = x_fhi_vibes_section_relaxation_kwargs()
+                            sec_relaxation.x_fhi_vibes_section_relaxation_kwargs.append(sec_kwargs)
                             for kwargs_key in val['kwargs']:
                                 setattr(
                                     sec_kwargs, 'x_fhi_vibes_relaxation_kwargs_%s' % kwargs_key,
@@ -298,17 +310,21 @@ class FHIVibesParser:
                                 sec_relaxation, 'x_fhi_vibes_relaxation_%s' % relaxation_key.replace('-', '_'),
                                 val[relaxation_key])
                 elif key == 'Phonopy':
-                    sec_phonopy = sec_metadata.m_create(x_fhi_vibes_section_phonopy)
+                    sec_phonopy = x_fhi_vibes_section_phonopy()
+                    sec_metadata.x_fhi_vibes_section_phonopy.append(sec_phonopy)
                     for phonopy_key in val.keys():
                         if phonopy_key == 'primitive':
-                            sec_primitive = sec_phonopy.m_create(x_fhi_vibes_section_atoms)
+                            sec_primitive = x_fhi_vibes_section_atoms()
+                            sec_phonopy.x_fhi_vibes_section_phonopy_primitive.append(sec_primitive)
                             parse_atoms(sec_primitive, val['primitive'])
                         else:
                             setattr(sec_phonopy, 'x_fhi_vibes_phonopy_%s' % phonopy_key, val[phonopy_key])
                 elif key == 'calculator':
-                    sec_calculator = sec_metadata.m_create(x_fhi_vibes_section_calculator)
+                    sec_calculator = x_fhi_vibes_section_calculator()
+                    sec_metadata.x_fhi_vibes_section_metadata_calculator.append(sec_calculator)
                     sec_calculator.x_fhi_vibes_calculator = metadata['calculator']['calculator']
-                    sec_calculator_parameters = sec_calculator.m_create(x_fhi_vibes_section_calculator_parameters)
+                    sec_calculator_parameters = x_fhi_vibes_section_calculator_parameters()
+                    sec_calculator.x_fhi_vibes_section_calculator_parameters.append(sec_calculator_parameters)
                     for calc_key in val['calculator_parameters'].keys():
                         if calc_key == 'use_pimd_wrapper':
                             val['calculator_parameters'][calc_key] = str(val['calculator_parameters'][calc_key])
@@ -316,26 +332,32 @@ class FHIVibesParser:
                             sec_calculator_parameters, 'x_fhi_vibes_calculator_parameters_%s' % calc_key,
                             val['calculator_parameters'][calc_key])
                 elif key in ['atoms', 'primitive', 'supercell']:
-                    sec_atoms = sec_metadata.m_create(x_fhi_vibes_section_atoms)
+                    sec_atoms = x_fhi_vibes_section_atoms()
+                    sec_metadata.x_fhi_vibes_section_metadata_atoms.append(sec_atoms)
                     sec_atoms.x_fhi_vibes_atoms_kind = key
                     parse_atoms(sec_atoms, val)
                 elif key == 'vibes':
-                    sec_vibes = sec_metadata.m_create(x_fhi_vibes_section_vibes)
+                    sec_vibes = x_fhi_vibes_section_vibes()
+                    sec_metadata.x_fhi_vibes_section_metadata_vibes.append(sec_vibes)
                     for vibes_key in val.keys():
                         setattr(sec_vibes, 'x_fhi_vibes_%s' % vibes_key, val[vibes_key])
                 elif key == 'settings':
-                    sec_settings = sec_metadata.m_create(x_fhi_vibes_section_settings)
+                    sec_settings = x_fhi_vibes_section_settings()
+                    sec_metadata.x_fhi_vibes_section_metadata_settings.append(sec_settings)
                     for settings_key in val.keys():
                         setattr(sec_settings, 'x_fhi_vibes_settings_%s' % settings_key, val[settings_key])
                 else:
                     setattr(sec_metadata, key, val)
 
-        sec_method = self.archive.run[n_run].m_create(Method)
-        sec_dft = sec_method.m_create(DFT)
+        sec_method = Method()
+        self.archive.run[n_run].method.append(sec_method)
+        sec_dft = DFT()
+        sec_method.dft = sec_dft
 
         parse_xc_functional()
 
-        sec_attrs = sec_method.m_create(x_fhi_vibes_section_attributes)
+        sec_attrs = x_fhi_vibes_section_attributes()
+        sec_method.x_fhi_vibes_section_attributes.append(sec_attrs)
 
         time_units = {'ns': ureg.ns, 'fs': ureg.fs, 'ps': ureg.ps}
         attrs = self.parser.get('attrs')
@@ -343,7 +365,8 @@ class FHIVibesParser:
             if key == 'raw_metadata':
                 parse_metadata()
             elif key.startswith('atoms_'):
-                sec_atoms = sec_attrs.m_create(x_fhi_vibes_section_atoms)
+                sec_atoms = x_fhi_vibes_section_atoms()
+                sec_attrs.x_fhi_vibes_section_attributes_atoms.append(sec_atoms)
                 sec_atoms.x_fhi_vibes_atoms_kind = key
                 atoms = json.loads(val)
                 sec_atoms.x_fhi_vibes_atoms_natoms = len(atoms['positions'])
@@ -396,9 +419,9 @@ class FHIVibesParser:
             for n_frame in range(self.n_frames):
                 if (n_frame % self.frame_rate) > 0:
                     continue
-                self.archive.m_create(Run)
+                self.archive.run.append(Run())
         else:
-            self.archive.m_create(Run)
+            self.archive.run.append(Run())
 
         for n_run, sec_run in enumerate(self.archive.run):
             sec_run.program = Program(name='FHI-vibes', version=metadata.get('vibes', dict()).get('version'))

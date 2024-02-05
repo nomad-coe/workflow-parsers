@@ -29,14 +29,14 @@ from .calculator import PhononProperties
 from nomad import config  # type: ignore
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
-from nomad.datamodel.metainfo.simulation.run import Run, Program
-from nomad.datamodel.metainfo.simulation.method import (
+from runschema.run import Run, Program
+from runschema.method import (
     Method, Electronic
 )
-from nomad.datamodel.metainfo.simulation.system import (
+from runschema.system import (
     System, Atoms
 )
-from nomad.datamodel.metainfo.simulation.calculation import (
+from runschema.calculation import (
     Calculation, BandStructure, BandEnergies, Dos, DosValues, Thermodynamics
 )
 from simulationworkflowschema import (
@@ -234,10 +234,12 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
 
         sec_scc = archive.run[0].calculation[0]
 
-        sec_k_band = sec_scc.m_create(BandStructure, Calculation.band_structure_phonon)
+        sec_k_band = BandStructure()
+        sec_scc.band_structure_phonon.append(sec_k_band)
 
         for i in range(len(freqs)):
-            sec_k_band_segment = sec_k_band.m_create(BandEnergies)
+            sec_k_band_segment = BandEnergies()
+            sec_k_band.segment.append(sec_k_band_segment)
             sec_k_band_segment.kpoints = bands[i]
             sec_k_band_segment.endpoints_labels = [str(label) for label in bands_labels[i]]
             sec_k_band_segment.energies = [freqs[i]]
@@ -250,9 +252,11 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
         f = (f * ureg.eV).to('joules').magnitude
 
         sec_scc = archive.run[0].calculation[0]
-        sec_dos = sec_scc.m_create(Dos, Calculation.dos_phonon)
+        sec_dos = Dos()
+        sec_scc.dos_phonon.append(sec_dos)
         sec_dos.energies = f
-        sec_dos_values = sec_dos.m_create(DosValues, Dos.total)
+        sec_dos_values = DosValues()
+        sec_dos.total.append(sec_dos_values)
         sec_dos_values.value = dos
 
     def parse_thermodynamical_properties():
@@ -278,7 +282,8 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
         sec_scc = sec_run.calculation[0]
 
         for n, Tn in enumerate(T):
-            sec_thermo_prop = sec_scc.m_create(Thermodynamics)
+            sec_thermo_prop = Thermodynamics()
+            sec_scc.thermodynamics.append(sec_thermo_prop)
             sec_thermo_prop.temperature = Tn
             sec_thermo_prop.vibrational_free_energy_at_constant_volume = fe[n]
             sec_thermo_prop.heat_capacity_c_v = cv[n]
@@ -315,20 +320,25 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     supercell_matrix = phonopy_obj.supercell_matrix
     sym_tol = phonopy_obj.symmetry.tolerance
 
-    sec_run = archive.m_create(Run)
+    sec_run = Run()
+    archive.run.append(sec_run)
     sec_run.program = Program(name='Phonopy', version=phonopy.__version__)
 
-    sec_system_unit = sec_run.m_create(System)
-    sec_atoms = sec_system_unit.m_create(Atoms)
+    sec_system_unit = System()
+    sec_run.system.append(sec_system_unit)
+    sec_atoms = Atoms()
+    sec_system_unit.atoms = sec_atoms
     sec_atoms.periodic = pbc
     sec_atoms.labels = unit_sym
     sec_atoms.positions = unit_pos
     sec_atoms.lattice_vectors = unit_cell
 
-    sec_system = sec_run.m_create(System)
+    sec_system = System()
+    sec_run.system.append(sec_system)
     sec_system.sub_system_ref = sec_system_unit
     sec_system.systems_ref = [sec_system_unit]
-    sec_atoms = sec_system.m_create(Atoms)
+    sec_atoms = Atoms()
+    sec_system.atoms = sec_atoms
     sec_atoms.periodic = pbc
     sec_atoms.labels = super_sym
     sec_atoms.positions = super_pos
@@ -336,7 +346,8 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     sec_atoms.supercell_matrix = supercell_matrix
     sec_system.x_phonopy_original_system_ref = sec_system_unit
 
-    sec_method = sec_run.m_create(Method)
+    sec_method = Method()
+    sec_run.method.append(sec_method)
     # TODO I put this so as to have a recognizable section method, but metainfo
     # should be expanded to include phonon related method parameters
     sec_method.electronic = Electronic(method='DFT')
@@ -351,7 +362,8 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
         logger.error('Error producing force constants.')
         return
 
-    sec_scc = sec_run.m_create(Calculation)
+    sec_scc = Calculation()
+    sec_run.calculation.append(sec_scc)
     sec_scc.system_ref = sec_system
     sec_scc.method_ref = sec_method
     sec_scc.hessian_matrix = force_constants
