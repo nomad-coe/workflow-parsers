@@ -27,14 +27,18 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def parser():
     return PhonopyParser()
 
 
 def test_basic(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in', archive, None)
+    parser.parse(
+        "tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in",
+        archive,
+        None,
+    )
 
     # need to assert values, no unbiased reference
     sec_thermo = archive.run[0].calculation[0].thermodynamics
@@ -55,4 +59,4 @@ def test_basic(parser):
 
 def test_vasp(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/phonopy/vasp/phonopy.yaml', archive, None)
+    parser.parse("tests/data/phonopy/vasp/phonopy.yaml", archive, None)
