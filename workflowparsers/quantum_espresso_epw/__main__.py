@@ -24,7 +24,7 @@ from nomad.utils import configure_logging
 from nomad.datamodel import EntryArchive
 from workflowparsers.quantum_espresso_epw import QuantumEspressoEPWParser
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     configure_logging(console_log_level=logging.DEBUG)
     archive = EntryArchive()
     QuantumEspressoEPWParser().parse(sys.argv[1], archive, logging)

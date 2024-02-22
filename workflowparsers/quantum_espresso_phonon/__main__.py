@@ -24,7 +24,7 @@ from nomad.utils import configure_logging
 from nomad.datamodel import EntryArchive
 from workflowparsers.quantum_espresso_phonon import QuantumEspressoPhononParser
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     configure_logging(console_log_level=logging.DEBUG)
     archive = EntryArchive()
     QuantumEspressoPhononParser().parse(sys.argv[1], archive, logging)

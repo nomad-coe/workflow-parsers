@@ -39,11 +39,11 @@ tests = [
     'phonopy==2.11.0',
     'h5py==3.6.0',
     'typing-extensions==4.4.0',
-    'ruff==0.1.4',
+    'ruff==0.1.8',
 ]
 
 [tool.ruff]
-include = ["electronicparsers/*.py", "tests/*.py"]
+include = ["workflowparsers/*.py", "tests/*.py"]
 select = [
     "E", # pycodestyle
     "W", # pycodestyle
@@ -65,6 +65,23 @@ ignore = [
     "PLR5501", # else-if-used
 ]
 fixable = ["ALL"]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.format]
+# use single quotes for strings.
+quote-style = "single"
+
+# indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
 
 [tool.setuptools.packages.find]
 include = ["workflowparsers*"]

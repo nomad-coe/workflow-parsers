@@ -54,12 +54,12 @@ def test_Fe(parser):
     """
 
     archive = EntryArchive()
-    parser.parse("tests/data/lobster/Fe/lobsterout", archive, logging)
+    parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
 
     run = archive.run[0]
-    assert run.program.name == "LOBSTER"
+    assert run.program.name == 'LOBSTER'
     assert run.clean_end is True
-    assert run.program.version == "4.0.0"
+    assert run.program.version == '4.0.0'
     assert run.time_run.wall_start.magnitude == 1619687985
 
     assert len(run.calculation) == 1
@@ -73,16 +73,16 @@ def test_Fe(parser):
 
     method = run.method
     assert len(method) == 1
-    assert method[0].x_lobster_code == "VASP"
-    assert method[0].electrons_representation[0].basis_set[0].type == "pbeVaspFit2015"
+    assert method[0].x_lobster_code == 'VASP'
+    assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
     assert cohp.x_lobster_number_of_cohp_pairs == 20
     assert len(cohp.x_lobster_cohp_atom1_labels) == 20
-    assert cohp.x_lobster_cohp_atom1_labels[19] == "Fe2"
+    assert cohp.x_lobster_cohp_atom1_labels[19] == 'Fe2'
     assert len(cohp.x_lobster_cohp_atom2_labels) == 20
-    assert cohp.x_lobster_cohp_atom1_labels[3] == "Fe1"
+    assert cohp.x_lobster_cohp_atom1_labels[3] == 'Fe1'
     assert len(cohp.x_lobster_cohp_distances) == 20
     assert cohp.x_lobster_cohp_distances[0].magnitude == approx(A_to_m(2.831775))
     assert cohp.x_lobster_cohp_distances[13].magnitude == approx(A_to_m(2.45239))
@@ -134,9 +134,9 @@ def test_Fe(parser):
     coop = scc.x_lobster_section_coop
     assert coop.x_lobster_number_of_coop_pairs == 20
     assert len(coop.x_lobster_coop_atom1_labels) == 20
-    assert coop.x_lobster_coop_atom1_labels[19] == "Fe2"
+    assert coop.x_lobster_coop_atom1_labels[19] == 'Fe2'
     assert len(coop.x_lobster_coop_atom2_labels) == 20
-    assert coop.x_lobster_coop_atom1_labels[3] == "Fe1"
+    assert coop.x_lobster_coop_atom1_labels[3] == 'Fe1'
     assert len(coop.x_lobster_coop_distances) == 20
     assert coop.x_lobster_coop_distances[0].magnitude == approx(A_to_m(2.831775))
     assert coop.x_lobster_coop_distances[13].magnitude == approx(A_to_m(2.45239))
@@ -188,13 +188,13 @@ def test_Fe(parser):
     charges = scc.charges
     assert len(charges) == 2
     mulliken = charges[0]
-    assert mulliken.analysis_method == "mulliken"
+    assert mulliken.analysis_method == 'mulliken'
     assert np.shape(mulliken.value) == (2,)
     assert mulliken.value[0] == pytest.approx(0.0 * e, abs=1e-6)
     assert mulliken.value[1] == pytest.approx(0.0 * e, abs=1e-6)
 
     loewdin = charges[1]
-    assert loewdin.analysis_method == "loewdin"
+    assert loewdin.analysis_method == 'loewdin'
     assert np.shape(loewdin.value) == (2,)
     assert loewdin.value[0] == pytest.approx(0.0 * e, abs=1e-6)
     assert loewdin.value[1] == pytest.approx(0.0 * e, abs=1e-6)
@@ -224,11 +224,11 @@ def test_Fe(parser):
         dos_up.atom_projected[0].atom_index == 0
         and dos_up.atom_projected[6].atom_index == 1
     )
-    assert dos_up.atom_projected[0].m_kind == "real_orbital"
+    assert dos_up.atom_projected[0].m_kind == 'real_orbital'
     assert (dos_up.atom_projected[4].lm == [2, 1]).all()
     assert np.shape(dos_up.atom_projected[11].value) == (201,)
-    assert dos_up.atom_projected[5].value[190].to("1/eV").magnitude == approx(0.00909)
-    assert dos_down.atom_projected[5].value[190].to("1/eV").magnitude == approx(0.29205)
+    assert dos_up.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.00909)
+    assert dos_down.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.29205)
 
 
 def test_NaCl(parser):
@@ -237,12 +237,12 @@ def test_NaCl(parser):
     """
 
     archive = EntryArchive()
-    parser.parse("tests/data/lobster/NaCl/lobsterout", archive, logging)
+    parser.parse('tests/data/lobster/NaCl/lobsterout', archive, logging)
 
     run = archive.run[0]
-    assert run.program.name == "LOBSTER"
+    assert run.program.name == 'LOBSTER'
     assert run.clean_end is True
-    assert run.program.version == "3.2.0"
+    assert run.program.version == '3.2.0'
     assert run.time_run.wall_start.magnitude == 1619713048
 
     assert len(run.calculation) == 1
@@ -254,16 +254,16 @@ def test_NaCl(parser):
 
     method = run.method
     assert len(method) == 1
-    assert method[0].x_lobster_code == "VASP"
-    assert method[0].electrons_representation[0].basis_set[0].type == "pbeVaspFit2015"
+    assert method[0].x_lobster_code == 'VASP'
+    assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
     assert cohp.x_lobster_number_of_cohp_pairs == 72
     assert len(cohp.x_lobster_cohp_atom1_labels) == 72
-    assert cohp.x_lobster_cohp_atom1_labels[71] == "Cl7"
+    assert cohp.x_lobster_cohp_atom1_labels[71] == 'Cl7'
     assert len(cohp.x_lobster_cohp_atom2_labels) == 72
-    assert cohp.x_lobster_cohp_atom2_labels[43] == "Cl6"
+    assert cohp.x_lobster_cohp_atom2_labels[43] == 'Cl6'
     assert len(cohp.x_lobster_cohp_distances) == 72
     assert cohp.x_lobster_cohp_distances[0].magnitude == approx(A_to_m(3.99586))
     assert cohp.x_lobster_cohp_distances[47].magnitude == approx(A_to_m(2.82550))
@@ -309,9 +309,9 @@ def test_NaCl(parser):
     coop = scc.x_lobster_section_coop
     assert coop.x_lobster_number_of_coop_pairs == 72
     assert len(coop.x_lobster_coop_atom1_labels) == 72
-    assert coop.x_lobster_coop_atom1_labels[71] == "Cl7"
+    assert coop.x_lobster_coop_atom1_labels[71] == 'Cl7'
     assert len(coop.x_lobster_coop_atom2_labels) == 72
-    assert coop.x_lobster_coop_atom2_labels[0] == "Na2"
+    assert coop.x_lobster_coop_atom2_labels[0] == 'Na2'
     assert len(coop.x_lobster_coop_distances) == 72
     assert coop.x_lobster_coop_distances[0].magnitude == approx(A_to_m(3.99586))
     assert coop.x_lobster_coop_distances[12].magnitude == approx(A_to_m(2.82550))
@@ -357,14 +357,14 @@ def test_NaCl(parser):
     charges = scc.charges
     assert len(charges) == 2
     mulliken = charges[0]
-    assert mulliken.analysis_method == "mulliken"
+    assert mulliken.analysis_method == 'mulliken'
     # here the approx is not really working (changing the 0.78 to for example
     # 10 makes the test still pass)
     assert mulliken.value[0].magnitude == approx(0.78 * e)
     assert mulliken.value[7].magnitude == approx(-0.78 * e)
 
     loewdin = charges[1]
-    assert loewdin.analysis_method == "loewdin"
+    assert loewdin.analysis_method == 'loewdin'
     assert loewdin.value[0].magnitude == approx(0.67 * e)
     assert loewdin.value[7].magnitude == approx(-0.67 * e)
 
@@ -389,7 +389,7 @@ def test_NaCl(parser):
     assert len(dos.atom_projected) == 20
     dos.atom_projected[0].atom_index == 0
     dos.atom_projected[19].atom_index == 7
-    assert dos.atom_projected[5].m_kind == "real_orbital"
+    assert dos.atom_projected[5].m_kind == 'real_orbital'
     assert (dos.atom_projected[17].lm == [1, 2]).all()
     assert np.shape(dos.atom_projected[13].value) == (201,)
     assert np.shape(dos.atom_projected[8].value) == (201,)
@@ -406,12 +406,12 @@ def test_HfV(parser):
     """
 
     archive = EntryArchive()
-    parser.parse("tests/data/lobster/HfV2/lobsterout", archive, logging)
+    parser.parse('tests/data/lobster/HfV2/lobsterout', archive, logging)
 
     run = archive.run[0]
-    assert run.program.name == "LOBSTER"
+    assert run.program.name == 'LOBSTER'
     assert run.clean_end is True
-    assert run.program.version == "2.0.0"
+    assert run.program.version == '2.0.0'
 
     assert len(run.calculation) == 1
     scc = run.calculation[0]
@@ -431,15 +431,15 @@ def test_HfV(parser):
 
     # method
     method = run.method
-    assert method[0].electrons_representation[0].basis_set[0].type == "Koga"
+    assert method[0].electrons_representation[0].basis_set[0].type == 'Koga'
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
     assert cohp.x_lobster_number_of_cohp_pairs == 56
     assert len(cohp.x_lobster_cohp_atom1_labels) == 56
-    assert cohp.x_lobster_cohp_atom1_labels[41] == "V6"
+    assert cohp.x_lobster_cohp_atom1_labels[41] == 'V6'
     assert len(cohp.x_lobster_cohp_atom2_labels) == 56
-    assert cohp.x_lobster_cohp_atom2_labels[16] == "V9"
+    assert cohp.x_lobster_cohp_atom2_labels[16] == 'V9'
     assert len(cohp.x_lobster_cohp_distances) == 56
     assert cohp.x_lobster_cohp_distances[0].magnitude == approx(A_to_m(3.17294))
     assert cohp.x_lobster_cohp_distances[47].magnitude == approx(A_to_m(2.60684))
@@ -460,9 +460,9 @@ def test_HfV(parser):
     coop = scc.x_lobster_section_coop
     assert coop.x_lobster_number_of_coop_pairs == 56
     assert len(coop.x_lobster_coop_atom1_labels) == 56
-    assert coop.x_lobster_coop_atom1_labels[41] == "V6"
+    assert coop.x_lobster_coop_atom1_labels[41] == 'V6'
     assert len(coop.x_lobster_coop_atom2_labels) == 56
-    assert coop.x_lobster_coop_atom2_labels[11] == "Hf4"
+    assert coop.x_lobster_coop_atom2_labels[11] == 'Hf4'
     assert len(coop.x_lobster_coop_distances) == 56
     assert coop.x_lobster_coop_distances[0].magnitude == approx(A_to_m(3.17294))
     assert coop.x_lobster_coop_distances[47].magnitude == approx(A_to_m(2.60684))
@@ -487,22 +487,22 @@ def test_QE_Ni(parser):
     """
 
     archive = EntryArchive()
-    parser.parse("tests/data/lobster/Ni/lobsterout", archive, logging)
+    parser.parse('tests/data/lobster/Ni/lobsterout', archive, logging)
 
     run = archive.run[0]
 
     # QE system parsing
     system = run.system
     assert len(system) == 1
-    assert system[0].atoms.labels == ["Ni"]
+    assert system[0].atoms.labels == ['Ni']
     assert system[0].atoms.periodic == [True, True, True]
     assert len(system[0].atoms.positions) == 1
     assert (system[0].atoms.positions[0].magnitude == [0, 0, 0]).all()
 
     method = run.method
     assert len(method) == 1
-    assert method[0].x_lobster_code == "Quantum Espresso"
-    assert method[0].electrons_representation[0].basis_set[0].type == "Bunge"
+    assert method[0].x_lobster_code == 'Quantum Espresso'
+    assert method[0].electrons_representation[0].basis_set[0].type == 'Bunge'
 
     assert len(run.calculation) == 1
     scc = run.calculation[0]
@@ -523,7 +523,7 @@ def test_failed_case(parser):
     """
 
     archive = EntryArchive()
-    parser.parse("tests/data/lobster/failed_case/lobsterout", archive, logging)
+    parser.parse('tests/data/lobster/failed_case/lobsterout', archive, logging)
 
     run = archive.run[0]
     assert run.clean_end is False

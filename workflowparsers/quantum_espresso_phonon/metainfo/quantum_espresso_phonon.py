@@ -16,11 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np            # pylint: disable=unused-import
+import numpy as np  # pylint: disable=unused-import
 
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
-    Reference, JSON
+    MSection,
+    MCategory,
+    Category,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+    SectionProxy,
+    Reference,
+    JSON,
 )
 import runschema.run  # pylint: disable=unused-import
 import runschema.calculation  # pylint: disable=unused-import
@@ -32,308 +40,350 @@ m_package = Package()
 
 
 class x_qe_phonon_n_parallel(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_phonon_n_parallel_min = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_parallel_max = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_parallel_sum = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Method(runschema.method.Method):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_phonon_kinetic_energy_cutoff = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='joule',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_charge_density_cutoff = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='joule',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_convergence_threshold = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_beta = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_exchange_correlation = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_kohn_sham_states = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_parameters = Quantity(
         type=JSON,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_fft_g_cutoff = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_fft_g_vectors = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_fft_grid = Quantity(
         type=np.dtype(np.int32),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_smooth_g_cutoff = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_smooth_g_vectors = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_smooth_grid = Quantity(
         type=np.dtype(np.int32),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_kpoints = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_alpha_ewald = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_negative_rho = Quantity(
         type=np.dtype(np.float64),
         shape=[2],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_parallel_sticks = SubSection(sub_section=x_qe_phonon_n_parallel.m_def)
 
-    x_qe_phonon_n_parallel_g_vectors = SubSection(sub_section=x_qe_phonon_n_parallel.m_def)
+    x_qe_phonon_n_parallel_g_vectors = SubSection(
+        sub_section=x_qe_phonon_n_parallel.m_def
+    )
 
 
 class System(runschema.system.System):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_phonon_bravais_lattice_index = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_lattice_parameter = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='m',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_unit_cell_volume = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='m ** 3',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_atoms_cell = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_atomic_sites = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_point_group = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class x_qe_phonon_scf_iteration(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_phonon_fermi_energy_shift = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='joule',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_iter = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_time = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='s',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_total_cpu_time = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='s',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_threshold = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_alpha_mix = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_ddv_scf_2 = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class x_qe_phonon_representation(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_phonon_number = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_converged = Quantity(
         type=bool,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_modes = Quantity(
         type=np.dtype(np.int32),
         shape=['*'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
-    x_qe_phonon_scf_iteration = SubSection(sub_section=x_qe_phonon_scf_iteration.m_def, repeats=True)
+    x_qe_phonon_scf_iteration = SubSection(
+        sub_section=x_qe_phonon_scf_iteration.m_def, repeats=True
+    )
 
 
 class Calculation(runschema.calculation.Calculation):
-
     m_def = Section(validate=False, extends_base_section=True)
 
-    x_qe_phonon_representation = SubSection(sub_section=x_qe_phonon_representation.m_def)
+    x_qe_phonon_representation = SubSection(
+        sub_section=x_qe_phonon_representation.m_def
+    )
 
 
 class AtomParameters(runschema.method.AtomParameters):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_phonon_file = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_md5_check_sum = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_type = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_radial_grid_points = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_beta_functions = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_l = Quantity(
         type=np.dtype(np.int32),
         shape=['x_qe_phonon_n_beta_functions'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_n_q_coefficients = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_phonon_l = Quantity(
         type=np.dtype(np.float64),
         shape=['x_qe_phonon_n_q_coefficients'],
-        description='''
-        ''')
+        description="""
+        """,
+    )

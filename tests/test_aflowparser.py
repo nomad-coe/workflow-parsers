@@ -26,23 +26,23 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def parser():
     return AFLOWParser()
 
 
 def test_aflowlib(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/aflow/Ag1Co1O2_ICSD_246157/aflowlib.json", archive, None)
+    parser.parse('tests/data/aflow/Ag1Co1O2_ICSD_246157/aflowlib.json', archive, None)
 
     assert len(archive.run) == 3
 
-    assert archive.run[0].program.version == "aflow30847"
-    assert archive.run[0].x_aflow_auid == "aflow:fbc2cf03b9659c90"
+    assert archive.run[0].program.version == 'aflow30847'
+    assert archive.run[0].x_aflow_auid == 'aflow:fbc2cf03b9659c90'
     sec_system = archive.run[0].system[0]
     assert sec_system.atoms.lattice_vectors[1][0].magnitude == approx(-1.45323479e-10)
-    assert sec_system.x_aflow_Pearson_symbol_superlattice == "hP8"
-    assert list(sec_system.x_aflow_Wyckoff_letters_orig) == [["c"], ["a"], ["f"]]
+    assert sec_system.x_aflow_Pearson_symbol_superlattice == 'hP8'
+    assert list(sec_system.x_aflow_Wyckoff_letters_orig) == [['c'], ['a'], ['f']]
     sec_method = archive.run[0].method[0]
     assert sec_method.x_aflow_delta_electronic_energy_convergence == approx(3.06569e-05)
     sec_calculation = archive.run[0].calculation[0]
@@ -55,7 +55,7 @@ def test_aflowlib(parser):
 
     run = archive.run[1]
     assert len(run.system) == len(run.calculation) == 24
-    assert run.system[7].atoms.labels[6] == "O"
+    assert run.system[7].atoms.labels[6] == 'O'
     assert run.system[21].atoms.lattice_vectors[0][1].magnitude == approx(
         -2.5241880209758e-10
     )
@@ -83,11 +83,11 @@ def test_aflowlib(parser):
 
 def test_aflowin(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/aflow/MgO/aflow.in", archive, None)
+    parser.parse('tests/data/aflow/MgO/aflow.in', archive, None)
 
     assert len(archive.run) == 2
 
-    assert archive.run[0].program.version == "3.2.1"
+    assert archive.run[0].program.version == '3.2.1'
     sec_system = archive.run[0].system[0]
     assert sec_system.atoms.lattice_vectors[1][2].magnitude == approx(2.1277509e-10)
     assert sec_system.atoms.positions[1][1].magnitude == approx(2.1277509e-10)

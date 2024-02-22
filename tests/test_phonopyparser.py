@@ -27,7 +27,7 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def parser():
     return PhonopyParser()
 
@@ -35,7 +35,7 @@ def parser():
 def test_basic(parser):
     archive = EntryArchive()
     parser.parse(
-        "tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in",
+        'tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in',
         archive,
         None,
     )
@@ -59,4 +59,4 @@ def test_basic(parser):
 
 def test_vasp(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/phonopy/vasp/phonopy.yaml", archive, None)
+    parser.parse('tests/data/phonopy/vasp/phonopy.yaml', archive, None)

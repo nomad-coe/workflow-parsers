@@ -23,18 +23,38 @@ import numpy as np
 
 from nomad.units import ureg
 from simulationworkflowschema import (
-    Elastic, ElasticMethod, ElasticResults, EquationOfState, EquationOfStateMethod,
-    EquationOfStateResults, Thermodynamics, ThermodynamicsResults,
-    Phonon, PhononMethod, PhononResults
+    Elastic,
+    ElasticMethod,
+    ElasticResults,
+    EquationOfState,
+    EquationOfStateMethod,
+    EquationOfStateResults,
+    Thermodynamics,
+    ThermodynamicsResults,
+    Phonon,
+    PhononMethod,
+    PhononResults,
 )
 from simulationworkflowschema.equation_of_state import EOSFit
 from simulationworkflowschema.thermodynamics import Stability, Decomposition
 from runschema.run import Run, Program
 from runschema.system import System, Atoms
 from runschema.method import (
-    Method, DFT, Electronic, XCFunctional, Functional, BasisSet, BasisSetContainer,)
+    Method,
+    DFT,
+    Electronic,
+    XCFunctional,
+    Functional,
+    BasisSet,
+    BasisSetContainer,
+)
 from runschema.calculation import (
-    Calculation, Dos, DosValues, BandStructure, BandEnergies)
+    Calculation,
+    Dos,
+    DosValues,
+    BandStructure,
+    BandEnergies,
+)
 from .metainfo.atomate import Composition, Symmetry
 
 
@@ -66,11 +86,15 @@ class AtomateParser:
 
         elastic_tensor = source.get('elastic_tensor')
         if elastic_tensor is not None:
-            workflow.results.elastic_constants_matrix_second_order = elastic_tensor * ureg.GPa
+            workflow.results.elastic_constants_matrix_second_order = (
+                elastic_tensor * ureg.GPa
+            )
 
         compliance_tensor = source.get('compliance_tensor')
         if compliance_tensor is not None:
-            workflow.results.compliance_matrix_second_order = compliance_tensor * (1 / ureg.GPa)
+            workflow.results.compliance_matrix_second_order = compliance_tensor * (
+                1 / ureg.GPa
+            )
 
         if source.get('g_reuss') is not None:
             workflow.results.shear_modulus_reuss = source['g_reuss'] * ureg.GPa
@@ -90,9 +114,10 @@ class AtomateParser:
 
     def parse_eos(self, source):
         workflow = EquationOfState(
-            method=EquationOfStateMethod(), results=EquationOfStateResults())
+            method=EquationOfStateMethod(), results=EquationOfStateResults()
+        )
         if source.get('volumes') is not None:
-            workflow.results.volumes = source['volumes'] * ureg.angstrom ** 3
+            workflow.results.volumes = source['volumes'] * ureg.angstrom**3
         if source.get('energies') is not None:
             workflow.results.energies = source['energies'] * ureg.eV
         for fit_function, result in source.get('eos', {}).items():
@@ -100,13 +125,13 @@ class AtomateParser:
             workflow.results.eos_fit.append(sec_eos_fit)
             sec_eos_fit.function_name = fit_function
             if result.get('B') is not None:
-                sec_eos_fit.bulk_modulus = result['B'] * ureg.eV / ureg.angstrom ** 3
+                sec_eos_fit.bulk_modulus = result['B'] * ureg.eV / ureg.angstrom**3
             if result.get('C') is not None:
                 sec_eos_fit.bulk_modulus_derivative = result['C']
             if result.get('E0') is not None:
                 sec_eos_fit.equilibrium_energy = result['E0'] * ureg.eV
             if result.get('V0') is not None:
-                sec_eos_fit.equilibrium_volume = result['V0'] * ureg.angstrom ** 3
+                sec_eos_fit.equilibrium_volume = result['V0'] * ureg.angstrom**3
             if result.get('eos_energies') is not None:
                 sec_eos_fit.fitted_energies = result['eos_energies'] * ureg.eV
         self.archive.workflow2 = workflow
@@ -118,9 +143,12 @@ class AtomateParser:
         if not workflow.results:
             workflow.results = ThermodynamicsResults()
         sec_stability = Stability()
-        sec_stability.formation_energy = data.get(
-            'formation_energy_per_atom', 0) * data.get('nsites', 1) * ureg.eV
-        sec_stability.delta_formation_energy = data.get('energy_above_hull', 0) * ureg.eV
+        sec_stability.formation_energy = (
+            data.get('formation_energy_per_atom', 0) * data.get('nsites', 1) * ureg.eV
+        )
+        sec_stability.delta_formation_energy = (
+            data.get('energy_above_hull', 0) * ureg.eV
+        )
         sec_stability.is_stable = data.get('is_stable')
         if data.get('decomposes_to') is not None:
             for system in data.get('decomposes_to'):
@@ -167,10 +195,14 @@ class AtomateParser:
                     continue
                 sec_segment = BandEnergies()
                 sec_bs.segment.append(sec_segment)
-                energies = bands[endpoints[0]: endpoints[1] + 1]
-                sec_segment.energies = np.reshape(energies, (1, *np.shape(energies))) * ureg.THz * ureg.h
-                sec_segment.kpoints = qpoints[endpoints[0]: endpoints[1] + 1]
-                sec_segment.endpoints_labels = [labels[hisym_qpts.index(qpoints[i])] for i in endpoints]
+                energies = bands[endpoints[0] : endpoints[1] + 1]
+                sec_segment.energies = (
+                    np.reshape(energies, (1, *np.shape(energies))) * ureg.THz * ureg.h
+                )
+                sec_segment.kpoints = qpoints[endpoints[0] : endpoints[1] + 1]
+                sec_segment.endpoints_labels = [
+                    labels[hisym_qpts.index(qpoints[i])] for i in endpoints
+                ]
                 endpoints = []
 
         calc.system_ref = self.archive.run[-1].system[0]
@@ -182,14 +214,14 @@ class AtomateParser:
         if len(data['calcs_reversed']) == 0:
             return
 
-        xc_func_mapping = {
-            'PAW_PBE': ['GGA_X_PBE', 'GGA_C_PBE']
-        }
+        xc_func_mapping = {'PAW_PBE': ['GGA_X_PBE', 'GGA_C_PBE']}
 
         sec_method = Method()
         self.archive.run[-1].method.append(sec_method)
         sec_xc_functional = XCFunctional()
-        for potcar_type in data['calcs_reversed'][0].get('input', {}).get('potcar_type', []):
+        for potcar_type in (
+            data['calcs_reversed'][0].get('input', {}).get('potcar_type', [])
+        ):
             for xc_functional in xc_func_mapping.get(potcar_type, []):
                 if '_X_' in xc_functional or xc_functional.endswith('_X'):
                     sec_xc_functional.exchange.append(Functional(name=xc_functional))
@@ -198,10 +230,12 @@ class AtomateParser:
                 elif 'HYB' in xc_functional:
                     sec_xc_functional.hybrid.append(Functional(name=xc_functional))
                 else:
-                    sec_xc_functional.contributions.append(Functional(name=xc_functional))
+                    sec_xc_functional.contributions.append(
+                        Functional(name=xc_functional)
+                    )
 
         sec_method.dft = DFT(xc_functional=sec_xc_functional)
-        sec_method.electronic = Electronic(method="DFT")
+        sec_method.electronic = Electronic(method='DFT')
 
         encut = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('ENCUT')
         prec = data['calcs_reversed'][0].get('input', {}).get('incar', {}).get('PREC')
@@ -257,11 +291,13 @@ class AtomateParser:
 
         for key, val in self.data.get('composition', {}).items():
             sec_system.x_mp_composition.append(
-                Composition(x_mp_label=key, x_mp_value=val))
+                Composition(x_mp_label=key, x_mp_value=val)
+            )
 
         for key, val in self.data.get('composition_reduced', {}).items():
             sec_system.x_mp_composition_reduced.append(
-                Composition(x_mp_label=key, x_mp_value=val))
+                Composition(x_mp_label=key, x_mp_value=val)
+            )
 
         symmetry = self.data.get('symmetry')
         if symmetry is not None:
@@ -274,8 +310,10 @@ class AtomateParser:
                     pass
 
         # misc
-        sec_system.x_mp_elements = [e.get('element') if isinstance(
-            e, dict) else e for e in self.data.get('elements', [])]
+        sec_system.x_mp_elements = [
+            e.get('element') if isinstance(e, dict) else e
+            for e in self.data.get('elements', [])
+        ]
         for key, val in self.data.items():
             try:
                 setattr(sec_system, 'x_mp_%s' % key, val)
@@ -289,8 +327,11 @@ class AtomateParser:
 
         # TODO should we use the MP api for workflow results?
         # TODO handle multiple workflow sections
-        workflow_files = [f for f in os.listdir(
-            self.maindir) if f.endswith('.json') and f != os.path.basename(self.filepath)]
+        workflow_files = [
+            f
+            for f in os.listdir(self.maindir)
+            if f.endswith('.json') and f != os.path.basename(self.filepath)
+        ]
         workflow_files.sort()
         for filename in workflow_files:
             try:
@@ -299,7 +340,9 @@ class AtomateParser:
                 continue
             # make sure data matches that of system
             # TODO maybe better to simply compare filename prefix so no need to load data
-            if data.get('material_id', data.get('task_id')) != self.data.get('material_id'):
+            if data.get('material_id', data.get('task_id')) != self.data.get(
+                'material_id'
+            ):
                 continue
 
             if 'elasticity' in data:

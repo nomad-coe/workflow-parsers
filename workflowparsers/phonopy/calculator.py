@@ -38,29 +38,29 @@ def generate_kpath_parameters(points, paths, npoints):
     for p in paths:
         k_points.append([points[k] for k in p])
         for index in range(len(p)):
-            if p[index] == "G":
-                p[index] = "Γ"
+            if p[index] == 'G':
+                p[index] = 'Γ'
     parameters = []
     for h, seg in enumerate(k_points):
         for i, path in enumerate(seg):
             parameter = {}
-            parameter["npoints"] = npoints
-            parameter["startname"] = paths[h][i]
+            parameter['npoints'] = npoints
+            parameter['startname'] = paths[h][i]
             if i == 0 and len(seg) > 2:
-                parameter["kstart"] = path
-                parameter["kend"] = seg[i + 1]
-                parameter["endname"] = paths[h][i + 1]
+                parameter['kstart'] = path
+                parameter['kend'] = seg[i + 1]
+                parameter['endname'] = paths[h][i + 1]
                 parameters.append(parameter)
             elif i == (len(seg) - 2):
-                parameter["kstart"] = path
-                parameter["kend"] = seg[i + 1]
-                parameter["endname"] = paths[h][i + 1]
+                parameter['kstart'] = path
+                parameter['kend'] = seg[i + 1]
+                parameter['endname'] = paths[h][i + 1]
                 parameters.append(parameter)
                 break
             else:
-                parameter["kstart"] = path
-                parameter["kend"] = seg[i + 1]
-                parameter["endname"] = paths[h][i + 1]
+                parameter['kstart'] = path
+                parameter['kend'] = seg[i + 1]
+                parameter['endname'] = paths[h][i + 1]
                 parameters.append(parameter)
     return parameters
 
@@ -69,13 +69,13 @@ def read_kpath(filename):
     with open(filename) as f:
         string = f.read()
 
-        labels = re.search(r"BAND_LABELS\s*=\s*(.+)", string)
+        labels = re.search(r'BAND_LABELS\s*=\s*(.+)', string)
         try:
             labels = labels.group(1).strip().split()
         except Exception:
             return
 
-        points = re.search(r"BAND\s*=\s*(.+)", string)
+        points = re.search(r'BAND\s*=\s*(.+)', string)
         try:
             points = points.group(1)
             points = [float(Fraction(p)) for p in points.split()]
@@ -84,7 +84,7 @@ def read_kpath(filename):
         except Exception:
             return
 
-        npoints = re.search(r"BAND_POINTS\s*\=\s*(\d+)", string)
+        npoints = re.search(r'BAND_POINTS\s*\=\s*(\d+)', string)
         if npoints is not None:
             npoints = int(npoints.group(1))
         else:
@@ -99,9 +99,9 @@ def generate_kpath_ase(cell, symprec, logger=None):
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
-        logger.warning("Cannot resolve lattice paths.")
-        paths = special_paths["orthorhombic"]
-        points = sc_special_points["orthorhombic"]
+        logger.warning('Cannot resolve lattice paths.')
+        paths = special_paths['orthorhombic']
+        points = sc_special_points['orthorhombic']
     if points is None:
         try:
             points = get_special_points(cell)
@@ -109,7 +109,7 @@ def generate_kpath_ase(cell, symprec, logger=None):
             return []
 
     if isinstance(paths, str):
-        paths = [list(path) for path in paths.split(",")]
+        paths = [list(path) for path in paths.split(',')]
     return generate_kpath_parameters(points, paths, 100)
 
 
@@ -117,14 +117,14 @@ class PhononProperties:
     def __init__(self, phonopy_obj, logger, **kwargs):
         self.logger = logger
         self.phonopy_obj = phonopy_obj
-        self.t_max = kwargs.get("t_max", 1000)
-        self.t_min = kwargs.get("t_min", 0)
-        self.t_step = kwargs.get("t_step", 100)
-        self.band_conf = kwargs.get("band_conf")
+        self.t_max = kwargs.get('t_max', 1000)
+        self.t_min = kwargs.get('t_min', 0)
+        self.t_step = kwargs.get('t_step', 100)
+        self.band_conf = kwargs.get('band_conf')
 
         self.n_atoms = len(phonopy_obj.unitcell)
 
-        k_mesh = kwargs.get("k_mesh", 30)
+        k_mesh = kwargs.get('k_mesh', 30)
         mesh_density = (2 * k_mesh**3) / self.n_atoms
         mesh_number = np.round(mesh_density ** (1.0 / 3.0))
         self.mesh = [mesh_number, mesh_number, mesh_number]
@@ -159,11 +159,11 @@ class PhononProperties:
         distance = 0.0
         bands_special_points = [distance]
         bands_labels = []
-        label = parameters[0]["startname"]
+        label = parameters[0]['startname']
         for b in parameters:
-            kstart = np.array(b["kstart"])
-            kend = np.array(b["kend"])
-            npoints = b["npoints"]
+            kstart = np.array(b['kstart'])
+            kend = np.array(b['kend'])
+            npoints = b['npoints']
             dk = (kend - kstart) / (npoints - 1)
             bands.append([(kstart + dk * n) for n in range(npoints)])
             dk_length = np.linalg.norm(dk)
@@ -173,7 +173,7 @@ class PhononProperties:
 
             distance += dk_length * (npoints - 1)
             bands_special_points.append(distance)
-            label = [b["startname"], b["endname"]]
+            label = [b['startname'], b['endname']]
             bands_labels.append(label)
 
         bs_obj = BandStructure(

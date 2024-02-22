@@ -27,27 +27,27 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def parser():
     return AtomateParser()
 
 
 def test_all(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/atomate/mp-149/mp-149_materials.json", archive, None)
+    parser.parse('tests/data/atomate/mp-149/mp-149_materials.json', archive, None)
 
     run = archive.run[0]
-    assert run.program.name == "MaterialsProject"
+    assert run.program.name == 'MaterialsProject'
 
     sec_system = run.system[0]
-    assert sec_system.atoms.labels == ["Si", "Si"]
+    assert sec_system.atoms.labels == ['Si', 'Si']
     assert sec_system.atoms.lattice_vectors[1][2].magnitude == approx(2.734364e-10)
     assert sec_system.atoms.positions[0][0].magnitude == approx(1.367182e-10)
     assert sec_system.x_mp_composition_reduced[0].x_mp_value == approx(1.0)
     assert sec_system.x_mp_symmetry[0].x_mp_symprec == approx(0.1)
-    assert sec_system.x_mp_elements[0] == "Si"
+    assert sec_system.x_mp_elements[0] == 'Si'
     assert sec_system.x_mp_volume == approx(40.88829284866483)
-    assert sec_system.x_mp_formula_anonymous == "A"
+    assert sec_system.x_mp_formula_anonymous == 'A'
 
     # TODO currently, workflow2 is not repeating
     # TODO error loading metainfo in github action

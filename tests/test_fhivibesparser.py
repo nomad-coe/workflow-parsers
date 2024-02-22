@@ -27,7 +27,7 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def parser():
     return FHIVibesParser()
 
@@ -35,9 +35,9 @@ def parser():
 # TODO find out why tests fail on github
 def _test_singlepoint(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/fhivibes/singlepoint.nc", archive, None)
+    parser.parse('tests/data/fhivibes/singlepoint.nc', archive, None)
 
-    assert archive.workflow2.m_def.name == "SinglePoint"
+    assert archive.workflow2.m_def.name == 'SinglePoint'
 
     sec_run = archive.run
     assert len(sec_run) == 10
@@ -79,9 +79,9 @@ def _test_singlepoint(parser):
 
 def _test_relaxation(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/fhivibes/relaxation.nc", archive, None)
+    parser.parse('tests/data/fhivibes/relaxation.nc', archive, None)
 
-    assert archive.workflow2.m_def.name == "GeometryOptimization"
+    assert archive.workflow2.m_def.name == 'GeometryOptimization'
 
     assert len(archive.run) == 1
 
@@ -96,7 +96,7 @@ def _test_relaxation(parser):
     sec_relaxation = sec_metadata.x_fhi_vibes_section_metadata_relaxation[0]
     assert sec_relaxation.x_fhi_vibes_relaxation_maxstep == 0.2
     assert not sec_relaxation.x_fhi_vibes_relaxation_hydrostatic_strain
-    assert sec_relaxation.x_fhi_vibes_relaxation_type == "optimization"
+    assert sec_relaxation.x_fhi_vibes_relaxation_type == 'optimization'
 
     sec_sccs = archive.run[0].calculation
     assert len(sec_sccs) == 3
@@ -108,15 +108,15 @@ def _test_relaxation(parser):
 
 def _test_molecular_dynamics(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/fhivibes/molecular_dynamics.nc", archive, None)
+    parser.parse('tests/data/fhivibes/molecular_dynamics.nc', archive, None)
 
-    assert archive.workflow2.m_def.name == "MolecularDynamics"
+    assert archive.workflow2.m_def.name == 'MolecularDynamics'
 
     sec_attrs = archive.run[0].method[0].x_fhi_vibes_section_attributes[0]
     sec_md = sec_attrs.x_fhi_vibes_section_attributes_metadata[
         0
     ].x_fhi_vibes_section_metadata_MD[0]
-    assert sec_md.x_fhi_vibes_MD_md_type == "Langevin"
+    assert sec_md.x_fhi_vibes_MD_md_type == 'Langevin'
     assert sec_md.x_fhi_vibes_MD_friction == 0.02
 
     sec_systems = archive.run[0].system
@@ -139,15 +139,15 @@ def _test_molecular_dynamics(parser):
 
 def _test_phonon(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/fhivibes/phonopy.nc", archive, None)
+    parser.parse('tests/data/fhivibes/phonopy.nc', archive, None)
 
-    assert archive.workflow2.m_def.name == "Phonon"
+    assert archive.workflow2.m_def.name == 'Phonon'
 
     sec_attrs = archive.run[0].method[0].x_fhi_vibes_section_attributes[0]
     sec_phonon = sec_attrs.x_fhi_vibes_section_attributes_metadata[
         0
     ].x_fhi_vibes_section_metadata_phonopy[0]
-    assert sec_phonon.x_fhi_vibes_phonopy_version == "2.6.1"
+    assert sec_phonon.x_fhi_vibes_phonopy_version == '2.6.1'
     sec_atoms = sec_phonon.x_fhi_vibes_section_phonopy_primitive[0]
     assert np.shape(sec_atoms.x_fhi_vibes_atoms_positions) == (2, 3)
     assert sec_atoms.x_fhi_vibes_atoms_cell[0][2].magnitude == approx(2.70925272e-10)

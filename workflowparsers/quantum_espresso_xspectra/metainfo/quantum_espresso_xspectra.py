@@ -16,10 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np            # pylint: disable=unused-import
+import numpy as np  # pylint: disable=unused-import
 
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, Package, Quantity, Section, SubSection, JSON
+    MSection,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+    JSON,
 )
 import runschema.run  # pylint: disable=unused-import
 import runschema.calculation  # pylint: disable=unused-import
@@ -31,226 +36,255 @@ m_package = Package()
 
 
 class x_qe_xspectra_input(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_xspectra_calculation = Quantity(
         type=str,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_xepsilon = Quantity(
         type=np.float64,
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_xonly_plot = Quantity(
         type=bool,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_filecore = Quantity(
         type=str,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_main_plot_parameters = Quantity(
         type=JSON,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class x_qe_xspectra_pwscf_wavefunction(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_xspectra_file = Quantity(
         type=str,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_wavefunctions = Quantity(
         type=str,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class x_qe_xspectra_n_parallel(MSection):
-
     m_def = Section(validate=False)
 
     x_qe_xspectra_n_parallel_min = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_parallel_max = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_parallel_sum = Quantity(
         type=np.dtype(np.float64),
         shape=[3],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Run(runschema.run.Run):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_input = SubSection(sub_section=x_qe_xspectra_input.m_def)
 
 
 class Method(runschema.method.Method):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_save_directory = Quantity(
         type=str,
-        description='''
-        ''')
-    x_qe_xspectra_pwscf_wavefunction = SubSection(sub_section=x_qe_xspectra_pwscf_wavefunction, repeats=True)
+        description="""
+        """,
+    )
+    x_qe_xspectra_pwscf_wavefunction = SubSection(
+        sub_section=x_qe_xspectra_pwscf_wavefunction, repeats=True
+    )
 
-    x_qe_xspectra_n_parallel_sticks = SubSection(sub_section=x_qe_xspectra_n_parallel.m_def)
+    x_qe_xspectra_n_parallel_sticks = SubSection(
+        sub_section=x_qe_xspectra_n_parallel.m_def
+    )
 
-    x_qe_xspectra_n_parallel_g_vectors = SubSection(sub_section=x_qe_xspectra_n_parallel.m_def)
+    x_qe_xspectra_n_parallel_g_vectors = SubSection(
+        sub_section=x_qe_xspectra_n_parallel.m_def
+    )
 
 
 class System(runschema.system.System):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_bravais_lattice_index = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_lattice_parameter = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='m',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_unit_cell_volume = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='m ** 3',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_atoms_cell = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_atomic_sites = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_point_group = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class AtomParameters(runschema.method.AtomParameters):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_file = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_md5_check_sum = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_type = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_radial_grid_points = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_beta_functions = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_l = Quantity(
         type=np.dtype(np.int32),
         shape=['x_qe_xspectra_n_beta_functions'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_n_q_coefficients = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_l = Quantity(
         type=np.dtype(np.float64),
         shape=['x_qe_xspectra_n_q_coefficients'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Spectra(runschema.calculation.Spectra):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_energy_zero = Quantity(
         type=np.float64,
         unit='eV',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_xemin = Quantity(
         type=np.float64,
         unit='eV',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_xemax = Quantity(
         type=np.float64,
         unit='eV',
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_xnepoint = Quantity(
         type=np.float64,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_broadening_parameter = Quantity(
         type=np.float64,
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_qe_xspectra_energy_core_level = Quantity(
         type=np.float64,
         unit='eV',
-        description='''
-        ''')
+        description="""
+        """,
+    )

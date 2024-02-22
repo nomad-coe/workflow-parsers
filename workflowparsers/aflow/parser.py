@@ -28,13 +28,30 @@ from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
 from runschema.run import Run, Program
 from runschema.calculation import (
-    Calculation, Energy, EnergyEntry, Forces, ForcesEntry, Stress, StressEntry,
-    Thermodynamics, Dos, DosValues, BandStructure, BandEnergies)
+    Calculation,
+    Energy,
+    EnergyEntry,
+    Forces,
+    ForcesEntry,
+    Stress,
+    StressEntry,
+    Thermodynamics,
+    Dos,
+    DosValues,
+    BandStructure,
+    BandEnergies,
+)
 from runschema.method import Method
 from runschema.system import System, Atoms
 from simulationworkflowschema import (
-    Elastic, ElasticMethod, ElasticResults, Phonon, PhononMethod, PhononResults,
-    Thermodynamics as WorkflowThermodynamics, ThermodynamicsResults
+    Elastic,
+    ElasticMethod,
+    ElasticResults,
+    Phonon,
+    PhononMethod,
+    PhononResults,
+    Thermodynamics as WorkflowThermodynamics,
+    ThermodynamicsResults,
 )
 
 
@@ -46,28 +63,41 @@ class AflowOutParser(TextParser):
         super().__init__(**kwargs)
 
     def init_quantities(self):
-
         def str_to_property(val_in):
             val = val_in.split('=')
-            return val[0].strip().replace(' ', '_').lower(), val[-1].split('//')[0].strip()
+            return val[0].strip().replace(' ', '_').lower(), val[-1].split('//')[
+                0
+            ].strip()
 
         self._quantities = [
             Quantity(
                 'property',
-                r'\n *\[(.+)\](.+?=.+)', str_operation=str_to_property, repeats=True),
+                r'\n *\[(.+)\](.+?=.+)',
+                str_operation=str_to_property,
+                repeats=True,
+            ),
             Quantity(
                 'section',
                 r'(\[.+?\]START[\s\S]+?\]STOP)',
-                repeats=True, sub_parser=TextParser(quantities=[
-                    Quantity(
-                        'name',
-                        r'\[(.+)\]START', str_operation=lambda x: x.lower(), dtype=str),
-                    Quantity(
-                        'key_value',
-                        r'\n *([^#]\S+)=(\S+)', repeats=True),
-                    Quantity(
-                        'array',
-                        rf'\n *(\d[\s\S]+?\d\s*)\[.+?STOP', dtype=np.dtype(np.float64))]))]
+                repeats=True,
+                sub_parser=TextParser(
+                    quantities=[
+                        Quantity(
+                            'name',
+                            r'\[(.+)\]START',
+                            str_operation=lambda x: x.lower(),
+                            dtype=str,
+                        ),
+                        Quantity('key_value', r'\n *([^#]\S+)=(\S+)', repeats=True),
+                        Quantity(
+                            'array',
+                            rf'\n *(\d[\s\S]+?\d\s*)\[.+?STOP',
+                            dtype=np.dtype(np.float64),
+                        ),
+                    ]
+                ),
+            ),
+        ]
 
     def parse(self, key=None):
         super().parse(key)
@@ -90,27 +120,45 @@ class AflowInParser(AflowOutParser):
     def init_quantities(self):
         super().init_quantities()
         self._quantities += [
-            Quantity(
-                'aflow_version',
-                r'Stefano Curtarolo \- \(AFLOW V([\d\.]+)\)'),
+            Quantity('aflow_version', r'Stefano Curtarolo \- \(AFLOW V([\d\.]+)\)'),
             Quantity(
                 'poscar',
                 r'\[VASP_POSCAR_MODE_EXPLICIT\]START\s*([\s\S]+?)\[VASP_POSCAR_MODE_EXPLICIT\]STOP',
-                str_operation=lambda x: x, convert=False, repeats=True),
+                str_operation=lambda x: x,
+                convert=False,
+                repeats=True,
+            ),
             Quantity(
                 'aflow_composition',
-                r'\[AFLOW\] COMPOSITION=(\S+)', sub_parser=TextParser(quantities=[
-                    Quantity('species', r'([A-Z][a-z]*)', repeats=True, dtype=str),
-                    Quantity('composition', r'(\d+)\|', repeats=True, dtype=np.dtype(np.int32))
-                ])
+                r'\[AFLOW\] COMPOSITION=(\S+)',
+                sub_parser=TextParser(
+                    quantities=[
+                        Quantity('species', r'([A-Z][a-z]*)', repeats=True, dtype=str),
+                        Quantity(
+                            'composition',
+                            r'(\d+)\|',
+                            repeats=True,
+                            dtype=np.dtype(np.int32),
+                        ),
+                    ]
+                ),
+            ),
+        ] + [
+            Quantity(
+                module.lower(),
+                r'\n *\[AFLOW\_%s\]CALC([\s\S]+?)\[AFLOW\] \*' % module,
+                sub_parser=TextParser(
+                    quantities=[
+                        Quantity(
+                            'parameters',
+                            r'\[AFLOW\_%s\](.+?)=(\S+)' % module,
+                            repeats=True,
+                        )
+                    ]
+                ),
             )
-        ] + [Quantity(
-            module.lower(),
-            r'\n *\[AFLOW\_%s\]CALC([\s\S]+?)\[AFLOW\] \*' % module, sub_parser=TextParser(quantities=[
-                Quantity(
-                    'parameters',
-                    r'\[AFLOW\_%s\](.+?)=(\S+)' % module, repeats=True)])) for module in [
-                        'AEL', 'AGL', 'APL', 'QHA', 'AAPL']]
+            for module in ['AEL', 'AGL', 'APL', 'QHA', 'AAPL']
+        ]
 
     def parse(self, key=None):
         super().parse(key)
@@ -122,14 +170,19 @@ class AflowInParser(AflowOutParser):
                 self._results['geometry'] = atoms.get_cell().cellpar()
                 composition = self._results['aflow_composition']
                 self._results['species'] = composition.species
-                self._results['composition'] = [int(c) for c in composition._results['composition']]
+                self._results['composition'] = [
+                    int(c) for c in composition._results['composition']
+                ]
                 self._results['positions_cartesian'] = atoms.get_positions()
             except Exception:
                 pass
 
         if self._results.get('loop') is None:
-            self._results['loop'] = [module for module in [
-                'ael', 'agl', 'apl', 'qha', 'aapl'] if module in self._results]
+            self._results['loop'] = [
+                module
+                for module in ['ael', 'agl', 'apl', 'qha', 'aapl']
+                if module in self._results
+            ]
 
 
 class AFLOWParser:
@@ -147,8 +200,9 @@ class AFLOWParser:
             'bulk_modulus_vrh': 'bulk_modulus_hill',
             'shear_modulus_vrh': 'shear_modulus_hill',
             'youngs_modulus_vrh': 'Young_modulus_hill',
-            'pughs_modulus_ratio': 'pugh_ratio_hill', 'applied_pressure': 'x_aflow_ael_applied_pressure',
-            'average_external_pressure': 'x_aflow_ael_average_external_pressure'
+            'pughs_modulus_ratio': 'pugh_ratio_hill',
+            'applied_pressure': 'x_aflow_ael_applied_pressure',
+            'average_external_pressure': 'x_aflow_ael_average_external_pressure',
         }
 
     def init_parser(self):
@@ -166,8 +220,9 @@ class AFLOWParser:
 
     def parse_structures(self, module):
         try:
-            structures = json.load(open(os.path.join(
-                self.maindir, '%s_energy_structures.json' % module))).get('%s_energy_structures' % module, [])
+            structures = json.load(
+                open(os.path.join(self.maindir, '%s_energy_structures.json' % module))
+            ).get('%s_energy_structures' % module, [])
         except Exception:
             structures = []
 
@@ -177,21 +232,30 @@ class AFLOWParser:
             sec_thermo = Thermodynamics()
             sec_calc.thermodynamics.append(sec_thermo)
             if structure.get('energy') is not None:
-                sec_calc.energy = Energy(total=EnergyEntry(value=structure.get('energy') * ureg.eV))
+                sec_calc.energy = Energy(
+                    total=EnergyEntry(value=structure.get('energy') * ureg.eV)
+                )
             if structure.get('pressure') is not None:
                 sec_thermo.pressure = structure.get('pressure') * ureg.kbar
             if structure.get('stress_tensor') is not None:
-                sec_calc.stress = Stress(total=StressEntry(value=structure.get('stress_tensor') * ureg.kbar))
+                sec_calc.stress = Stress(
+                    total=StressEntry(value=structure.get('stress_tensor') * ureg.kbar)
+                )
             if structure.get('structure') is not None:
                 sec_system = System()
                 self.archive.run[-1].system.append(sec_system)
                 sec_system.atoms = Atoms()
                 struc = structure.get('structure')
-                sec_system.atoms.labels = [atom.get('name') for atom in struc.get('atoms', [])]
-                sec_system.atoms.concentrations = [atom.get('occupancy') for atom in struc.get('atoms', [])]
+                sec_system.atoms.labels = [
+                    atom.get('name') for atom in struc.get('atoms', [])
+                ]
+                sec_system.atoms.concentrations = [
+                    atom.get('occupancy') for atom in struc.get('atoms', [])
+                ]
                 if struc.get('lattice') is not None:
-                    sec_system.atoms.lattice_vectors = struc.get(
-                        'lattice') * ureg.angstrom * struc.get('scale', 1)
+                    sec_system.atoms.lattice_vectors = (
+                        struc.get('lattice') * ureg.angstrom * struc.get('scale', 1)
+                    )
                 positions = [atom.get('position') for atom in struc.get('atoms', [])]
                 if struc.get('coordinates_type', 'direct').lower().startswith('d'):
                     if sec_system.atoms.lattice_vectors is not None:
@@ -202,7 +266,8 @@ class AFLOWParser:
         sec_run = Run()
         self.archive.run.append(sec_run)
         sec_run.program = Program(
-            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
+            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown')
+        )
 
         self.parse_structures('AGL')
 
@@ -213,7 +278,9 @@ class AFLOWParser:
 
         workflow = WorkflowThermodynamics(results=ThermodynamicsResults())
 
-        thermal_properties = np.reshape(thermal_properties, (len(thermal_properties) // 9, 9))
+        thermal_properties = np.reshape(
+            thermal_properties, (len(thermal_properties) // 9, 9)
+        )
         thermal_properties = np.transpose(thermal_properties)
         energies = self.agl_parser.get('agl_energies_temperature')
         energies = np.reshape(energies, (len(energies) // 9, 9))
@@ -224,8 +291,12 @@ class AFLOWParser:
         workflow.results.vibrational_free_energy = energies[2] * ureg.meV
         workflow.results.vibrational_internal_energy = energies[3] * ureg.meV
         workflow.results.vibrational_entropy = energies[4] * ureg.meV / ureg.K
-        workflow.results.heat_capacity_c_v = thermal_properties[4] * ureg.boltzmann_constant
-        workflow.results.heat_capacity_c_p = thermal_properties[5] * ureg.boltzmann_constant
+        workflow.results.heat_capacity_c_v = (
+            thermal_properties[4] * ureg.boltzmann_constant
+        )
+        workflow.results.heat_capacity_c_p = (
+            thermal_properties[5] * ureg.boltzmann_constant
+        )
         # TODO add these to metainfo def
         # workflow.results.thermal_conductivity = thermal_properties[1] * ureg.watt / ureg.m * ureg.K
         # sec_debye.debye_temperature = thermal_properties[2] * ureg.K
@@ -239,7 +310,8 @@ class AFLOWParser:
         sec_run = Run()
         self.archive.run.append(sec_run)
         sec_run.program = Program(
-            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
+            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown')
+        )
 
         self.parse_structures('AEL')
 
@@ -249,8 +321,12 @@ class AFLOWParser:
         workflow.method.calculation_method = 'stress'
         workflow.method.elastic_constants_order = 2
 
-        paths = [d for d in self.aflow_data.get('files', []) if d.startswith('ARUN.AEL')]
-        deforms = np.array([d.split('_')[-2:] for d in paths], dtype=np.dtype(np.float64))
+        paths = [
+            d for d in self.aflow_data.get('files', []) if d.startswith('ARUN.AEL')
+        ]
+        deforms = np.array(
+            [d.split('_')[-2:] for d in paths], dtype=np.dtype(np.float64)
+        )
         strains = [d[1] for d in deforms if d[0] == 1]
         workflow.results.n_deformations = int(max(np.transpose(deforms)[0]))
         workflow.results.n_strains = len(strains)
@@ -268,12 +344,14 @@ class AFLOWParser:
             setattr(workflow.results, key, val)
 
         if self.ael_parser.ael_stiffness_tensor is not None:
-            workflow.results.elastic_constants_matrix_second_order = np.reshape(
-                self.ael_parser.ael_stiffness_tensor, (6, 6)) * ureg.GPa
+            workflow.results.elastic_constants_matrix_second_order = (
+                np.reshape(self.ael_parser.ael_stiffness_tensor, (6, 6)) * ureg.GPa
+            )
 
         if self.ael_parser.ael_compliance_tensor is not None:
             workflow.results.compliance_matrix_second_order = np.reshape(
-                self.ael_parser.ael_compliance_tensor, (6, 6))
+                self.ael_parser.ael_compliance_tensor, (6, 6)
+            )
 
         self.archive.workflow2 = workflow
 
@@ -281,13 +359,15 @@ class AFLOWParser:
         sec_run = Run()
         self.archive.run.append(sec_run)
         sec_run.program = Program(
-            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
+            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown')
+        )
         sec_scc = Calculation()
         sec_run.calculation.append(sec_scc)
 
         try:
             dos = np.transpose(
-                np.loadtxt(self.get_aflow_file('flow.apl.phonon_dos.out.xz')))
+                np.loadtxt(self.get_aflow_file('flow.apl.phonon_dos.out.xz'))
+            )
         except Exception:
             dos = None
 
@@ -295,21 +375,27 @@ class AFLOWParser:
             sec_dos = Dos()
             sec_scc.dos_phonon.append(sec_dos)
             sec_dos.energies = dos[2] * ureg.millielectron_volt
-            sec_dos.total.append(DosValues(value=dos[3] * (1 / ureg.millielectron_volt)))
+            sec_dos.total.append(
+                DosValues(value=dos[3] * (1 / ureg.millielectron_volt))
+            )
 
         try:
             kpoints = np.transpose(
-                np.loadtxt(self.get_aflow_file('aflow.apl.hskpoints.out.xz')))
+                np.loadtxt(self.get_aflow_file('aflow.apl.hskpoints.out.xz'))
+            )
             n_kpoints = int(max(kpoints[3])) + 1
             kpoints = kpoints[:3]
             kpoints = np.reshape(kpoints, (3, len(kpoints[0]) // n_kpoints, n_kpoints))
             kpoints = np.transpose(kpoints, axes=(1, 2, 0))
 
             bandstructure = np.transpose(
-                np.loadtxt(self.get_aflow_file('aflow.apl.phonon_dispersion.out.xz')))
+                np.loadtxt(self.get_aflow_file('aflow.apl.phonon_dispersion.out.xz'))
+            )
             bandstructure = bandstructure[2:]
-            bandstructure = np.reshape(bandstructure, (
-                len(bandstructure), len(bandstructure[0]) // n_kpoints, n_kpoints))
+            bandstructure = np.reshape(
+                bandstructure,
+                (len(bandstructure), len(bandstructure[0]) // n_kpoints, n_kpoints),
+            )
             bandstructure = np.transpose(bandstructure, axes=(1, 2, 0))
         except Exception:
             kpoints = None
@@ -321,10 +407,17 @@ class AFLOWParser:
                 sec_segment = BandEnergies()
                 sec_bandstructure.segment.append(sec_segment)
                 sec_segment.kpoints = kpoints[n_segment]
-                sec_segment.energies = np.reshape(
-                    bandstructure[n_segment], (1, *np.shape(bandstructure[n_segment]))) * ureg.millielectron_volt
+                sec_segment.energies = (
+                    np.reshape(
+                        bandstructure[n_segment],
+                        (1, *np.shape(bandstructure[n_segment])),
+                    )
+                    * ureg.millielectron_volt
+                )
 
-        self.apl_parser.mainfile = self.get_aflow_file('aflow.apl.thermodynamic_properties.out')
+        self.apl_parser.mainfile = self.get_aflow_file(
+            'aflow.apl.thermodynamic_properties.out'
+        )
 
         workflow = Phonon(method=PhononMethod(), results=PhononResults())
 
@@ -333,7 +426,9 @@ class AFLOWParser:
         if mesh is not None:
             try:
                 cell = Cell.fromcellpar(self.aflowin_parser.geometry)
-                workflow.method.mesh_density = np.product([int(m) for m in mesh.split('x')]) / cell.volume
+                workflow.method.mesh_density = (
+                    np.product([int(m) for m in mesh.split('x')]) / cell.volume
+                )
             except Exception:
                 pass
 
@@ -344,15 +439,24 @@ class AFLOWParser:
                 qpoints = self.apl_parser.apl_qpoints
                 qpoints = np.reshape(qpoints, (len(qpoints) // 4, 4))
                 group_velocity = np.reshape(
-                    group_velocity, (len(qpoints), len(group_velocity) // len(qpoints)))
+                    group_velocity, (len(qpoints), len(group_velocity) // len(qpoints))
+                )
                 group_velocity = np.transpose(np.transpose(group_velocity)[1:])
                 workflow.results.qpoints = np.transpose(np.transpose(qpoints)[1:])
-                workflow.results.group_velocity = np.reshape(group_velocity, (
-                    len(group_velocity), len(group_velocity[0]) // 3, 3)) * ureg.kilometer / ureg.second
+                workflow.results.group_velocity = (
+                    np.reshape(
+                        group_velocity,
+                        (len(group_velocity), len(group_velocity[0]) // 3, 3),
+                    )
+                    * ureg.kilometer
+                    / ureg.second
+                )
             except Exception:
                 pass
 
-        self.apl_parser.mainfile = self.get_aflow_file('aflow.apl.thermodynamic_properties.out.xz')
+        self.apl_parser.mainfile = self.get_aflow_file(
+            'aflow.apl.thermodynamic_properties.out.xz'
+        )
         apl_thermo = self.apl_parser.get('apl_thermo')
         # TODO handle multiple workflows
         if apl_thermo is not None:
@@ -360,9 +464,13 @@ class AFLOWParser:
             sec_thermo = WorkflowThermodynamics(results=ThermodynamicsResults())
             sec_thermo.results.temperature = apl_thermo[0] * ureg.kelvin
             sec_thermo.results.internal_energy = apl_thermo[2] * ureg.millielectron_volt
-            sec_thermo.results.helmholtz_free_energy = apl_thermo[3] * ureg.millielectron_volt
+            sec_thermo.results.helmholtz_free_energy = (
+                apl_thermo[3] * ureg.millielectron_volt
+            )
             sec_thermo.results.entropy = apl_thermo[4] * ureg.boltzmann_constant
-            sec_thermo.results.heat_capacity_c_v = apl_thermo[5] * ureg.boltzmann_constant
+            sec_thermo.results.heat_capacity_c_v = (
+                apl_thermo[5] * ureg.boltzmann_constant
+            )
 
         self.archive.workflow2 = workflow
 
@@ -381,7 +489,8 @@ class AFLOWParser:
         sec_run = Run()
         self.archive.run.append(sec_run)
         sec_run.program = Program(
-            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown'))
+            name='AFlow', version=self.aflow_data.get('aflow_version', 'unknown')
+        )
 
         # parse run metadata
         run_quantities = ['aurl', 'auid', 'data_api', 'data_source', 'loop']
@@ -406,37 +515,95 @@ class AFLOWParser:
         for n, specie in enumerate(species):
             atom_labels += [specie] * self.aflow_data['composition'][n]
         sec_system.atoms.labels = atom_labels
-        sec_system.atoms.positions = self.aflow_data.get('positions_cartesian', []) * ureg.angstrom
+        sec_system.atoms.positions = (
+            self.aflow_data.get('positions_cartesian', []) * ureg.angstrom
+        )
 
         # parse system metadata from aflow_data
         system_quantities = [
-            'compound', 'prototype', 'nspecies', 'natoms', 'natoms_orig', 'composition',
-            'density', 'density_orig', 'scintillation_attenuation_length', 'stoichiometry',
-            'species', 'geometry', 'geometry_orig', 'volume_cell', 'volume_atom',
-            'volume_cell_orig', 'volume_atom_orig', 'n_sg', 'sg', 'sg2', 'spacegroup_orig',
-            'spacegroup_relax', 'Bravais_lattice_orig', 'lattice_variation_orig',
-            'lattice_system_orig', 'Pearson_symbol_orig', 'Bravais_lattice_relax',
-            'lattice_variation_relax', 'lattice_system_relax', 'Pearson_symbol_relax',
-            'crystal_family_orig', 'crystal_system_orig', 'crystal_class_orig',
-            'point_group_Hermann_Mauguin_orig', 'point_group_Schoenflies_orig',
-            'point_group_orbifold_orig', 'point_group_type_orig', 'point_group_order_orig',
-            'point_group_structure_orig', 'Bravais_lattice_lattice_type_orig',
-            'Bravais_lattice_lattice_variation_type_orig', 'Bravais_lattice_lattice_system_orig',
-            'Bravais_superlattice_lattice_type_orig', 'Bravais_superlattice_lattice_variation_type_orig',
-            'Bravais_superlattice_lattice_system_orig', 'Pearson_symbol_superlattice_orig',
-            'reciprocal_geometry_orig', 'reciprocal_volume_cell_orig', 'reciprocal_lattice_type_orig',
-            'reciprocal_lattice_variation_type_orig', 'Wyckoff_letters_orig',
-            'Wyckoff_multiplicities_orig', 'Wyckoff_site_symmetries_orig',
-            'crystal_family', 'crystal_system', 'crystal_class', 'point_group_Hermann_Mauguin',
-            'point_group_Schoenflies', 'point_group_orbifold', 'point_group_type', 'point_group_order',
-            'point_group_structure', 'Bravais_lattice_lattice_type', 'Bravais_lattice_lattice_variation_type',
-            'Bravais_lattice_lattice_system', 'Bravais_superlattice_lattice_type',
-            'Bravais_superlattice_lattice_variation_type', 'Bravais_superlattice_lattice_system',
-            'Pearson_symbol_superlattice', 'reciprocal_geometry', 'reciprocal_volume_cell',
-            'reciprocal_lattice_type', 'reciprocal_lattice_variation_type', 'Wyckoff_letters',
-            'Wyckoff_multiplicities', 'Wyckoff_site_symmetries', 'prototype_label_orig',
-            'prototype_params_list_orig', 'prototype_params_values_orig', 'prototype_label_relax',
-            'prototype_params_list_relax', 'prototype_params_values_relax']
+            'compound',
+            'prototype',
+            'nspecies',
+            'natoms',
+            'natoms_orig',
+            'composition',
+            'density',
+            'density_orig',
+            'scintillation_attenuation_length',
+            'stoichiometry',
+            'species',
+            'geometry',
+            'geometry_orig',
+            'volume_cell',
+            'volume_atom',
+            'volume_cell_orig',
+            'volume_atom_orig',
+            'n_sg',
+            'sg',
+            'sg2',
+            'spacegroup_orig',
+            'spacegroup_relax',
+            'Bravais_lattice_orig',
+            'lattice_variation_orig',
+            'lattice_system_orig',
+            'Pearson_symbol_orig',
+            'Bravais_lattice_relax',
+            'lattice_variation_relax',
+            'lattice_system_relax',
+            'Pearson_symbol_relax',
+            'crystal_family_orig',
+            'crystal_system_orig',
+            'crystal_class_orig',
+            'point_group_Hermann_Mauguin_orig',
+            'point_group_Schoenflies_orig',
+            'point_group_orbifold_orig',
+            'point_group_type_orig',
+            'point_group_order_orig',
+            'point_group_structure_orig',
+            'Bravais_lattice_lattice_type_orig',
+            'Bravais_lattice_lattice_variation_type_orig',
+            'Bravais_lattice_lattice_system_orig',
+            'Bravais_superlattice_lattice_type_orig',
+            'Bravais_superlattice_lattice_variation_type_orig',
+            'Bravais_superlattice_lattice_system_orig',
+            'Pearson_symbol_superlattice_orig',
+            'reciprocal_geometry_orig',
+            'reciprocal_volume_cell_orig',
+            'reciprocal_lattice_type_orig',
+            'reciprocal_lattice_variation_type_orig',
+            'Wyckoff_letters_orig',
+            'Wyckoff_multiplicities_orig',
+            'Wyckoff_site_symmetries_orig',
+            'crystal_family',
+            'crystal_system',
+            'crystal_class',
+            'point_group_Hermann_Mauguin',
+            'point_group_Schoenflies',
+            'point_group_orbifold',
+            'point_group_type',
+            'point_group_order',
+            'point_group_structure',
+            'Bravais_lattice_lattice_type',
+            'Bravais_lattice_lattice_variation_type',
+            'Bravais_lattice_lattice_system',
+            'Bravais_superlattice_lattice_type',
+            'Bravais_superlattice_lattice_variation_type',
+            'Bravais_superlattice_lattice_system',
+            'Pearson_symbol_superlattice',
+            'reciprocal_geometry',
+            'reciprocal_volume_cell',
+            'reciprocal_lattice_type',
+            'reciprocal_lattice_variation_type',
+            'Wyckoff_letters',
+            'Wyckoff_multiplicities',
+            'Wyckoff_site_symmetries',
+            'prototype_label_orig',
+            'prototype_params_list_orig',
+            'prototype_params_values_orig',
+            'prototype_label_relax',
+            'prototype_params_list_relax',
+            'prototype_params_values_relax',
+        ]
         for key in system_quantities:
             val = self.aflow_data.get(key)
             if val is not None:
@@ -446,12 +613,29 @@ class AFLOWParser:
 
         # parse method metadata from self.aflow_data
         method_quantities = [
-            'code', 'species_pp', 'n_dft_type', 'dft_type', 'dft_type', 'species_pp_version',
-            'species_pp_ZVAL', 'species_pp_AUID', 'ldau_type', 'ldau_l', 'ldau_u', 'ldau_j',
-            'valence_cell_iupac', 'valence_cell_std', 'energy_cutoff',
-            'delta_electronic_energy_convergence', 'delta_electronic_energy_threshold',
-            'kpoints_relax', 'kpoints_static', 'n_kpoints_bands_path', 'kpoints_bands_path',
-            'kpoints_bands_nkpts']
+            'code',
+            'species_pp',
+            'n_dft_type',
+            'dft_type',
+            'dft_type',
+            'species_pp_version',
+            'species_pp_ZVAL',
+            'species_pp_AUID',
+            'ldau_type',
+            'ldau_l',
+            'ldau_u',
+            'ldau_j',
+            'valence_cell_iupac',
+            'valence_cell_std',
+            'energy_cutoff',
+            'delta_electronic_energy_convergence',
+            'delta_electronic_energy_threshold',
+            'kpoints_relax',
+            'kpoints_static',
+            'n_kpoints_bands_path',
+            'kpoints_bands_path',
+            'kpoints_bands_nkpts',
+        ]
         sec_method = Method()
         sec_run.method.append(sec_method)
         for key in method_quantities:
@@ -467,9 +651,13 @@ class AFLOWParser:
         sec_thermo = Thermodynamics()
         sec_scc.thermodynamics.append(sec_thermo)
         if self.aflow_data.get('energy_cell') is not None:
-            sec_scc.energy.total = EnergyEntry(value=self.aflow_data['energy_cell'] * ureg.eV)
+            sec_scc.energy.total = EnergyEntry(
+                value=self.aflow_data['energy_cell'] * ureg.eV
+            )
         if self.aflow_data.get('forces') is not None:
-            sec_scc.forces.total = ForcesEntry(value=self.aflow_data['forces'] * ureg.eV / ureg.angstrom)
+            sec_scc.forces.total = ForcesEntry(
+                value=self.aflow_data['forces'] * ureg.eV / ureg.angstrom
+            )
         if self.aflow_data.get('enthalpy_cell') is not None:
             sec_thermo.enthalpy = self.aflow_data['enthalpy_cell'] * ureg.eV
         if self.aflow_data.get('entropy_cell') is not None:
@@ -477,23 +665,65 @@ class AFLOWParser:
         if self.aflow_data.get('calculation_time') is not None:
             sec_scc.time_calculation = self.aflow_data['calculation_time'] * ureg.s
         calculation_quantities = [
-            'stress_tensor', 'pressure_residual', 'Pulay_stress', 'Egap', 'Egap_fit', 'Egap_type',
-            'enthalpy_formation_cell', 'entropic_temperature', 'PV', 'spin_cell', 'spinD',
-            'spinF', 'calculation_memory', 'calculation_cores', 'nbondxx',
-            'agl_thermal_conductivity_300K', 'agl_debye', 'agl_acoustic_debye', 'agl_gruneisen',
-            'agl_heat_capacity_Cv_300K', 'agl_heat_capacity_Cp_300K', 'agl_thermal_expansion_300K',
-            'agl_bulk_modulus_static_300K', 'agl_bulk_modulus_isothermal_300K', 'agl_poisson_ratio_source',
-            'agl_vibrational_free_energy_300K_cell', 'agl_vibrational_free_energy_300K_atom',
-            'agl_vibrational_entropy_300K_cell', 'agl_vibrational_entropy_300K_atom',
-            'ael_poisson_ratio', 'ael_bulk_modulus_voigt', 'ael_bulk_modulus_reuss',
-            'ael_shear_modulus_voigt', 'ael_shear_modulus_reuss', 'ael_bulk_modulus_vrh',
-            'ael_shear_modulus_vrh', 'ael_elastic_anisotropy', 'ael_youngs_modulus_vrh',
-            'ael_speed_sound_transverse', 'ael_speed_sound_longitudinal', 'ael_speed_sound_average',
-            'ael_pughs_modulus_ratio', 'ael_debye_temperature', 'ael_applied_pressure',
-            'ael_average_external_pressure', 'ael_stiffness_tensor', 'ael_compliance_tensor',
-            'bader_net_charges', 'bader_atomic_volumes', 'n_files', 'files', 'node_CPU_Model',
-            'node_CPU_Cores', 'node_CPU_MHz', 'node_RAM_GB', 'catalog', 'aflowlib_version',
-            'aflowlib_date']
+            'stress_tensor',
+            'pressure_residual',
+            'Pulay_stress',
+            'Egap',
+            'Egap_fit',
+            'Egap_type',
+            'enthalpy_formation_cell',
+            'entropic_temperature',
+            'PV',
+            'spin_cell',
+            'spinD',
+            'spinF',
+            'calculation_memory',
+            'calculation_cores',
+            'nbondxx',
+            'agl_thermal_conductivity_300K',
+            'agl_debye',
+            'agl_acoustic_debye',
+            'agl_gruneisen',
+            'agl_heat_capacity_Cv_300K',
+            'agl_heat_capacity_Cp_300K',
+            'agl_thermal_expansion_300K',
+            'agl_bulk_modulus_static_300K',
+            'agl_bulk_modulus_isothermal_300K',
+            'agl_poisson_ratio_source',
+            'agl_vibrational_free_energy_300K_cell',
+            'agl_vibrational_free_energy_300K_atom',
+            'agl_vibrational_entropy_300K_cell',
+            'agl_vibrational_entropy_300K_atom',
+            'ael_poisson_ratio',
+            'ael_bulk_modulus_voigt',
+            'ael_bulk_modulus_reuss',
+            'ael_shear_modulus_voigt',
+            'ael_shear_modulus_reuss',
+            'ael_bulk_modulus_vrh',
+            'ael_shear_modulus_vrh',
+            'ael_elastic_anisotropy',
+            'ael_youngs_modulus_vrh',
+            'ael_speed_sound_transverse',
+            'ael_speed_sound_longitudinal',
+            'ael_speed_sound_average',
+            'ael_pughs_modulus_ratio',
+            'ael_debye_temperature',
+            'ael_applied_pressure',
+            'ael_average_external_pressure',
+            'ael_stiffness_tensor',
+            'ael_compliance_tensor',
+            'bader_net_charges',
+            'bader_atomic_volumes',
+            'n_files',
+            'files',
+            'node_CPU_Model',
+            'node_CPU_Cores',
+            'node_CPU_MHz',
+            'node_RAM_GB',
+            'catalog',
+            'aflowlib_version',
+            'aflowlib_date',
+        ]
         for key in calculation_quantities:
             val = self.aflow_data.get(key)
             if val is not None:

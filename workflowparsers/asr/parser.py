@@ -34,15 +34,27 @@ from nomad.datamodel import EntryArchive
 from runschema.run import Run, Program, TimeRun
 from runschema.system import System, Atoms
 from runschema.calculation import (
-    Calculation, BandStructure, BandEnergies, Energy, EnergyEntry, Forces, ForcesEntry,
-    Stress, StressEntry)
-from simulationworkflowschema import (
-    GeometryOptimization, Phonon
+    Calculation,
+    BandStructure,
+    BandEnergies,
+    Energy,
+    EnergyEntry,
+    Forces,
+    ForcesEntry,
+    Stress,
+    StressEntry,
 )
+from simulationworkflowschema import GeometryOptimization, Phonon
 from .metainfo.asr import (
-    x_asr_resources, x_asr_metadata,
-    x_asr_run_specification, x_asr_parameters, x_asr_code, x_asr_codes, x_asr_dependencies,
-    x_asr_dependency)
+    x_asr_resources,
+    x_asr_metadata,
+    x_asr_run_specification,
+    x_asr_parameters,
+    x_asr_code,
+    x_asr_codes,
+    x_asr_dependencies,
+    x_asr_dependency,
+)
 
 
 class ASRRecord:
@@ -75,7 +87,8 @@ class ASRRecord:
             positions=atoms.get_positions() * ureg.angstrom,
             lattice_vectors=atoms.get_cell().array * ureg.angstrom,
             periodic=[True, True, True],
-            labels=atoms.get_chemical_symbols())
+            labels=atoms.get_chemical_symbols(),
+        )
 
     def _parse_c2db_relax(self):
         result = self.record.result
@@ -87,7 +100,9 @@ class ASRRecord:
         self._archive.run[-1].calculation.append(calc)
         calc.system_ref = self._archive.run[-1].system[-1]
         calc.energy = Energy(total=EnergyEntry(value=result.etot * ureg.eV))
-        calc.forces = Forces(total=ForcesEntry(value=result.forces * ureg.eV / ureg.angstrom))
+        calc.forces = Forces(
+            total=ForcesEntry(value=result.forces * ureg.eV / ureg.angstrom)
+        )
         stress = np.zeros((3, 3))
         stress[0][0] = result.stress[0]
         stress[1][1] = result.stress[1]
@@ -117,10 +132,12 @@ class ASRRecord:
                 continue
             sec_segment = BandEnergies()
             bandstructure.segment.append(sec_segment)
-            energies = bands[endpoints[0]: endpoints[1] + 1]
+            energies = bands[endpoints[0] : endpoints[1] + 1]
             sec_segment.energies = np.reshape(energies, (1, *np.shape(energies)))
-            sec_segment.kpoints = path.kpts[endpoints[0]: endpoints[1] + 1]
-            sec_segment.endpoints_labels = [labels[hisym_kpts.index(list(path.kpts[i]))] for i in endpoints]
+            sec_segment.kpoints = path.kpts[endpoints[0] : endpoints[1] + 1]
+            sec_segment.endpoints_labels = [
+                labels[hisym_kpts.index(list(path.kpts[i]))] for i in endpoints
+            ]
             endpoints = [i]
 
     def _parse_run(self):
@@ -131,7 +148,8 @@ class ASRRecord:
         if self.record.resources is not None:
             run.time_run = TimeRun(
                 date_start=self.record.resources.execution_start,
-                date_end=self.record.resources.execution_end)
+                date_end=self.record.resources.execution_end,
+            )
         resources = x_asr_resources()
         run.x_asr_resources.append(resources)
         for key, val in self.record.resources.__dict__.items():
@@ -144,9 +162,11 @@ class ASRRecord:
             metadata = x_asr_metadata()
             run.x_asr_metadata.append(metadata)
             metadata.x_asr_created = (
-                self.record.metadata.created - datetime.datetime(1970, 1, 1)).total_seconds()
+                self.record.metadata.created - datetime.datetime(1970, 1, 1)
+            ).total_seconds()
             metadata.x_asr_modified = (
-                self.record.metadata.modified - datetime.datetime(1970, 1, 1)).total_seconds()
+                self.record.metadata.modified - datetime.datetime(1970, 1, 1)
+            ).total_seconds()
             metadata.x_asr_directory = self.record.metadata.directory
 
         # misc
@@ -219,10 +239,10 @@ class ASRParser:
 
 
 def asr_to_archives(directory: str, recipes: List[str] = None):
-    '''
+    """
     Converts the asr results for the specified recipes under the given directory to the
     nomad archive format.
-    '''
+    """
     # record can only be fetched on the directory
     cwd = os.getcwd()
     try:

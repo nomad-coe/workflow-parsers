@@ -26,11 +26,11 @@ def approx(value, abs=0, rel=1e-6):
     return pytest.approx(value, abs=abs, rel=rel)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def parser():
     return QuantumEspressoEPWParser()
 
 
 def test_1(parser):
     archive = EntryArchive()
-    parser.parse("tests/data/quantum_espresso_epw/epw.out", archive, None)
+    parser.parse('tests/data/quantum_espresso_epw/epw.out', archive, None)
