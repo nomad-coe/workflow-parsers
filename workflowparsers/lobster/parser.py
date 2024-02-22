@@ -104,7 +104,7 @@ def parse_ICOXPLIST(fname, scc, method):
         lines = icoxplist.get('line')
         if lines is None:
             break
-        if type(lines[0][4]) is int:
+        if isinstance(lines[0][4], int):
             a1, a2, distances, tmp, bonds = zip(*lines)
         else:
             a1, a2, distances, v, tmp = zip(*lines)
