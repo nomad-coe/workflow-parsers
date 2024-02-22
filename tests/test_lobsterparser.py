@@ -48,13 +48,15 @@ def approx(value):
     return pytest.approx(value, abs=0, rel=1e-6)
 
 
-def test_Fe(parser):
+def test_Fe(parser, caplog):
     """
     Tests spin-polarized Fe calculation with LOBSTER 4.0.0
     """
 
     archive = EntryArchive()
     parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
+
+    assert len(caplog.records) == 0
 
     run = archive.run[0]
     assert run.program.name == "LOBSTER"
@@ -218,7 +220,7 @@ def test_Fe(parser):
     assert dos_down.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.29205)
 
 
-def test_NaCl(parser):
+def test_NaCl(parser, caplog):
     """
     Test non-spin-polarized NaCl calculation with LOBSTER 3.2.0
     """
@@ -373,7 +375,7 @@ def test_NaCl(parser):
     assert dos.atom_projected[16].value[152].magnitude == approx(0.00337 / eV)
 
 
-def test_HfV(parser):
+def test_HfV(parser, caplog):
     """
     Test non-spin-polarized HfV2 calculation with LOBSTER 2.0.0,
     it has different ICOHPLIST.lobster and ICOOPLIST.lobster scheme.
@@ -382,6 +384,8 @@ def test_HfV(parser):
 
     archive = EntryArchive()
     parser.parse('tests/data/lobster/HfV2/lobsterout', archive, logging)
+
+    assert len(caplog.records) == 1
 
     run = archive.run[0]
     assert run.program.name == "LOBSTER"
@@ -449,7 +453,7 @@ def test_HfV(parser):
         eV_to_J(-0.50035))
 
 
-def test_QE_Ni(parser):
+def test_QE_Ni(parser, caplog):
     """
     Check that basic info is parsed properly when LOBSTER is run on top
     of Quantum Espresso calculations.
@@ -457,6 +461,8 @@ def test_QE_Ni(parser):
 
     archive = EntryArchive()
     parser.parse('tests/data/lobster/Ni/lobsterout', archive, logging)
+
+    assert len(caplog.records) == 0
 
     run = archive.run[0]
 
@@ -485,7 +491,7 @@ def test_QE_Ni(parser):
     assert run.clean_end is True
 
 
-def test_failed_case(parser):
+def test_failed_case(parser, caplog):
     """
     Check that we also handle gracefully a case where the lobster ends very early.
     Here it is because of a wrong CONTCAR.
@@ -493,6 +499,8 @@ def test_failed_case(parser):
 
     archive = EntryArchive()
     parser.parse('tests/data/lobster/failed_case/lobsterout', archive, logging)
+
+    assert len(caplog.records) == 0
 
     run = archive.run[0]
     assert run.clean_end is False
