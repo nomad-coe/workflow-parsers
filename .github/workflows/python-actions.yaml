@@ -17,12 +17,6 @@ jobs:
         pip install --upgrade pip
         pip install .[tests]
         pip install types-PyYAML
-    - name: pycodestyle
-      run: |
-        python -m pycodestyle --ignore=E501,E701,E731 *parsers tests
-    - name: pylint
-      run: |
-        python -m pylint *parsers tests
     - name: mypy
       run: |
         python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
@@ -30,8 +24,17 @@ jobs:
       run: |
         python -m pytest -sv tests
 
-  ruff:
+  ruff-linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chartboost/ruff-action@vu
+        with:
+          args: "check ."
+  ruff-formatting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: chartboost/ruff-action@v1
+        with:
+          args: "format ."
