@@ -16,11 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np            # pylint: disable=unused-import
-import typing                 # pylint: disable=unused-import
+import numpy as np  # pylint: disable=unused-import
+import typing  # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
-    Reference
+    MSection,
+    MCategory,
+    Category,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+    SectionProxy,
+    Reference,
 )
 
 import runschema.run  # pylint: disable=unused-import
@@ -33,132 +40,148 @@ m_package = Package()
 
 
 class CalcTypes(MSection):
-
     m_def = Section(validate=False)
 
     x_mp_label = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_value = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Origins(MSection):
-
     m_def = Section(validate=False)
 
     x_mp_name = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_task_id = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_last_updated = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Run(runschema.run.Run):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_mp_emmet_version = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_pymatgen_version = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_build_date = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_cif = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_n_tags = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_tags = Quantity(
         type=str,
         shape=['x_mp_n_tags'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_material_id = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_deprecated = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_n_tasks = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_task_ids = Quantity(
         type=str,
         shape=['x_mp_n_tasks'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_icsd_id = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_icsd_ids = Quantity(
         type=np.dtype(np.int32),
         shape=['x_mp_n_tasks'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_last_updated = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_created_at = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_calc_types = SubSection(sub_section=CalcTypes.m_def, repeats=True)
 
@@ -166,138 +189,155 @@ class Run(runschema.run.Run):
 
 
 class Composition(MSection):
-
     m_def = Section(validate=False)
 
     x_mp_label = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_value = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Symmetry(MSection):
-
     m_def = Section(validate=False)
 
     x_mp_symprec = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_version = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_source = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_symbol = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_number = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_point_group = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_crystal_system = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_hall = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class System(runschema.system.System):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_mp_formula_anonymous = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_oxide_type = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_chemsys = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_formula_pretty = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_volume = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_density = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_density_atomic = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_nelements = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_elements = Quantity(
         type=str,
         shape=['x_mp_nelements'],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_nsites = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_symmetry = SubSection(sub_section=Symmetry.m_def, repeats=True)
 
@@ -307,47 +347,49 @@ class System(runschema.system.System):
 
 
 class Hubbard(MSection):
-
     m_def = Section(validate=False)
 
     x_mp_element = Quantity(
         type=str,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_hubbard = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
 
 class Method(runschema.method.Method):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_mp_is_compatible = Quantity(
         type=bool,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_is_hubbard = Quantity(
         type=bool,
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )
 
     x_mp_hubbards = SubSection(sub_section=Hubbard.m_def, repeats=True)
 
 
 class Calculation(runschema.calculation.Calculation):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_mp_uncorrected_energy_per_atom = Quantity(
         type=np.dtype(np.float64),
         shape=[],
-        description='''
-        ''')
+        description="""
+        """,
+    )

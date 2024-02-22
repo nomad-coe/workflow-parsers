@@ -34,7 +34,11 @@ def parser():
 
 def test_basic(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in', archive, None)
+    parser.parse(
+        'tests/data/phonopy/Ge/phonopy-FHI-aims-displacement-01/control.in',
+        archive,
+        None,
+    )
 
     # need to assert values, no unbiased reference
     sec_thermo = archive.run[0].calculation[0].thermodynamics

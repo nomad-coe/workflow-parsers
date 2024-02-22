@@ -30,18 +30,17 @@ from nomad import config  # type: ignore
 from nomad.units import ureg
 from nomad.parsing.file_parser import TextParser, Quantity
 from runschema.run import Run, Program
-from runschema.method import (
-    Method, Electronic
-)
-from runschema.system import (
-    System, Atoms
-)
+from runschema.method import Method, Electronic
+from runschema.system import System, Atoms
 from runschema.calculation import (
-    Calculation, BandStructure, BandEnergies, Dos, DosValues, Thermodynamics
+    Calculation,
+    BandStructure,
+    BandEnergies,
+    Dos,
+    DosValues,
+    Thermodynamics,
 )
-from simulationworkflowschema import (
-    Phonon, PhononMethod, PhononResults
-)
+from simulationworkflowschema import Phonon, PhononMethod, PhononResults
 from nomad.datamodel.metainfo.workflow import Link, Task
 from nomad.datamodel import EntryArchive
 
@@ -49,7 +48,7 @@ from .metainfo import phonopy as phonopymetainfo  # pylint: disable=unused-impor
 
 
 def read_aims(filename):
-    '''Method to read FHI-aims geometry files in phonopy context.'''
+    """Method to read FHI-aims geometry files in phonopy context."""
     cell = []
     positions = []
     fractional = []
@@ -76,23 +75,27 @@ def read_aims(filename):
 
     for n, pos in enumerate(positions):
         if fractional[n]:
-            positions[n] = [sum([pos[j] * cell[j][i] for j in range(3)]) for i in range(3)]
+            positions[n] = [
+                sum([pos[j] * cell[j][i] for j in range(3)]) for i in range(3)
+            ]
     if len(magmoms) == len(positions):
-        return PhonopyAtoms(cell=cell, symbols=symbols, positions=positions, magmoms=magmoms)
+        return PhonopyAtoms(
+            cell=cell, symbols=symbols, positions=positions, magmoms=magmoms
+        )
     else:
         return PhonopyAtoms(cell=cell, symbols=symbols, positions=positions)
 
 
 class Atoms_with_forces(PhonopyAtoms):
-    ''' Hack to phonopy.atoms to maintain ASE compatibility also for forces.'''
+    """Hack to phonopy.atoms to maintain ASE compatibility also for forces."""
 
     def get_forces(self):
         return self.forces
 
 
 def read_aims_output(filename):
-    ''' Read FHI-aims output
-        returns geometry with forces from last self-consistency iteration'''
+    """Read FHI-aims output
+    returns geometry with forces from last self-consistency iteration"""
     cell = []
     symbols = []
     positions = []
@@ -117,10 +120,17 @@ def read_aims_output(filename):
                     line = f.readline()
                     if 'Species' in line or 'atom ' in line:
                         line = line.split()
-                        positions.append([float(x) for x in line[position_index:position_index + 3]])
+                        positions.append(
+                            [
+                                float(x)
+                                for x in line[position_index : position_index + 3]
+                            ]
+                        )
                         symbols.append(line[symbol_index])
             elif 'Total atomic forces' in line:
-                forces = [[float(x) for x in f.readline().split()[2:5]] for _ in range(N)]
+                forces = [
+                    [float(x) for x in f.readline().split()[2:5]] for _ in range(N)
+                ]
 
     atoms = Atoms_with_forces(cell=cell, symbols=symbols, positions=positions)
     atoms.forces = forces
@@ -128,10 +138,11 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
-    '''
+def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None):
+    """
     Collect the pre calculated forces for each of the supercells
-    '''
+    """
+
     def get_aims_output_file(directory):
         files = [f for f in os.listdir(directory) if f.endswith('.out')]
         output = None
@@ -154,11 +165,11 @@ def read_forces_aims(reference_supercells, tolerance=1E-6, logger=None):
             logger.warning('Inconsistent cell.')
             return False
         # get normalized positions, wrapped to the bounding cell
-        ref_pos = reference.get_scaled_positions() % 1.
-        cal_pos = calculated.get_scaled_positions() % 1.
+        ref_pos = reference.get_scaled_positions() % 1.0
+        cal_pos = calculated.get_scaled_positions() % 1.0
         # resolve coordinates at the boundary
-        ref_pos = np.where(ref_pos != 1., ref_pos, 0.)
-        cal_pos = np.where(cal_pos != 1., cal_pos, 0.)
+        ref_pos = np.where(ref_pos != 1.0, ref_pos, 0.0)
+        cal_pos = np.where(cal_pos != 1.0, cal_pos, 0.0)
         if (abs(ref_pos - cal_pos) > tolerance).any():
             logger.warning('Inconsistent positions.')
             return False
@@ -210,17 +221,31 @@ class ControlParser(TextParser):
                 return np.reshape(val, (3, 3))
 
         self._quantities = [
-            Quantity('displacement', r'\n *phonon displacement\s*([\d\.]+)', dtype=float),
-            Quantity('symmetry_thresh', r'\n *phonon symmetry_thresh\s*([\d\.]+)', dtype=float),
+            Quantity(
+                'displacement', r'\n *phonon displacement\s*([\d\.]+)', dtype=float
+            ),
+            Quantity(
+                'symmetry_thresh',
+                r'\n *phonon symmetry_thresh\s*([\d\.]+)',
+                dtype=float,
+            ),
             Quantity('frequency_unit', r'\n *phonon frequency_unit\s*(\S+)'),
-            Quantity('supercell', r'\n *phonon supercell\s*(.+)', str_operation=str_to_supercell),
-            Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac)]
+            Quantity(
+                'supercell',
+                r'\n *phonon supercell\s*(.+)',
+                str_operation=str_to_supercell,
+            ),
+            Quantity('nac', r'\n *phonon nac\s*(.+)', str_operation=str_to_nac),
+        ]
 
 
-def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=None, logger=None, **kwargs):
-    '''
+def phonopy_obj_to_archive(
+    phonopy_obj, references=[], archive=None, filename=None, logger=None, **kwargs
+):
+    """
     Executes Phonopy starting from a phonopy object and write the results on a nomad archive.
-    '''
+    """
+
     def parse_bandstructure():
         freqs, bands, bands_labels = properties.get_bandstructure()
         if freqs is None:
@@ -241,7 +266,9 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
             sec_k_band_segment = BandEnergies()
             sec_k_band.segment.append(sec_k_band_segment)
             sec_k_band_segment.kpoints = bands[i]
-            sec_k_band_segment.endpoints_labels = [str(label) for label in bands_labels[i]]
+            sec_k_band_segment.endpoints_labels = [
+                str(label) for label in bands_labels[i]
+            ]
             sec_k_band_segment.energies = [freqs[i]]
 
     def parse_dos():
@@ -357,7 +384,9 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
 
     try:
         force_constants = phonopy_obj.get_force_constants()
-        force_constants = (force_constants * ureg.eV / ureg.angstrom ** 2).to('J/(m**2)').magnitude
+        force_constants = (
+            (force_constants * ureg.eV / ureg.angstrom**2).to('J/(m**2)').magnitude
+        )
     except Exception:
         logger.error('Error producing force constants.')
         return
@@ -388,19 +417,24 @@ def phonopy_obj_to_archive(phonopy_obj, references=[], archive=None, filename=No
     inputs = []
     for path in references:
         try:
-            archive = archive.m_context.resolve_archive(f'../upload/archive/mainfile/{path}')
+            archive = archive.m_context.resolve_archive(
+                f'../upload/archive/mainfile/{path}'
+            )
             section = archive.run[0].calculation[0]
         except Exception as e:
             section = None
-            logger.error('Could not resolve referenced calculations.', exc_info=e, path=path)
+            logger.error(
+                'Could not resolve referenced calculations.', exc_info=e, path=path
+            )
         if section is not None:
             inputs.append(Link(name='Input calculation', section=section))
     workflow.inputs = inputs
-    workflow.outputs = [
-        Link(name='Phonon results', section=f'/workflow2/results')
+    workflow.outputs = [Link(name='Phonon results', section=f'/workflow2/results')]
+    workflow.tasks = [
+        Task(
+            name='Phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs
+        )
     ]
-    workflow.tasks = [Task(
-        name='Phonon calculation', inputs=workflow.inputs, outputs=workflow.outputs)]
     archive.workflow2 = workflow
 
     if filename:
@@ -464,25 +498,33 @@ class PhonopyParser:
             displacement = self.control_parser.get('displacement', 0.001)
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
             try:
-                phonopy_obj = phonopy.Phonopy(cell_obj, supercell_matrix, symprec=sym, calculator='fhi-aims')
+                phonopy_obj = phonopy.Phonopy(
+                    cell_obj, supercell_matrix, symprec=sym, calculator='fhi-aims'
+                )
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
-                set_of_forces, relative_paths = read_forces_aims(supercells, logger=self.logger)
+                set_of_forces, relative_paths = read_forces_aims(
+                    supercells, logger=self.logger
+                )
             except Exception:
-                self.logger.error("Error generating phonopy object.")
+                self.logger.error('Error generating phonopy object.')
                 set_of_forces = []
                 phonopy_obj = None
                 relative_paths = []
 
-            prep_path = self.mainfile.split("phonopy-FHI-aims-displacement-")
+            prep_path = self.mainfile.split('phonopy-FHI-aims-displacement-')
             # Try to resolve references as paths relative to the upload root.
             try:
                 for path in relative_paths:
-                    abs_path = "%s%s" % (prep_path[0], path)
-                    rel_path = abs_path.split(config.fs.staging + "/")[1].split("/", 3)[3]
+                    abs_path = '%s%s' % (prep_path[0], path)
+                    rel_path = abs_path.split(config.fs.staging + '/')[1].split('/', 3)[
+                        3
+                    ]
                     self.references.append(rel_path)
             except Exception:
-                self.logger.warning("Could not resolve path to a referenced calculation within the upload.")
+                self.logger.warning(
+                    'Could not resolve path to a referenced calculation within the upload.'
+                )
 
         finally:
             os.chdir(cwd)
@@ -507,14 +549,18 @@ class PhonopyParser:
         maindir = os.path.dirname(self.mainfile)
         # TODO read band configuration from phonopy.yaml
         files = [f for f in os.listdir(maindir) if f.endswith('.conf')]
-        self._kwargs.update({'band_conf': os.path.join(maindir, files[0]) if files else None})
+        self._kwargs.update(
+            {'band_conf': os.path.join(maindir, files[0]) if files else None}
+        )
 
         phonopy_obj = self.phonopy_obj
         if phonopy_obj is None:
             self.logger.error('Error running phonopy.')
             return
 
-        phonopy_obj_to_archive(phonopy_obj, references=self.references, archive=archive, logger=logger)
+        phonopy_obj_to_archive(
+            phonopy_obj, references=self.references, archive=archive, logger=logger
+        )
 
     def after_normalization(self, archive, logger=None) -> None:
         # Overwrite the result method with method details taken from the first referenced
@@ -528,6 +574,10 @@ class PhonopyParser:
             return
 
         new_method = referenced_archive.results.method.m_copy()
-        new_method.simulation.program_name = self.archive.results.method.simulation.program_name
-        new_method.simulation.program_version = self.archive.results.method.simulation.program_version
+        new_method.simulation.program_name = (
+            self.archive.results.method.simulation.program_name
+        )
+        new_method.simulation.program_version = (
+            self.archive.results.method.simulation.program_version
+        )
         archive.results.method = new_method

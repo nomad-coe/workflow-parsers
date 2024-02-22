@@ -28,23 +28,43 @@ from nomad.parsing.file_parser import FileParser
 
 from runschema.run import Run, Program
 from runschema.method import (
-    Method, DFT, XCFunctional, Functional, BasisSet, BasisSetContainer,
+    Method,
+    DFT,
+    XCFunctional,
+    Functional,
+    BasisSet,
+    BasisSetContainer,
 )
-from runschema.system import (
-    System, Atoms
-)
+from runschema.system import System, Atoms
 from runschema.calculation import (
-    Calculation, Thermodynamics, Energy, EnergyEntry, Stress, StressEntry, Forces, ForcesEntry
+    Calculation,
+    Thermodynamics,
+    Energy,
+    EnergyEntry,
+    Stress,
+    StressEntry,
+    Forces,
+    ForcesEntry,
 )
 from simulationworkflowschema import (
-    SinglePoint, GeometryOptimization, MolecularDynamics, Phonon
+    SinglePoint,
+    GeometryOptimization,
+    MolecularDynamics,
+    Phonon,
 )
-from .metainfo.fhi_vibes import x_fhi_vibes_section_attributes,\
-    x_fhi_vibes_section_metadata, x_fhi_vibes_section_atoms, x_fhi_vibes_section_MD,\
-    x_fhi_vibes_section_calculator, x_fhi_vibes_section_calculator_parameters,\
-    x_fhi_vibes_section_vibes, x_fhi_vibes_section_relaxation,\
-    x_fhi_vibes_section_relaxation_kwargs, x_fhi_vibes_section_settings,\
-    x_fhi_vibes_section_phonopy
+from .metainfo.fhi_vibes import (
+    x_fhi_vibes_section_attributes,
+    x_fhi_vibes_section_metadata,
+    x_fhi_vibes_section_atoms,
+    x_fhi_vibes_section_MD,
+    x_fhi_vibes_section_calculator,
+    x_fhi_vibes_section_calculator_parameters,
+    x_fhi_vibes_section_vibes,
+    x_fhi_vibes_section_relaxation,
+    x_fhi_vibes_section_relaxation_kwargs,
+    x_fhi_vibes_section_settings,
+    x_fhi_vibes_section_phonopy,
+)
 
 
 class XarrayParser(FileParser):
@@ -58,7 +78,9 @@ class XarrayParser(FileParser):
         if self._file_handler is None:
             try:
                 self._file_handler = xarray.open_dataset(self.mainfile)
-                self._raw_metadata = json.loads(self._file_handler.attrs.get('raw_metadata', '{}'))
+                self._raw_metadata = json.loads(
+                    self._file_handler.attrs.get('raw_metadata', '{}')
+                )
             except Exception:
                 self.logger.error('Error reading trajectory file.')
                 pass
@@ -96,14 +118,29 @@ class FHIVibesParser:
         self.parser = XarrayParser()
 
         self._units = {
-            'volume': ureg.angstrom ** 3, 'displacements': ureg.angstrom, 'velocities': ureg.angstrom / ureg.fs,
-            'momenta': ureg.eV * ureg.fs / ureg.angstrom, 'force_constants': ureg.eV / ureg.angstrom ** 2,
-            'forces_harmonic': ureg.eV / ureg.angstrom, 'forces': ureg.eV / ureg.angstrom, 'stress': ureg.eV / ureg.angstrom ** 3,
-            'energy_potential_harmonic': ureg.eV, 'sigma_per_sample': None,
-            'pressure': ureg.eV / ureg.angstrom ** 3, 'temperature': ureg.K, 'pressure_kinetic': ureg.eV / ureg.angstrom ** 3,
-            'pressure_potential': ureg.eV / ureg.angstrom ** 3, 'aims_uuid': None, 'energy': ureg.eV,
-            'heat_flux': ureg.amu / ureg.fs ** 3, 'heat_flux_harmonic': ureg.amu / ureg.fs ** 3,
-            'heat_flux_0_harmonic': ureg.amu / ureg.fs ** 3, 'mass': ureg.amu, 'length': ureg.angstrom, 'time': ureg.fs}
+            'volume': ureg.angstrom**3,
+            'displacements': ureg.angstrom,
+            'velocities': ureg.angstrom / ureg.fs,
+            'momenta': ureg.eV * ureg.fs / ureg.angstrom,
+            'force_constants': ureg.eV / ureg.angstrom**2,
+            'forces_harmonic': ureg.eV / ureg.angstrom,
+            'forces': ureg.eV / ureg.angstrom,
+            'stress': ureg.eV / ureg.angstrom**3,
+            'energy_potential_harmonic': ureg.eV,
+            'sigma_per_sample': None,
+            'pressure': ureg.eV / ureg.angstrom**3,
+            'temperature': ureg.K,
+            'pressure_kinetic': ureg.eV / ureg.angstrom**3,
+            'pressure_potential': ureg.eV / ureg.angstrom**3,
+            'aims_uuid': None,
+            'energy': ureg.eV,
+            'heat_flux': ureg.amu / ureg.fs**3,
+            'heat_flux_harmonic': ureg.amu / ureg.fs**3,
+            'heat_flux_0_harmonic': ureg.amu / ureg.fs**3,
+            'mass': ureg.amu,
+            'length': ureg.angstrom,
+            'time': ureg.fs,
+        }
 
         self._frame_rate = None
         # max cumulative number of atoms for all parsed trajectories to calculate sampling rate
@@ -120,7 +157,11 @@ class FHIVibesParser:
                 self._frame_rate = 1
             else:
                 cum_atoms = n_atoms * self.n_frames
-                self._frame_rate = 1 if cum_atoms <= self._cum_max_atoms else cum_atoms // self._cum_max_atoms
+                self._frame_rate = (
+                    1
+                    if cum_atoms <= self._cum_max_atoms
+                    else cum_atoms // self._cum_max_atoms
+                )
             if self.n_frames // self._frame_rate > self._max_frames:
                 self._frame_rate = self.n_frames // self._max_frames
         return self._frame_rate
@@ -132,17 +173,22 @@ class FHIVibesParser:
         return len(self.parser.get('positions', []))
 
     def parse_configurations(self):
-
         def parse_system(n_frame):
             sec_system = System()
             sec_run.system.append(sec_system)
             sec_atoms = Atoms()
             sec_system.atoms = sec_atoms
             sec_atoms.labels = self.parser.get('attrs').get('symbols')
-            sec_atoms.positions = self.parser.get('positions', unit=self._units.get('length'))[n_frame]
-            sec_atoms.lattice_vectors = self.parser.get('cell', unit=self._units.get('length'))[n_frame]
+            sec_atoms.positions = self.parser.get(
+                'positions', unit=self._units.get('length')
+            )[n_frame]
+            sec_atoms.lattice_vectors = self.parser.get(
+                'cell', unit=self._units.get('length')
+            )[n_frame]
             sec_atoms.periodic = self.parser.get('attrs/raw_metadata/atoms/pbc')
-            velocities = self.parser.get('velocities', unit=self._units.get('velocities'))
+            velocities = self.parser.get(
+                'velocities', unit=self._units.get('velocities')
+            )
             if velocities is not None:
                 sec_atoms.velocities = velocities[n_frame]
             return sec_system
@@ -167,21 +213,40 @@ class FHIVibesParser:
             for key in ['kinetic', 'potential']:
                 val = self.parser.get('energy_%s' % key, unit=self._units.get('energy'))
                 if val is not None:
-                    sec_energy.contributions.append(EnergyEntry(value=val[n_frame], kind=key))
+                    sec_energy.contributions.append(
+                        EnergyEntry(value=val[n_frame], kind=key)
+                    )
 
                 val = self.parser.get('stress_%s' % key, unit=self._units.get('stress'))
                 if val is not None:
-                    sec_stress.contributions.append(StressEntry(value=val[n_frame], kind=key))
+                    sec_stress.contributions.append(
+                        StressEntry(value=val[n_frame], kind=key)
+                    )
 
-                    val = self.parser.get('stresses_%s' % key, unit=self._units.get('stress'))
+                    val = self.parser.get(
+                        'stresses_%s' % key, unit=self._units.get('stress')
+                    )
                     if val is not None:
                         sec_stress.contributions[-1].values_per_atom = val[n_frame]
 
             calculation_quantities = [
-                'volume', 'displacements', 'momenta', 'forces_harmonic',
-                'forces', 'stress', 'energy_potential_harmonic', 'sigma_per_sample',
-                'pressure', 'temperature', 'pressure_kinetic', 'pressure_potential', 'aims_uuid',
-                'heat_flux', 'heat_flux_harmonic', 'heat_flux_0_harmonic']
+                'volume',
+                'displacements',
+                'momenta',
+                'forces_harmonic',
+                'forces',
+                'stress',
+                'energy_potential_harmonic',
+                'sigma_per_sample',
+                'pressure',
+                'temperature',
+                'pressure_kinetic',
+                'pressure_potential',
+                'aims_uuid',
+                'heat_flux',
+                'heat_flux_harmonic',
+                'heat_flux_0_harmonic',
+            ]
             for key in calculation_quantities:
                 val = self.parser.get(key, unit=self._units.get(key, None))
                 if val is None:
@@ -206,7 +271,9 @@ class FHIVibesParser:
 
         sec_scc = None
         try:
-            sec_atrr = self.archive.run[-1].method[-1].x_fhi_vibes_section_attributes[-1]
+            sec_atrr = (
+                self.archive.run[-1].method[-1].x_fhi_vibes_section_attributes[-1]
+            )
             timestep = sec_atrr.x_fhi_vibes_attributes_timestep
         except Exception:
             timestep = 0
@@ -242,9 +309,12 @@ class FHIVibesParser:
             # from the underlying calculation
             xc_type_map = {'PW': 'C'}
             calculator_parameters = self.parser.get(
-                'attrs/raw_metadata/calculator/calculator_parameters', {})
+                'attrs/raw_metadata/calculator/calculator_parameters', {}
+            )
             xc_functional = calculator_parameters.get('xc', '').upper()
-            xc_functional_info = re.match(r'(\w+)\S+?((?:LDA|GGA|MGGA|HYB_GGA|HYB_MGGA))', xc_functional)
+            xc_functional_info = re.match(
+                r'(\w+)\S+?((?:LDA|GGA|MGGA|HYB_GGA|HYB_MGGA))', xc_functional
+            )
             if xc_functional_info:
                 xc_name = xc_functional_info.group(1)
                 xc_type = xc_type_map.get(xc_name, None)
@@ -252,7 +322,10 @@ class FHIVibesParser:
                     self.logger.error('Cannot resolve XC functional.')
                     return
                 name = '%s_%s_%s' % (
-                    xc_functional_info.group(2), xc_type, xc_functional_info.group(1))
+                    xc_functional_info.group(2),
+                    xc_type,
+                    xc_functional_info.group(1),
+                )
                 sec_xc_functional = XCFunctional()
                 sec_dft.xc_functional = sec_xc_functional
                 functional = Functional(name=name)
@@ -292,45 +365,72 @@ class FHIVibesParser:
                     sec_metadata.x_fhi_vibes_section_metadata_MD.append(sec_md)
                     for md_key in val.keys():
                         setattr(
-                            sec_md, 'x_fhi_vibes_MD_%s' % md_key.replace('-', '_'),
-                            val[md_key])
+                            sec_md,
+                            'x_fhi_vibes_MD_%s' % md_key.replace('-', '_'),
+                            val[md_key],
+                        )
                 elif key == 'relaxation':
                     sec_relaxation = x_fhi_vibes_section_relaxation()
                     sec_metadata.x_fhi_vibes_section_relaxation.append(sec_relaxation)
                     for relaxation_key in val.keys():
                         if relaxation_key == 'kwargs':
                             sec_kwargs = x_fhi_vibes_section_relaxation_kwargs()
-                            sec_relaxation.x_fhi_vibes_section_relaxation_kwargs.append(sec_kwargs)
+                            sec_relaxation.x_fhi_vibes_section_relaxation_kwargs.append(
+                                sec_kwargs
+                            )
                             for kwargs_key in val['kwargs']:
                                 setattr(
-                                    sec_kwargs, 'x_fhi_vibes_relaxation_kwargs_%s' % kwargs_key,
-                                    val['kwargs'][kwargs_key])
+                                    sec_kwargs,
+                                    'x_fhi_vibes_relaxation_kwargs_%s' % kwargs_key,
+                                    val['kwargs'][kwargs_key],
+                                )
                         else:
                             setattr(
-                                sec_relaxation, 'x_fhi_vibes_relaxation_%s' % relaxation_key.replace('-', '_'),
-                                val[relaxation_key])
+                                sec_relaxation,
+                                'x_fhi_vibes_relaxation_%s'
+                                % relaxation_key.replace('-', '_'),
+                                val[relaxation_key],
+                            )
                 elif key == 'Phonopy':
                     sec_phonopy = x_fhi_vibes_section_phonopy()
                     sec_metadata.x_fhi_vibes_section_phonopy.append(sec_phonopy)
                     for phonopy_key in val.keys():
                         if phonopy_key == 'primitive':
                             sec_primitive = x_fhi_vibes_section_atoms()
-                            sec_phonopy.x_fhi_vibes_section_phonopy_primitive.append(sec_primitive)
+                            sec_phonopy.x_fhi_vibes_section_phonopy_primitive.append(
+                                sec_primitive
+                            )
                             parse_atoms(sec_primitive, val['primitive'])
                         else:
-                            setattr(sec_phonopy, 'x_fhi_vibes_phonopy_%s' % phonopy_key, val[phonopy_key])
+                            setattr(
+                                sec_phonopy,
+                                'x_fhi_vibes_phonopy_%s' % phonopy_key,
+                                val[phonopy_key],
+                            )
                 elif key == 'calculator':
                     sec_calculator = x_fhi_vibes_section_calculator()
-                    sec_metadata.x_fhi_vibes_section_metadata_calculator.append(sec_calculator)
-                    sec_calculator.x_fhi_vibes_calculator = metadata['calculator']['calculator']
-                    sec_calculator_parameters = x_fhi_vibes_section_calculator_parameters()
-                    sec_calculator.x_fhi_vibes_section_calculator_parameters.append(sec_calculator_parameters)
+                    sec_metadata.x_fhi_vibes_section_metadata_calculator.append(
+                        sec_calculator
+                    )
+                    sec_calculator.x_fhi_vibes_calculator = metadata['calculator'][
+                        'calculator'
+                    ]
+                    sec_calculator_parameters = (
+                        x_fhi_vibes_section_calculator_parameters()
+                    )
+                    sec_calculator.x_fhi_vibes_section_calculator_parameters.append(
+                        sec_calculator_parameters
+                    )
                     for calc_key in val['calculator_parameters'].keys():
                         if calc_key == 'use_pimd_wrapper':
-                            val['calculator_parameters'][calc_key] = str(val['calculator_parameters'][calc_key])
+                            val['calculator_parameters'][calc_key] = str(
+                                val['calculator_parameters'][calc_key]
+                            )
                         setattr(
-                            sec_calculator_parameters, 'x_fhi_vibes_calculator_parameters_%s' % calc_key,
-                            val['calculator_parameters'][calc_key])
+                            sec_calculator_parameters,
+                            'x_fhi_vibes_calculator_parameters_%s' % calc_key,
+                            val['calculator_parameters'][calc_key],
+                        )
                 elif key in ['atoms', 'primitive', 'supercell']:
                     sec_atoms = x_fhi_vibes_section_atoms()
                     sec_metadata.x_fhi_vibes_section_metadata_atoms.append(sec_atoms)
@@ -343,9 +443,15 @@ class FHIVibesParser:
                         setattr(sec_vibes, 'x_fhi_vibes_%s' % vibes_key, val[vibes_key])
                 elif key == 'settings':
                     sec_settings = x_fhi_vibes_section_settings()
-                    sec_metadata.x_fhi_vibes_section_metadata_settings.append(sec_settings)
+                    sec_metadata.x_fhi_vibes_section_metadata_settings.append(
+                        sec_settings
+                    )
                     for settings_key in val.keys():
-                        setattr(sec_settings, 'x_fhi_vibes_settings_%s' % settings_key, val[settings_key])
+                        setattr(
+                            sec_settings,
+                            'x_fhi_vibes_settings_%s' % settings_key,
+                            val[settings_key],
+                        )
                 else:
                     setattr(sec_metadata, key, val)
 
@@ -371,18 +477,26 @@ class FHIVibesParser:
                 atoms = json.loads(val)
                 sec_atoms.x_fhi_vibes_atoms_natoms = len(atoms['positions'])
                 parse_atoms(sec_atoms, atoms)
-                setattr(sec_attrs, 'x_fhi_vibes_attributes_number_of_%s' % key, len(atoms['positions']))
+                setattr(
+                    sec_attrs,
+                    'x_fhi_vibes_attributes_number_of_%s' % key,
+                    len(atoms['positions']),
+                )
             else:
                 if key == 'masses':
                     val = val * self._units.get('mass')
                 elif key == 'timestep':
-                    val = val * time_units.get(attrs.get('time_unit').lower(), self._units.get('time'))
+                    val = val * time_units.get(
+                        attrs.get('time_unit').lower(), self._units.get('time')
+                    )
                 setattr(sec_attrs, 'x_fhi_vibes_attributes_%s' % key, val)
 
         # we need this information for force constants
         n_atoms_supercell = sec_attrs.x_fhi_vibes_attributes_number_of_atoms_supercell
         if n_atoms_supercell:
-            sec_attrs.x_fhi_vibes_attributes_force_constants_remapped_size = n_atoms_supercell * 3
+            sec_attrs.x_fhi_vibes_attributes_force_constants_remapped_size = (
+                n_atoms_supercell * 3
+            )
 
     def init_parser(self):
         self.parser.mainfile = self.filepath
@@ -424,7 +538,9 @@ class FHIVibesParser:
             self.archive.run.append(Run())
 
         for n_run, sec_run in enumerate(self.archive.run):
-            sec_run.program = Program(name='FHI-vibes', version=metadata.get('vibes', dict()).get('version'))
+            sec_run.program = Program(
+                name='FHI-vibes', version=metadata.get('vibes', dict()).get('version')
+            )
 
             self.parse_method(n_run)
             if metadata.get('calculator', dict()).get('calculator').lower() == 'aims':
@@ -437,7 +553,7 @@ class FHIVibesParser:
                                 type='numeric AOs',
                                 scope=['full-electron'],
                             )
-                        ]
+                        ],
                     )
                 ]
 

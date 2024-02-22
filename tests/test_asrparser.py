@@ -48,10 +48,14 @@ def test_database():
     cwd = os.getcwd()
     try:
         os.chdir(tests_path)
-        subprocess.Popen(['asr', 'init'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.Popen(
+            ['asr', 'init'], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         subprocess.Popen(
             ['asr', 'run', 'asr.c2db.relax -a Si.json -c {"name":"emt"}'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
     except Exception:
         pass
     finally:

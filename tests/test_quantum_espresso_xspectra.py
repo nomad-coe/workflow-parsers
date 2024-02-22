@@ -33,7 +33,11 @@ def parser():
 
 def test_1(parser):
     archive = EntryArchive()
-    parser.parse('tests/data/quantum_espresso_xspectra/ms-10734/Spectra-1-1-1/0/dipole1/xanes.out', archive, None)
+    parser.parse(
+        'tests/data/quantum_espresso_xspectra/ms-10734/Spectra-1-1-1/0/dipole1/xanes.out',
+        archive,
+        None,
+    )
 
     sec_run = archive.run[0]
     assert sec_run.m_xpath('x_qe_xspectra_input')
@@ -45,7 +49,9 @@ def test_1(parser):
     # System
     sec_system = sec_run.system[0]
     assert sec_system.x_qe_xspectra_bravais_lattice_index == 0
-    assert sec_system.x_qe_xspectra_unit_cell_volume.magnitude == approx(7.381107151717e-28)
+    assert sec_system.x_qe_xspectra_unit_cell_volume.magnitude == approx(
+        7.381107151717e-28
+    )
     assert sec_system.x_qe_xspectra_n_atoms_cell == 72
     assert sec_system.atoms.labels[0] == 'Ti'
     assert sec_system.atoms.labels[4] == 'O'
@@ -54,7 +60,9 @@ def test_1(parser):
     # Method
     sec_method = sec_run.method
     assert len(sec_method) == 2
-    assert sec_method[0].m_xpath('electronic') and sec_method[0].m_xpath('atom_parameters')
+    assert sec_method[0].m_xpath('electronic') and sec_method[0].m_xpath(
+        'atom_parameters'
+    )
     assert sec_method[0].m_xpath('photon')
     assert sec_method[0].photon[0].multipole_type == 'dipole'
     sec_core_hole = sec_method[1].core_hole
@@ -71,5 +79,7 @@ def test_1(parser):
     sec_spectra = sec_scc[0].spectra[0]
     assert sec_spectra.type == 'XANES'
     assert sec_spectra.n_energies == 400
-    assert sec_spectra.excitation_energies[22].magnitude == approx(-1.6523701378886513e-18)
+    assert sec_spectra.excitation_energies[22].magnitude == approx(
+        -1.6523701378886513e-18
+    )
     assert sec_spectra.intensities[22] == approx(2.905e-5)

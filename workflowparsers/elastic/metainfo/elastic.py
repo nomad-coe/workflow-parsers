@@ -16,11 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np            # pylint: disable=unused-import
-import typing                 # pylint: disable=unused-import
+import numpy as np  # pylint: disable=unused-import
+import typing  # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
-    Reference
+    MSection,
+    MCategory,
+    Category,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+    SectionProxy,
+    Reference,
 )
 import runschema.run  # pylint: disable=unused-import
 import runschema.calculation  # pylint: disable=unused-import
@@ -32,137 +39,149 @@ m_package = Package()
 
 
 class x_elastic_section_strain_diagrams(MSection):
-    '''
+    """
     section collecting the data of the strain diagrams
-    '''
+    """
 
     m_def = Section(validate=False)
 
     x_elastic_strain_diagram_values = Quantity(
         type=np.dtype(np.float64),
-        shape=['x_elastic_number_of_deformations', 'x_elastic_strain_diagram_number_of_eta'],
-        description='''
+        shape=[
+            'x_elastic_number_of_deformations',
+            'x_elastic_strain_diagram_number_of_eta',
+        ],
+        description="""
         Values of the energy(units:J)/d2E(units:Pa)/cross-validation (depending on the
         value of x_elastic_strain_diagram_type)
-        ''')
+        """,
+    )
 
     x_elastic_strain_diagram_eta_values = Quantity(
         type=np.dtype(np.float64),
-        shape=['x_elastic_number_of_deformations', 'x_elastic_strain_diagram_number_of_eta'],
-        description='''
+        shape=[
+            'x_elastic_number_of_deformations',
+            'x_elastic_strain_diagram_number_of_eta',
+        ],
+        description="""
         eta values used the strain diagrams
-        ''')
+        """,
+    )
 
     x_elastic_strain_diagram_number_of_eta = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
+        description="""
         Number of strain values used in the strain diagram
-        ''')
+        """,
+    )
 
     x_elastic_strain_diagram_type = Quantity(
         type=str,
         shape=[],
-        description='''
+        description="""
         Kind of strain diagram. Possible values are: energy; cross-validation (cross-
         validation error); d2E (second derivative of the energy wrt the strain)
-        ''')
+        """,
+    )
 
     x_elastic_strain_diagram_polynomial_fit_order = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
+        description="""
         Order of the polynomial fit
-        ''')
+        """,
+    )
 
 
 class x_elastic_section_fitting_parameters(MSection):
-    '''
+    """
     section collecting the fitting parameters used to calculate the elastic constants
-    '''
+    """
 
     m_def = Section(validate=False)
 
     x_elastic_fitting_parameters_eta = Quantity(
         type=np.dtype(np.float64),
         shape=['x_elastic_number_of_deformations'],
-        description='''
+        description="""
         eta values used to calculate the elastic constants
-        ''')
+        """,
+    )
 
     x_elastic_fitting_parameters_polynomial_order = Quantity(
         type=np.dtype(np.int32),
         shape=['x_elastic_number_of_deformations'],
-        description='''
+        description="""
         polynomial order used to fit the Energy vs. volume curve and to calculate the
         elastic constants
-        ''')
+        """,
+    )
 
 
 class Method(runschema.method.Method):
-
     m_def = Section(validate=False, extends_base_section=True)
 
-#     x_elastic_elastic_constant_order = Quantity(
-#         type=np.dtype(np.int32),
-#         shape=[],
-#         description='''
-#         Order of the elastic constant
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_elastic_constant_order'))
+    #     x_elastic_elastic_constant_order = Quantity(
+    #         type=np.dtype(np.int32),
+    #         shape=[],
+    #         description='''
+    #         Order of the elastic constant
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_elastic_constant_order'))
 
-#     x_elastic_number_of_deformations = Quantity(
-#         type=np.dtype(np.int32),
-#         shape=[],
-#         description='''
-#         number of deformed structures equally spaced in strain, which are generated
-#         between the maximum negative strain and the maximum positive one
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_number_of_deformations'))
+    #     x_elastic_number_of_deformations = Quantity(
+    #         type=np.dtype(np.int32),
+    #         shape=[],
+    #         description='''
+    #         number of deformed structures equally spaced in strain, which are generated
+    #         between the maximum negative strain and the maximum positive one
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_number_of_deformations'))
 
-#     x_elastic_deformation_types = Quantity(
-#         type=np.dtype(np.int32),
-#         shape=['x_elastic_number_of_deformations', 6],
-#         description='''
-#         deformation types
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_deformation_types'))
+    #     x_elastic_deformation_types = Quantity(
+    #         type=np.dtype(np.int32),
+    #         shape=['x_elastic_number_of_deformations', 6],
+    #         description='''
+    #         deformation types
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_deformation_types'))
 
-#     x_elastic_calculation_method = Quantity(
-#         type=str,
-#         shape=[],
-#         description='''
-#         Method of calculation
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_calculation_method'))
+    #     x_elastic_calculation_method = Quantity(
+    #         type=str,
+    #         shape=[],
+    #         description='''
+    #         Method of calculation
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_calculation_method'))
 
-#     x_elastic_code = Quantity(
-#         type=str,
-#         shape=[],
-#         description='''
-#         Code used for the calculation of the elastic constants
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_code'))
+    #     x_elastic_code = Quantity(
+    #         type=str,
+    #         shape=[],
+    #         description='''
+    #         Code used for the calculation of the elastic constants
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_code'))
 
-#     x_elastic_max_lagrangian_strain = Quantity(
-#         type=np.dtype(np.float64),
-#         shape=[],
-#         description='''
-#         Maximum lagrangian strain used to calculate the elastic constants
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_max_lagrangian_strain'))
+    #     x_elastic_max_lagrangian_strain = Quantity(
+    #         type=np.dtype(np.float64),
+    #         shape=[],
+    #         description='''
+    #         Maximum lagrangian strain used to calculate the elastic constants
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_max_lagrangian_strain'))
 
-#     x_elastic_number_of_distorted_structures = Quantity(
-#         type=np.dtype(np.int32),
-#         shape=[],
-#         description='''
-#         Number of distorted structures used to calculate the elastic constants
-#         ''',
-#         a_legacy=LegacyDefinition(name='x_elastic_number_of_distorted_structures'))
+    #     x_elastic_number_of_distorted_structures = Quantity(
+    #         type=np.dtype(np.int32),
+    #         shape=[],
+    #         description='''
+    #         Number of distorted structures used to calculate the elastic constants
+    #         ''',
+    #         a_legacy=LegacyDefinition(name='x_elastic_number_of_distorted_structures'))
 
     x_elastic_section_fitting_parameters = SubSection(
-        sub_section=SectionProxy('x_elastic_section_fitting_parameters'),
-        repeats=True)
+        sub_section=SectionProxy('x_elastic_section_fitting_parameters'), repeats=True
+    )
 
 
 # class section_single_configuration_calculation(public.section_single_configuration_calculation):
@@ -325,20 +344,21 @@ class Method(runschema.method.Method):
 
 
 class System(runschema.system.System):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_elastic_space_group_number = Quantity(
         type=np.dtype(np.int32),
         shape=[],
-        description='''
+        description="""
         Space-group number of the system
-        ''')
+        """,
+    )
 
     x_elastic_unit_cell_volume = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='m ** 3',
-        description='''
+        description="""
         Volume of the equilibrium unit cell
-        ''')
+        """,
+    )

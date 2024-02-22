@@ -55,25 +55,27 @@ def test_2nd(parser):
     assert sec_strain[0].value[2][5] == approx(-3.30877062e-16)
     assert sec_strain[3].type == 'cross-validation'
     assert sec_strain[2].eta[1][2] == 0.03
-    assert sec_strain[6].value[2][4] == approx(6.8708895e+12)
+    assert sec_strain[6].value[2][4] == approx(6.8708895e12)
     assert sec_strain[4].polynomial_fit_order == 6
 
     assert results.elastic_constants_notation_matrix_second_order[1][2] == 'C12'
-    assert results.elastic_constants_matrix_second_order[0][2].magnitude == approx(1.008e+11)
+    assert results.elastic_constants_matrix_second_order[0][2].magnitude == approx(
+        1.008e11
+    )
     assert results.compliance_matrix_second_order[3][3].magnitude == approx(1.75e-12)
-    assert results.bulk_modulus_voigt.magnitude == approx(4.4937e+11)
-    assert results.shear_modulus_voigt.magnitude == approx(5.3074e+11)
-    assert results.bulk_modulus_reuss.magnitude == approx(4.4937e+11)
-    assert results.shear_modulus_reuss.magnitude == approx(5.2574e+11)
-    assert results.bulk_modulus_hill.magnitude == approx(4.4937e+11)
-    assert results.shear_modulus_hill.magnitude == approx(5.2824e+11)
-    assert results.young_modulus_voigt.magnitude == approx(1.14245e+12)
+    assert results.bulk_modulus_voigt.magnitude == approx(4.4937e11)
+    assert results.shear_modulus_voigt.magnitude == approx(5.3074e11)
+    assert results.bulk_modulus_reuss.magnitude == approx(4.4937e11)
+    assert results.shear_modulus_reuss.magnitude == approx(5.2574e11)
+    assert results.bulk_modulus_hill.magnitude == approx(4.4937e11)
+    assert results.shear_modulus_hill.magnitude == approx(5.2824e11)
+    assert results.young_modulus_voigt.magnitude == approx(1.14245e12)
     assert results.poisson_ratio_voigt == 0.08
-    assert results.young_modulus_reuss.magnitude == approx(1.1347e+12)
+    assert results.young_modulus_reuss.magnitude == approx(1.1347e12)
     assert results.poisson_ratio_reuss == 0.08
-    assert results.young_modulus_hill.magnitude == approx(1.13858e+12)
+    assert results.young_modulus_hill.magnitude == approx(1.13858e12)
     assert results.poisson_ratio_hill == 0.08
-    assert results.eigenvalues_elastic[1].magnitude == approx(1.3481e+12)
+    assert results.eigenvalues_elastic[1].magnitude == approx(1.3481e12)
 
     sec_scc = archive.run[0].calculation[0]
     assert len(sec_scc.calculations_path) == 33
@@ -94,9 +96,15 @@ def test_3rd(parser):
     # assert sec_strain[3].value[8][7] == approx(2.06899957e-23)
 
     results = archive.workflow2.results
-    assert results.elastic_constants_matrix_third_order[3][1][3].magnitude == approx(1.274e+10)
-    assert results.elastic_constants_matrix_third_order[5][2][5].magnitude == approx(1.2825e+10)
-    assert results.elastic_constants_matrix_third_order[0][0][1].magnitude == approx(-1.18334e+12)
+    assert results.elastic_constants_matrix_third_order[3][1][3].magnitude == approx(
+        1.274e10
+    )
+    assert results.elastic_constants_matrix_third_order[5][2][5].magnitude == approx(
+        1.2825e10
+    )
+    assert results.elastic_constants_matrix_third_order[0][0][1].magnitude == approx(
+        -1.18334e12
+    )
 
 
 def test_stress(parser):

@@ -48,15 +48,19 @@ def test_aflowlib(parser):
     sec_calculation = archive.run[0].calculation[0]
     assert sec_calculation.energy.total.value.magnitude == approx(-5.58872856e-18)
     assert sec_calculation.forces.total.value[0][1].magnitude == approx(-2.14691669e-13)
-    assert sec_calculation.thermodynamics[0].enthalpy.magnitude == approx(-5.58872856e-18)
+    assert sec_calculation.thermodynamics[0].enthalpy.magnitude == approx(
+        -5.58872856e-18
+    )
     assert sec_calculation.x_aflow_pressure_residual == approx(2.95)
 
     run = archive.run[1]
     assert len(run.system) == len(run.calculation) == 24
     assert run.system[7].atoms.labels[6] == 'O'
-    assert run.system[21].atoms.lattice_vectors[0][1].magnitude == approx(-2.5241880209758e-10)
+    assert run.system[21].atoms.lattice_vectors[0][1].magnitude == approx(
+        -2.5241880209758e-10
+    )
     assert run.calculation[15].energy.total.value.magnitude == approx(-6.9854741e-19)
-    assert run.calculation[9].stress.total.value[2][2].magnitude == approx(-1.594e+08)
+    assert run.calculation[9].stress.total.value[2][2].magnitude == approx(-1.594e08)
     # TODO currently workflow is not a repeating section
     # assert archive.workflow.results.n_deformations == 3
     # assert archive.workflow.results.strain_maximum == pytest.approx(0.01)
@@ -68,7 +72,7 @@ def test_aflowlib(parser):
     run = archive.run[2]
     assert len(run.system) == len(run.calculation) == 28
     assert run.system[3].atoms.positions[3][2].magnitude == approx(5.53515521e-10)
-    assert run.calculation[19].thermodynamics[0].pressure.magnitude == (-1.6886e+09)
+    assert run.calculation[19].thermodynamics[0].pressure.magnitude == (-1.6886e09)
     sec_thermo = archive.workflow2.results
     assert sec_thermo.temperature[12].magnitude == 120
     # assert sec_thermo.thermal_conductivity[18].magnitude == approx(4.924586)
@@ -90,13 +94,19 @@ def test_aflowin(parser):
 
     sec_scc = archive.run[1].calculation[0]
     assert sec_scc.dos_phonon[0].energies[80].magnitude == approx(5.71011064e-22)
-    assert sec_scc.dos_phonon[0].total[0].value[1866].magnitude == approx(2.06688135e+20)
+    assert sec_scc.dos_phonon[0].total[0].value[1866].magnitude == approx(2.06688135e20)
     assert len(sec_scc.band_structure_phonon[0].segment) == 10
-    assert sec_scc.band_structure_phonon[0].segment[3].kpoints[7][1] == approx(1.02984830)
-    assert sec_scc.band_structure_phonon[0].segment[9].energies[0][10][3].magnitude == approx(1.92480691e-21)
+    assert sec_scc.band_structure_phonon[0].segment[3].kpoints[7][1] == approx(
+        1.02984830
+    )
+    assert sec_scc.band_structure_phonon[0].segment[9].energies[0][10][
+        3
+    ].magnitude == approx(1.92480691e-21)
 
     assert archive.workflow2.results.qpoints[9249][0] == approx(-4.7619047619e-02)
-    assert archive.workflow2.results.group_velocity[234][2][0].magnitude == approx(-133.348333)
+    assert archive.workflow2.results.group_velocity[234][2][0].magnitude == approx(
+        -133.348333
+    )
 
     # TODO currently workflow is not a repeating section
     # assert archive.workflow.results.temperature[161].magnitude == approx(1610)

@@ -16,11 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np            # pylint: disable=unused-import
-import typing                 # pylint: disable=unused-import
+import numpy as np  # pylint: disable=unused-import
+import typing  # pylint: disable=unused-import
 from nomad.metainfo import (  # pylint: disable=unused-import
-    MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
-    Reference
+    MSection,
+    MCategory,
+    Category,
+    Package,
+    Quantity,
+    Section,
+    SubSection,
+    SectionProxy,
+    Reference,
 )
 import runschema.run  # pylint: disable=unused-import
 import runschema.calculation  # pylint: disable=unused-import
@@ -32,44 +39,45 @@ m_package = Package()
 
 
 class x_phonopy_input(MCategory):
-    '''
+    """
     Information about properties that concern phonopy calculations.
-    '''
+    """
 
     m_def = Category()
 
 
 class Method(runschema.method.Method):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_phonopy_displacement = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='meter',
-        description='''
+        description="""
         Amplitude of the atom diplacement for the phonopy supercell
-        ''',
-        categories=[x_phonopy_input])
+        """,
+        categories=[x_phonopy_input],
+    )
 
     x_phonopy_symprec = Quantity(
         type=np.dtype(np.float64),
         shape=[],
         unit='meter',
-        description='''
+        description="""
         Symmetry threshold for the space group identification of the crystal for which the
         vibrational properties are to be calculated
-        ''',
-        categories=[x_phonopy_input])
+        """,
+        categories=[x_phonopy_input],
+    )
 
 
 class System(runschema.system.System):
-
     m_def = Section(validate=False, extends_base_section=True)
 
     x_phonopy_original_system_ref = Quantity(
         type=runschema.system.System,
         shape=[],
-        description='''
+        description="""
         Original cell from which the supercell for the DFT calculations was constructed
-        ''')
+        """,
+    )

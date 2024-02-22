@@ -28,8 +28,7 @@ from runschema.run import Run, Program
 from runschema.method import Method
 from runschema.system import System, Atoms
 from runschema.calculation import Calculation
-from simulationworkflowschema import (
-    Elastic, ElasticMethod, ElasticResults)
+from simulationworkflowschema import Elastic, ElasticMethod, ElasticResults
 from simulationworkflowschema.elastic import StrainDiagrams
 from .metainfo.elastic import x_elastic_section_fitting_parameters
 
@@ -41,22 +40,40 @@ class InfoParser(TextParser):
     def init_quantities(self):
         self._quantities = [
             Quantity(
-                'order', r'\s*Order of elastic constants\s*=\s*([0-9]+)', repeats=False,
-                dtype=int),
+                'order',
+                r'\s*Order of elastic constants\s*=\s*([0-9]+)',
+                repeats=False,
+                dtype=int,
+            ),
             Quantity(
-                'calculation_method', r'\s*Method of calculation\s*=\s*([-a-zA-Z]+)\s*',
-                repeats=False),
+                'calculation_method',
+                r'\s*Method of calculation\s*=\s*([-a-zA-Z]+)\s*',
+                repeats=False,
+            ),
             Quantity(
-                'code_name', r'\s*DFT code name\s*=\s*([-a-zA-Z]+)', repeats=False),
+                'code_name', r'\s*DFT code name\s*=\s*([-a-zA-Z]+)', repeats=False
+            ),
             Quantity(
-                'space_group_number', r'\s*Space-group number\s*=\s*([0-9]+)', repeats=False),
+                'space_group_number',
+                r'\s*Space-group number\s*=\s*([0-9]+)',
+                repeats=False,
+            ),
             Quantity(
-                'equilibrium_volume', r'\s*Volume of equilibrium unit cell\s*=\s*([0-9.]+)\s*',
-                unit='angstrom ** 3'),
+                'equilibrium_volume',
+                r'\s*Volume of equilibrium unit cell\s*=\s*([0-9.]+)\s*',
+                unit='angstrom ** 3',
+            ),
             Quantity(
-                'max_strain', r'\s*Maximum Lagrangian strain\s*=\s*([0-9.]+)', repeats=False),
+                'max_strain',
+                r'\s*Maximum Lagrangian strain\s*=\s*([0-9.]+)',
+                repeats=False,
+            ),
             Quantity(
-                'n_strains', r'\s*Number of distorted structures\s*=\s*([0-9]+)', repeats=False)]
+                'n_strains',
+                r'\s*Number of distorted structures\s*=\s*([0-9]+)',
+                repeats=False,
+            ),
+        ]
 
 
 class StructureParser(TextParser):
@@ -76,11 +93,18 @@ class StructureParser(TextParser):
 
         self._quantities = [
             Quantity(
-                'cellpar', r'a\s*b\s*c\n([\d\.\s]+)\n\s*alpha\s*beta\s*gamma\n([\d\.\s]+)\n+',
-                repeats=False),
+                'cellpar',
+                r'a\s*b\s*c\n([\d\.\s]+)\n\s*alpha\s*beta\s*gamma\n([\d\.\s]+)\n+',
+                repeats=False,
+            ),
             Quantity(
-                'sym_pos', r'Atom positions:\n\n([\s\d\.A-Za-z]+)\n\n',
-                str_operation=get_sym_pos, repeats=False, convert=False)]
+                'sym_pos',
+                r'Atom positions:\n\n([\s\d\.A-Za-z]+)\n\n',
+                str_operation=get_sym_pos,
+                repeats=False,
+                convert=False,
+            ),
+        ]
 
 
 class DistortedParametersParser(TextParser):
@@ -88,9 +112,15 @@ class DistortedParametersParser(TextParser):
         super().__init__(None)
 
     def init_quantities(self):
-        self._quantities = [Quantity(
-            'deformation', r'Lagrangian strain\s*=\s*\(([eta\s\d\.,]+)\)',
-            str_operation=lambda x: x.replace(',', '').split(), repeats=True, dtype=str)]
+        self._quantities = [
+            Quantity(
+                'deformation',
+                r'Lagrangian strain\s*=\s*\(([eta\s\d\.,]+)\)',
+                str_operation=lambda x: x.replace(',', '').split(),
+                repeats=True,
+                dtype=str,
+            )
+        ]
 
 
 class FitParser(TextParser):
@@ -98,15 +128,20 @@ class FitParser(TextParser):
         super().__init__(None)
 
     def init_quantities(self):
-
         def split_eta_val(val):
             order, val = val.strip().split(' order fit.')
             val = [float(v) for v in val.strip().split()]
             return order, val[0::2], val[1::2]
 
-        self._quantities = [Quantity(
-            'fit', r'(\w+ order fit\.\n[\d.\s\neE\-\+]+)\n', repeats=True, convert=False,
-            str_operation=split_eta_val)]
+        self._quantities = [
+            Quantity(
+                'fit',
+                r'(\w+ order fit\.\n[\d.\s\neE\-\+]+)\n',
+                repeats=True,
+                convert=False,
+                str_operation=split_eta_val,
+            )
+        ]
 
 
 class ElasticConstant2Parser(TextParser):
@@ -116,14 +151,29 @@ class ElasticConstant2Parser(TextParser):
     def init_quantities(self):
         self._quantities = [
             Quantity(
-                'voigt', r'Symmetry[\s\S]+\n\s*\n([C\d\s\n\(\)\-\+\/\*]+)\n',
-                shape=(6, 6), dtype=str, repeats=False),
+                'voigt',
+                r'Symmetry[\s\S]+\n\s*\n([C\d\s\n\(\)\-\+\/\*]+)\n',
+                shape=(6, 6),
+                dtype=str,
+                repeats=False,
+            ),
             Quantity(
-                'elastic_constant', r'Elastic constant[\s\S]+in GPa\s*:\s*\n\n([\-\d\.\s\n]+)\n',
-                shape=(6, 6), dtype=float, unit='GPa', repeats=False),
+                'elastic_constant',
+                r'Elastic constant[\s\S]+in GPa\s*:\s*\n\n([\-\d\.\s\n]+)\n',
+                shape=(6, 6),
+                dtype=float,
+                unit='GPa',
+                repeats=False,
+            ),
             Quantity(
-                'compliance', r'Elastic compliance[\s\S]+in 1/GPa\s*:\s*\n\n([\-\d\.\s\n]+)\n',
-                shape=(6, 6), dtype=float, unit='1/GPa', repeats=False)]
+                'compliance',
+                r'Elastic compliance[\s\S]+in 1/GPa\s*:\s*\n\n([\-\d\.\s\n]+)\n',
+                shape=(6, 6),
+                dtype=float,
+                unit='1/GPa',
+                repeats=False,
+            ),
+        ]
 
         def str_to_modulus(val_in):
             val_in = val_in.strip().split()
@@ -133,14 +183,23 @@ class ElasticConstant2Parser(TextParser):
             val = val * ureg.GPa if unit is not None else val
             return key, val
 
-        self._quantities.append(Quantity(
-            'modulus', r',\s*(\w+)\s*=\s*([\-\+\w\. ]+?)\n', str_operation=str_to_modulus,
-            repeats=True))
+        self._quantities.append(
+            Quantity(
+                'modulus',
+                r',\s*(\w+)\s*=\s*([\-\+\w\. ]+?)\n',
+                str_operation=str_to_modulus,
+                repeats=True,
+            )
+        )
 
-        self._quantities.append(Quantity(
-            'eigenvalues',
-            r'Eigenvalues of elastic constant \(stiffness\) matrix:\s*\n+([\-\d\.\n\s]+)\n',
-            unit='GPa', repeats=False))
+        self._quantities.append(
+            Quantity(
+                'eigenvalues',
+                r'Eigenvalues of elastic constant \(stiffness\) matrix:\s*\n+([\-\d\.\n\s]+)\n',
+                unit='GPa',
+                repeats=False,
+            )
+        )
 
 
 class ElasticConstant3Parser(TextParser):
@@ -156,15 +215,26 @@ class ElasticConstant3Parser(TextParser):
             for i in range(2):
                 for j in range(3):
                     arranged.append(
-                        matrix[i * 6: (i + 1) * 6, j * 6: (j + 1) * 6].tolist())
+                        matrix[i * 6 : (i + 1) * 6, j * 6 : (j + 1) * 6].tolist()
+                    )
             return arranged
 
         self._quantities = [
             Quantity(
-                'elastic_constant', r'\%\s*\n([\s0-6A-L]*)[\n\s\%1-6\-ij]*([\s0-6A-L]*)\n',
-                str_operation=arrange_matrix, dtype=str, repeats=False, convert=False),
+                'elastic_constant',
+                r'\%\s*\n([\s0-6A-L]*)[\n\s\%1-6\-ij]*([\s0-6A-L]*)\n',
+                str_operation=arrange_matrix,
+                dtype=str,
+                repeats=False,
+                convert=False,
+            ),
             Quantity(
-                'cijk', r'(C\d\d\d)\s*=\s*([\-\d\.]+)\s*GPa', repeats=True, convert=False)]
+                'cijk',
+                r'(C\d\d\d)\s*=\s*([\-\d\.]+)\s*GPa',
+                repeats=True,
+                convert=False,
+            ),
+        ]
 
 
 class ElasticParser:
@@ -185,7 +255,10 @@ class ElasticParser:
     def deformation_dirs(self):
         if self._deform_dirs is None:
             self._deform_dirs = [
-                os.path.join(self.maindir, d) for d in self._dirs if d.startswith(self._deform_dir_prefix)]
+                os.path.join(self.maindir, d)
+                for d in self._dirs
+                if d.startswith(self._deform_dir_prefix)
+            ]
 
         return self._deform_dirs
 
@@ -205,7 +278,9 @@ class ElasticParser:
             if code == 'exciting':
                 return os.path.join(dirname, 'INFO.OUT')
             elif code == 'wien':
-                return os.path.join(dirname, '%s_Converged.scf' % os.path.basename(dirname))
+                return os.path.join(
+                    dirname, '%s_Converged.scf' % os.path.basename(dirname)
+                )
             elif code == 'quantum':
                 return os.path.join(dirname, '%s.out' % os.path.basename(dirname))
             else:
@@ -334,14 +409,18 @@ class ElasticParser:
 
             result = list(result)
             result[1] = {
-                key: (val * ureg.GPa).to('Pa').magnitude for key, val in result[1].items()}
+                key: (val * ureg.GPa).to('Pa').magnitude
+                for key, val in result[1].items()
+            }
             energy_fit['d2e'] = result
 
         result = self._get_fit('Energy-vs-Strain', 'CVe.dat')
         if result is not None:
             result = list(result)
             result[1] = {
-                key: (val * ureg.hartree).to('J').magnitude for key, val in result[1].items()}
+                key: (val * ureg.hartree).to('J').magnitude
+                for key, val in result[1].items()
+            }
             energy_fit['cross-validation'] = result
 
         return energy_fit
@@ -447,12 +526,17 @@ class ElasticParser:
         coeff_A = cijk.get('C111', 0) + cijk.get('C112', 0) - cijk.get('C222', 0)
         coeff_B = -(cijk.get('C115', 0) + 3 * cijk.get('C125', 0)) / 2
         coeff_C = (cijk.get('C114', 0) + 3 * cijk.get('C124', 0)) / 2
-        coeff_D = -(2 * cijk.get('C111', 0) + cijk.get('C112', 0) - 3 * cijk.get('C222', 0)) / 4
+        coeff_D = (
+            -(2 * cijk.get('C111', 0) + cijk.get('C112', 0) - 3 * cijk.get('C222', 0))
+            / 4
+        )
         coeff_E = -cijk.get('C114', 0) - 2 * cijk.get('C124', 0)
         coeff_F = -cijk.get('C115', 0) - 2 * cijk.get('C125', 0)
         coeff_G = -(cijk.get('C115', 0) - cijk.get('C125', 0)) / 2
         coeff_H = (cijk.get('C114', 0) - cijk.get('C124', 0)) / 2
-        coeff_I = (2 * cijk.get('C111', 0) - cijk.get('C112', 0) - cijk.get('C222', 0)) / 4
+        coeff_I = (
+            2 * cijk.get('C111', 0) - cijk.get('C112', 0) - cijk.get('C222', 0)
+        ) / 4
         coeff_J = (cijk.get('C113', 0) - cijk.get('C123', 0)) / 2
         coeff_K = -(cijk.get('C144', 0) - cijk.get('C155', 0)) / 2
 
@@ -460,18 +544,33 @@ class ElasticParser:
 
         if space_group_number <= 148:  # rhombohedral II
             coefficients = dict(
-                A=coeff_A, B=coeff_B, C=coeff_C, D=coeff_D, E=coeff_E, F=coeff_F, G=coeff_G,
-                H=coeff_H, I=coeff_I, J=coeff_J, K=coeff_K)
+                A=coeff_A,
+                B=coeff_B,
+                C=coeff_C,
+                D=coeff_D,
+                E=coeff_E,
+                F=coeff_F,
+                G=coeff_G,
+                H=coeff_H,
+                I=coeff_I,
+                J=coeff_J,
+                K=coeff_K,
+            )
         elif space_group_number <= 167:  # rhombohedral I
             coefficients = dict(
-                A=coeff_A, B=coeff_C, C=coeff_D, D=coeff_E, E=coeff_H, F=coeff_I, G=coeff_J,
-                H=coeff_K)
+                A=coeff_A,
+                B=coeff_C,
+                C=coeff_D,
+                D=coeff_E,
+                E=coeff_H,
+                F=coeff_I,
+                G=coeff_J,
+                H=coeff_K,
+            )
         elif space_group_number <= 176:  # hexagonal II
-            coefficients = dict(
-                A=coeff_A, B=coeff_D, C=coeff_I, D=coeff_J, E=coeff_K)
+            coefficients = dict(A=coeff_A, B=coeff_D, C=coeff_I, D=coeff_J, E=coeff_K)
         elif space_group_number <= 194:  # hexagonal I
-            coefficients = dict(
-                A=coeff_A, B=coeff_D, C=coeff_I, D=coeff_J, E=coeff_K)
+            coefficients = dict(A=coeff_A, B=coeff_D, C=coeff_I, D=coeff_J, E=coeff_K)
         else:
             coefficients = dict()
 
@@ -496,8 +595,13 @@ class ElasticParser:
         n_strains = self.info['n_strains']
         poly_fit_2 = int((n_strains - 1) / 2)
         poly_fit = {
-            '2nd': poly_fit_2, '3rd': poly_fit_2 - 1, '4th': poly_fit_2 - 1,
-            '5th': poly_fit_2 - 2, '6th': poly_fit_2 - 2, '7th': poly_fit_2 - 3}
+            '2nd': poly_fit_2,
+            '3rd': poly_fit_2 - 1,
+            '4th': poly_fit_2 - 1,
+            '5th': poly_fit_2 - 2,
+            '6th': poly_fit_2 - 2,
+            '7th': poly_fit_2 - 3,
+        }
 
         if method == 'energy':
             strain, energy = self.get_strain_energy()
@@ -520,7 +624,9 @@ class ElasticParser:
             for diagram_type in ['cross-validation', 'd2e']:
                 for fit_order in energy_fit[diagram_type][0].keys():
                     sec_strain_diagram = StrainDiagrams()
-                    self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
+                    self.archive.workflow2.results.strain_diagrams.append(
+                        sec_strain_diagram
+                    )
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                     sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
@@ -537,7 +643,9 @@ class ElasticParser:
 
                 for si in range(6):
                     sec_strain_diagram = StrainDiagrams()
-                    self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
+                    self.archive.workflow2.results.strain_diagrams.append(
+                        sec_strain_diagram
+                    )
                     sec_strain_diagram.type = diagram_type
                     sec_strain_diagram.stress_voigt_component = si + 1
                     sec_strain_diagram.n_eta = len(strain_i[0])
@@ -551,13 +659,19 @@ class ElasticParser:
                         continue
                     for fit_order in stress_fit[diagram_type][si][0].keys():
                         sec_strain_diagram = StrainDiagrams()
-                        self.archive.workflow2.results.strain_diagrams.append(sec_strain_diagram)
+                        self.archive.workflow2.results.strain_diagrams.append(
+                            sec_strain_diagram
+                        )
                         sec_strain_diagram.type = diagram_type
                         sec_strain_diagram.stress_voigt_component = si + 1
                         sec_strain_diagram.polynomial_fit_order = int(fit_order[:-2])
                         sec_strain_diagram.n_eta = poly_fit.get(fit_order, None)
-                        sec_strain_diagram.eta = stress_fit[diagram_type][si][0][fit_order]
-                        sec_strain_diagram.value = np.array(stress_fit[diagram_type][si][1][fit_order])
+                        sec_strain_diagram.eta = stress_fit[diagram_type][si][0][
+                            fit_order
+                        ]
+                        sec_strain_diagram.value = np.array(
+                            stress_fit[diagram_type][si][1][fit_order]
+                        )
 
     def parse_elastic_constant(self):
         sec_results = self.archive.workflow2.results
@@ -566,8 +680,12 @@ class ElasticParser:
 
         if order == 2:
             matrices, moduli, eigenvalues = self.get_elastic_constants_order2()
-            sec_results.elastic_constants_notation_matrix_second_order = matrices.get('voigt')
-            sec_results.elastic_constants_matrix_second_order = matrices.get('elastic_constant')
+            sec_results.elastic_constants_notation_matrix_second_order = matrices.get(
+                'voigt'
+            )
+            sec_results.elastic_constants_matrix_second_order = matrices.get(
+                'elastic_constant'
+            )
             sec_results.compliance_matrix_second_order = matrices.get('compliance')
 
             sec_results.bulk_modulus_voigt = moduli.get('B_V', moduli.get('K_V'))
@@ -591,7 +709,9 @@ class ElasticParser:
         elif order == 3:
             elastic_constant = self.get_elastic_constants_order3()
             if elastic_constant is not None:
-                sec_results.elastic_constants_matrix_third_order = elastic_constant * ureg.GPa
+                sec_results.elastic_constants_matrix_third_order = (
+                    elastic_constant * ureg.GPa
+                )
 
     def init_parser(self):
         self._deform_dirs = None
@@ -659,8 +779,7 @@ class ElasticParser:
         sec_scc.system_ref = sec_system
 
         deformation_types = self.get_deformation_types()
-        workflow = Elastic(
-            method=ElasticMethod(), results=ElasticResults())
+        workflow = Elastic(method=ElasticMethod(), results=ElasticResults())
         workflow.method.energy_stress_calculator = self.info['code_name']
         workflow.method.calculation_method = self.info['calculation_method'].lower()
         workflow.method.elastic_constants_order = self.info['order']

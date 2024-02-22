@@ -22,7 +22,12 @@ from fractions import Fraction
 
 from ase import lattice as aselattice
 from ase.cell import Cell
-from ase.dft.kpoints import special_paths, parse_path_string, get_special_points, sc_special_points
+from ase.dft.kpoints import (
+    special_paths,
+    parse_path_string,
+    get_special_points,
+    sc_special_points,
+)
 
 from phonopy.phonon.band_structure import BandStructure
 from phonopy.units import EvTokJmol, VaspToTHz
@@ -108,7 +113,7 @@ def generate_kpath_ase(cell, symprec, logger=None):
     return generate_kpath_parameters(points, paths, 100)
 
 
-class PhononProperties():
+class PhononProperties:
     def __init__(self, phonopy_obj, logger, **kwargs):
         self.logger = logger
         self.phonopy_obj = phonopy_obj
@@ -120,8 +125,8 @@ class PhononProperties():
         self.n_atoms = len(phonopy_obj.unitcell)
 
         k_mesh = kwargs.get('k_mesh', 30)
-        mesh_density = (2 * k_mesh ** 3) / self.n_atoms
-        mesh_number = np.round(mesh_density**(1. / 3.))
+        mesh_density = (2 * k_mesh**3) / self.n_atoms
+        mesh_number = np.round(mesh_density ** (1.0 / 3.0))
         self.mesh = [mesh_number, mesh_number, mesh_number]
 
         self.n_atoms_supercell = len(phonopy_obj.supercell)
@@ -154,11 +159,11 @@ class PhononProperties():
         distance = 0.0
         bands_special_points = [distance]
         bands_labels = []
-        label = parameters[0]["startname"]
+        label = parameters[0]['startname']
         for b in parameters:
-            kstart = np.array(b["kstart"])
-            kend = np.array(b["kend"])
-            npoints = b["npoints"]
+            kstart = np.array(b['kstart'])
+            kend = np.array(b['kend'])
+            npoints = b['npoints']
             dk = (kend - kstart) / (npoints - 1)
             bands.append([(kstart + dk * n) for n in range(npoints)])
             dk_length = np.linalg.norm(dk)
@@ -168,12 +173,15 @@ class PhononProperties():
 
             distance += dk_length * (npoints - 1)
             bands_special_points.append(distance)
-            label = [b["startname"], b["endname"]]
+            label = [b['startname'], b['endname']]
             bands_labels.append(label)
 
         bs_obj = BandStructure(
-            bands, phonopy_obj.dynamical_matrix, with_eigenvectors=is_eigenvectors,
-            factor=frequency_unit_factor)
+            bands,
+            phonopy_obj.dynamical_matrix,
+            with_eigenvectors=is_eigenvectors,
+            factor=frequency_unit_factor,
+        )
 
         freqs = bs_obj.get_frequencies()
 
@@ -193,7 +201,8 @@ class PhononProperties():
         max_freq = max(np.ravel(frequencies)) + max(np.ravel(frequencies)) * 0.05
 
         phonopy_obj.set_total_DOS(
-            freq_min=min_freq, freq_max=max_freq, tetrahedron_method=True)
+            freq_min=min_freq, freq_max=max_freq, tetrahedron_method=True
+        )
         f, dos = phonopy_obj.get_total_DOS()
 
         return f, dos
@@ -203,7 +212,8 @@ class PhononProperties():
 
         phonopy_obj.set_mesh(self.mesh, is_gamma_center=True)
         phonopy_obj.set_thermal_properties(
-            t_step=self.t_step, t_max=self.t_max, t_min=self.t_min)
+            t_step=self.t_step, t_max=self.t_max, t_min=self.t_min
+        )
         T, fe, entropy, cv = phonopy_obj.get_thermal_properties()
         kJmolToEv = 1.0 / EvTokJmol
         fe = fe * kJmolToEv
