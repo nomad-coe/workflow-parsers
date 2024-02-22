@@ -28,9 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: chartboost/ruff-action@vu
+      - uses: chartboost/ruff-action@v1
         with:
           args: "check ."
+
   ruff-formatting:
     runs-on: ubuntu-latest
     steps:
