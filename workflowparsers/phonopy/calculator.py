@@ -16,9 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Optional
 import numpy as np
 import re
+from scipy.spatial.transform import Rotation as R
+from typing import Optional
 from fractions import Fraction
 
 from ase import lattice as aselattice
@@ -108,6 +109,46 @@ def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[i
     return None
 
 
+def generate_2D_rotation_matrix(rad_angle: float) -> np.array:
+    return np.array(
+        [
+            [np.cos(rad_angle), -np.sin(rad_angle)],
+            [np.sin(rad_angle), np.cos(rad_angle)],
+        ]
+    )
+
+
+def from_2D_to_3D(matrix_2d: np.array, rot_axis_id: int) -> Cell:
+    """
+    Converts a 2D rotation matrix to a 3D rotation matrix.
+    """
+    target_axes_ids = list(set(range(3)) - {rot_axis_id})
+
+    rot_matrix = np.eye(3)
+    for i in target_axes_ids:
+        for j in target_axes_ids:
+            rot_matrix[i, j] = matrix_2d[i, j]
+    return rot_matrix
+
+
+def rotate_cell(cell: np.array, rot_axis_id: int, rad_angle: float) -> np.array:
+    return R.from_matrix(
+        from_2D_to_3D(generate_2D_rotation_matrix(rad_angle), rot_axis_id)
+    ).apply(cell)
+
+
+def open_angle(
+    cell: np.array, rot_axis_id: int, rad_angle: float, target_axes_choice: int = 0
+) -> np.array:
+    target_axes_ids = list(set(range(3)) - {rot_axis_id})
+    target_axis_id = target_axes_ids[target_axes_choice]
+
+    cell[target_axis_id] = R.from_matrix(
+        from_2D_to_3D(generate_2D_rotation_matrix(rad_angle), rot_axis_id)
+    ).apply(cell[target_axis_id])
+    return cell
+
+
 def generate_kpath_ase(cell, symprec, logger=None):
     try:
         ase_cell = Cell(cell)
@@ -117,10 +158,9 @@ def generate_kpath_ase(cell, symprec, logger=None):
             logger.warning(
                 'Non-canonical hexagonal cell detected. Lattice paths may be incorrect.'
             )
-            ref_axes_id = list(set(range(3)) - {rot_axis_id})[0]  # assumes 3D-matrix
-            ase_cell[ref_axes_id] += R.from_rotvec(
-                np.pi / 6 * ase_cell[rot_axis_id]
-            ).apply(ase_cell[ref_axes_id])
+            ase_cell = rotate_cell(ase_cell, rot_axis_id, np.pi / 12)
+            ase_cell = open_angle(ase_cell, rot_axis_id, -np.pi / 6)
+            ase_cell = Cell(ase_cell)  # rotate_cell and open_angle return np.array
         lattice = aselattice.get_lattice_from_canonical_cell(ase_cell)
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
