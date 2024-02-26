@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import Optional
 import numpy as np
 import re
 from fractions import Fraction
@@ -93,9 +94,34 @@ def read_kpath(filename):
     return generate_kpath_parameters(points, [labels], npoints)
 
 
+def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[int]:
+    """
+    Tests if the cell is a non-canonical hexagonal cell
+    and returns the index of the ~ 60 degree angle.
+    """  # TODO: enforce stricter check?
+    target = 60
+    angles = cell.angles()
+
+    condition = (angles > target - symprec) & (angles < target + symprec)
+    if len(match_id := np.where(condition)[0]) == 1:
+        return match_id[0]
+    return None
+
+
 def generate_kpath_ase(cell, symprec, logger=None):
     try:
-        lattice = aselattice.get_lattice_from_canonical_cell(Cell(cell))
+        ase_cell = Cell(cell)
+        if (
+            rot_axis_id := test_non_canonical_hexagonal(ase_cell, 1)
+        ) is not None:  # TODO: set as input parameter?
+            logger.warning(
+                'Non-canonical hexagonal cell detected. Lattice paths may be incorrect.'
+            )
+            ref_axes_id = list(set(range(3)) - {rot_axis_id})[0]  # assumes 3D-matrix
+            ase_cell[ref_axes_id] += R.from_rotvec(
+                np.pi / 6 * ase_cell[rot_axis_id]
+            ).apply(ase_cell[ref_axes_id])
+        lattice = aselattice.get_lattice_from_canonical_cell(ase_cell)
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
