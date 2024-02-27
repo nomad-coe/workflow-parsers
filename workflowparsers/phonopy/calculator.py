@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from itertools import combinations
 import numpy as np
 import re
 from scipy.spatial.transform import Rotation as R
@@ -98,70 +99,38 @@ def read_kpath(filename):
 def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[int]:
     """
     Tests if the cell is a non-canonical hexagonal cell
-    and returns the index of the ~ 60 degree angle.
-    """  # TODO: enforce stricter check?
-    target = 60
-    angles = cell.angles()
+    and returns the index of the ~ 60 degree angle (error range controlled by `symprec`).
+    """
+    try:
+        target = 60
+        angles = cell.angles()
+        lattices = cell.lengths()
+    except AttributeError:
+        raise ValueError('Cell is not ase.cell.Cell')
 
-    condition = (angles > target - symprec) & (angles < target + symprec)
-    if len(match_id := np.where(condition)[0]) == 1:
-        return match_id[0]
+    condition_angles = (angles > target - symprec) & (angles < target + symprec)
+    lattice_pairs = list(combinations(lattices, 2))
+    if (len(match_id := np.where(condition_angles)[0]) == 1) and (
+        sum([lat[0] == lat[1] for lat in lattice_pairs]) == 1
+    ):
+        return int(match_id[0])
     return None
-
-
-def generate_2D_rotation_matrix(rad_angle: float) -> np.array:
-    return np.array(
-        [
-            [np.cos(rad_angle), -np.sin(rad_angle)],
-            [np.sin(rad_angle), np.cos(rad_angle)],
-        ]
-    )
-
-
-def from_2D_to_3D(matrix_2d: np.array, rot_axis_id: int) -> Cell:
-    """
-    Converts a 2D rotation matrix to a 3D rotation matrix.
-    """
-    target_axes_ids = list(set(range(3)) - {rot_axis_id})
-
-    rot_matrix = np.eye(3)
-    for i in target_axes_ids:
-        for j in target_axes_ids:
-            rot_matrix[i, j] = matrix_2d[i, j]
-    return rot_matrix
-
-
-def rotate_cell(cell: np.array, rot_axis_id: int, rad_angle: float) -> np.array:
-    return R.from_matrix(
-        from_2D_to_3D(generate_2D_rotation_matrix(rad_angle), rot_axis_id)
-    ).apply(cell)
-
-
-def open_angle(
-    cell: np.array, rot_axis_id: int, rad_angle: float, target_axes_choice: int = 0
-) -> np.array:
-    target_axes_ids = list(set(range(3)) - {rot_axis_id})
-    target_axis_id = target_axes_ids[target_axes_choice]
-
-    cell[target_axis_id] = R.from_matrix(
-        from_2D_to_3D(generate_2D_rotation_matrix(rad_angle), rot_axis_id)
-    ).apply(cell[target_axis_id])
-    return cell
 
 
 def generate_kpath_ase(cell, symprec, logger=None):
     try:
         ase_cell = Cell(cell)
-        if (
-            rot_axis_id := test_non_canonical_hexagonal(ase_cell, 1)
-        ) is not None:  # TODO: set as input parameter?
+        if isinstance(
+            rot_axis_id := test_non_canonical_hexagonal(ase_cell), int
+        ):  # TODO: set as input parameter?
             logger.warning(
-                'Non-canonical hexagonal cell detected. Lattice paths may be incorrect.'
+                """Non-canonical hexagonal cell detected. Will correct the orientation."""
             )
-            ase_cell = rotate_cell(ase_cell, rot_axis_id, np.pi / 12)
-            ase_cell = open_angle(ase_cell, rot_axis_id, -np.pi / 6)
-            ase_cell = Cell(ase_cell)  # rotate_cell and open_angle return np.array
-        lattice = aselattice.get_lattice_from_canonical_cell(ase_cell)
+            target_axis_id = list(set(range(3)) - {rot_axis_id})[0]
+            mirror_matrix = np.eye(3)
+            mirror_matrix[target_axis_id, target_axis_id] *= -1
+            ase_cell = Cell(mirror_matrix @ ase_cell)
+        lattice = aselattice.get_lattice_from_canonical_cell(ase_cell, eps=symprec)
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
