@@ -117,7 +117,7 @@ def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[i
     return None
 
 
-def generate_kpath_ase(cell, symprec, logger=None):
+def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list:
     try:
         ase_cell = Cell(cell)
         if isinstance(
@@ -135,8 +135,8 @@ def generate_kpath_ase(cell, symprec, logger=None):
         points = lattice.get_special_points()
     except Exception:
         logger.warning('Cannot resolve lattice paths.')
-        paths = special_paths['orthorhombic']
-        points = sc_special_points['orthorhombic']
+        paths = special_paths['triclinc']  # TODO: add test?
+        points = sc_special_points['triclinc']  # TODO: add test?
     if points is None:
         try:
             points = get_special_points(cell)
