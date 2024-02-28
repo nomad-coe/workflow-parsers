@@ -82,3 +82,5 @@ def test_hexagonal_noncanonical(parser):
     assert sec_band.segment[8].endpoints_labels == ['K', 'H']
 
     # TODO: also update other geometry artifacts
+
+    # TODO: add test for failed lattice classification
