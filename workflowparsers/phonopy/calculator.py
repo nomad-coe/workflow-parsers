@@ -96,7 +96,7 @@ def read_kpath(filename):
     return generate_kpath_parameters(points, [labels], npoints)
 
 
-def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[int]:
+def test_non_canonical_hexagonal(cell: Cell, symprec: float) -> Optional[int]:
     """
     Tests if the cell is a non-canonical hexagonal cell
     and returns the index of the ~ 60 degree angle (error range controlled by `symprec`).
@@ -108,10 +108,14 @@ def test_non_canonical_hexagonal(cell: Cell, symprec: float = 1.0) -> Optional[i
     except AttributeError:
         raise ValueError('Cell is not ase.cell.Cell')
 
+    # 2 tests:
+    ## 1. if there is only one angle close to 60 degrees
+    ## 2. if there is only one pair of lattice vectors with the same length
     condition_angles = (angles > target - symprec) & (angles < target + symprec)
     lattice_pairs = list(combinations(lattices, 2))
     if (len(match_id := np.where(condition_angles)[0]) == 1) and (
-        sum([lat[0] == lat[1] for lat in lattice_pairs]) == 1
+        sum([lat[1] - symprec <= lat[0] <= lat[1] + symprec for lat in lattice_pairs])
+        == 1
     ):
         return int(match_id[0])
     return None
@@ -121,8 +125,8 @@ def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list:
     try:
         ase_cell = Cell(cell)
         if isinstance(
-            rot_axis_id := test_non_canonical_hexagonal(ase_cell), int
-        ):  # TODO: set as input parameter?
+            rot_axis_id := test_non_canonical_hexagonal(ase_cell, 1e2 * symprec), int
+        ):  # be more lenient with the angle
             logger.warning(
                 """Non-canonical hexagonal cell detected. Will correct the orientation."""
             )
