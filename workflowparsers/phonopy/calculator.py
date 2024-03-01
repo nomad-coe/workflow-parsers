@@ -125,9 +125,10 @@ def test_non_canonical_hexagonal(cell: Cell, symprec: float) -> Optional[int]:
 
 def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list[dict[str, Any]]:
     try:
-        ase_cell = Cell(cell)
+        if not isinstance(cell, Cell):
+            cell = Cell(cell)
         if isinstance(
-            rot_axis_id := test_non_canonical_hexagonal(ase_cell, 1e2 * symprec), int
+            rot_axis_id := test_non_canonical_hexagonal(cell, 1e2 * symprec), int
         ):  # be more lenient with the angle
             logger.warning(
                 'Non-canonical hexagonal cell detected. Will correct the orientation.'
@@ -135,8 +136,8 @@ def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list[dict[str
             target_axis_id = list(set(range(3)) - {rot_axis_id})[0]
             mirror_matrix = np.eye(3)
             mirror_matrix[target_axis_id, target_axis_id] *= -1
-            ase_cell = Cell(mirror_matrix @ ase_cell)
-        lattice = aselattice.get_lattice_from_canonical_cell(ase_cell, eps=symprec)
+            cell = Cell(mirror_matrix @ cell)
+        lattice = aselattice.get_lattice_from_canonical_cell(cell, eps=symprec)
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
