@@ -20,7 +20,7 @@ from itertools import combinations
 import numpy as np
 import re
 from scipy.spatial.transform import Rotation as R
-from typing import Optional
+from typing import Any, Optional
 from fractions import Fraction
 
 from ase import lattice as aselattice
@@ -36,17 +36,19 @@ from phonopy.phonon.band_structure import BandStructure
 from phonopy.units import EvTokJmol, VaspToTHz
 
 
-def generate_kpath_parameters(points, paths, npoints):
-    k_points = []
+def generate_kpath_parameters(
+    points: list[list[float]], paths: list[str], npoints: int
+) -> list[dict[str, Any]]:
+    k_points: list[list[float]] = []
     for p in paths:
         k_points.append([points[k] for k in p])
         for index in range(len(p)):
             if p[index] == 'G':
                 p[index] = 'Γ'
-    parameters = []
+    parameters: list[dict[str, Any]] = []
     for h, seg in enumerate(k_points):
         for i, path in enumerate(seg):
-            parameter = {}
+            parameter: dict[str, Any] = {}
             parameter['npoints'] = npoints
             parameter['startname'] = paths[h][i]
             if i == 0 and len(seg) > 2:
@@ -68,7 +70,7 @@ def generate_kpath_parameters(points, paths, npoints):
     return parameters
 
 
-def read_kpath(filename):
+def read_kpath(filename: str) -> list[dict[str, Any]]:
     with open(filename) as f:
         string = f.read()
 
@@ -121,14 +123,14 @@ def test_non_canonical_hexagonal(cell: Cell, symprec: float) -> Optional[int]:
     return None
 
 
-def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list:
+def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list[dict[str, Any]]:
     try:
         ase_cell = Cell(cell)
         if isinstance(
             rot_axis_id := test_non_canonical_hexagonal(ase_cell, 1e2 * symprec), int
         ):  # be more lenient with the angle
             logger.warning(
-                """Non-canonical hexagonal cell detected. Will correct the orientation."""
+                'Non-canonical hexagonal cell detected. Will correct the orientation.'
             )
             target_axis_id = list(set(range(3)) - {rot_axis_id})[0]
             mirror_matrix = np.eye(3)
