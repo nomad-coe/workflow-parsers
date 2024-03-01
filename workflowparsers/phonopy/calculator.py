@@ -37,9 +37,9 @@ from phonopy.units import EvTokJmol, VaspToTHz
 
 
 def generate_kpath_parameters(
-    points: list[list[float]], paths: list[str], npoints: int
+    points: dict[str, np.ndarray], paths: list[list[str]], npoints: int
 ) -> list[dict[str, Any]]:
-    k_points: list[list[float]] = []
+    k_points: list[list[np.ndarray]] = []
     for p in paths:
         k_points.append([points[k] for k in p])
         for index in range(len(p)):
@@ -74,26 +74,23 @@ def read_kpath(filename: str) -> list[dict[str, Any]]:
     with open(filename) as f:
         string = f.read()
 
-        labels = re.search(r'BAND_LABELS\s*=\s*(.+)', string)
+        labels_extracted = re.search(r'BAND_LABELS\s*=\s*(.+)', string)
         try:
-            labels = labels.group(1).strip().split()
+            labels = labels_extracted.group(1).strip().split()
         except Exception:
-            return
+            return []
 
-        points = re.search(r'BAND\s*=\s*(.+)', string)
+        points_extracted = re.search(r'BAND\s*=\s*(.+)', string)
         try:
-            points = points.group(1)
+            points = points_extracted.group(1)
             points = [float(Fraction(p)) for p in points.split()]
             points = np.reshape(points, (len(labels), 3))
             points = {labels[i]: points[i] for i in range(len(labels))}
         except Exception:
-            return
+            return []
 
-        npoints = re.search(r'BAND_POINTS\s*\=\s*(\d+)', string)
-        if npoints is not None:
-            npoints = int(npoints.group(1))
-        else:
-            npoints = 100
+        npoints_extracted = re.search(r'BAND_POINTS\s*\=\s*(\d+)', string)
+        npoints = 100 if npoints_extracted is None else int(npoints_extracted.group(1))
 
     return generate_kpath_parameters(points, [labels], npoints)
 
