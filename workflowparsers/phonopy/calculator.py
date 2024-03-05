@@ -19,7 +19,6 @@
 from itertools import combinations
 import numpy as np
 import re
-from scipy.spatial.transform import Rotation as R
 from typing import Any, Optional
 from fractions import Fraction
 
