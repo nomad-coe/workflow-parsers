@@ -16,8 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from itertools import combinations
 import numpy as np
 import re
+from typing import Any, Optional
 from fractions import Fraction
 
 from ase import lattice as aselattice
@@ -33,17 +35,19 @@ from phonopy.phonon.band_structure import BandStructure
 from phonopy.units import EvTokJmol, VaspToTHz
 
 
-def generate_kpath_parameters(points, paths, npoints):
-    k_points = []
+def generate_kpath_parameters(
+    points: dict[str, np.ndarray], paths: list[list[str]], npoints: int
+) -> list[dict[str, Any]]:
+    k_points: list[list[np.ndarray]] = []
     for p in paths:
         k_points.append([points[k] for k in p])
         for index in range(len(p)):
             if p[index] == 'G':
                 p[index] = 'Γ'
-    parameters = []
+    parameters: list[dict[str, Any]] = []
     for h, seg in enumerate(k_points):
         for i, path in enumerate(seg):
-            parameter = {}
+            parameter: dict[str, Any] = {}
             parameter['npoints'] = npoints
             parameter['startname'] = paths[h][i]
             if i == 0 and len(seg) > 2:
@@ -65,43 +69,77 @@ def generate_kpath_parameters(points, paths, npoints):
     return parameters
 
 
-def read_kpath(filename):
+def read_kpath(filename: str) -> list[dict[str, Any]]:
     with open(filename) as f:
         string = f.read()
 
-        labels = re.search(r'BAND_LABELS\s*=\s*(.+)', string)
+        labels_extracted = re.search(r'BAND_LABELS\s*=\s*(.+)', string)
         try:
-            labels = labels.group(1).strip().split()
+            labels = labels_extracted.group(1).strip().split()
         except Exception:
-            return
+            return []
 
-        points = re.search(r'BAND\s*=\s*(.+)', string)
+        points_extracted = re.search(r'BAND\s*=\s*(.+)', string)
         try:
-            points = points.group(1)
+            points = points_extracted.group(1)
             points = [float(Fraction(p)) for p in points.split()]
             points = np.reshape(points, (len(labels), 3))
             points = {labels[i]: points[i] for i in range(len(labels))}
         except Exception:
-            return
+            return []
 
-        npoints = re.search(r'BAND_POINTS\s*\=\s*(\d+)', string)
-        if npoints is not None:
-            npoints = int(npoints.group(1))
-        else:
-            npoints = 100
+        npoints_extracted = re.search(r'BAND_POINTS\s*\=\s*(\d+)', string)
+        npoints = 100 if npoints_extracted is None else int(npoints_extracted.group(1))
 
     return generate_kpath_parameters(points, [labels], npoints)
 
 
-def generate_kpath_ase(cell, symprec, logger=None):
+def test_non_canonical_hexagonal(cell: Cell, symprec: float) -> Optional[int]:
+    """
+    Tests if the cell is a non-canonical hexagonal cell
+    and returns the index of the ~ 60 degree angle (error range controlled by `symprec`).
+    """
     try:
-        lattice = aselattice.get_lattice_from_canonical_cell(Cell(cell))
+        target = 60
+        angles = cell.angles()
+        lattices = cell.lengths()
+    except AttributeError:
+        raise ValueError('Cell is not ase.cell.Cell')
+
+    # 2 tests:
+    ## 1. if there is only one angle close to 60 degrees
+    ## 2. if there is only one pair of lattice vectors with the same length
+    condition_angles = (angles > target - symprec) & (angles < target + symprec)
+    lattice_pairs = list(combinations(lattices, 2))
+    if (len(match_id := np.where(condition_angles)[0]) == 1) and (
+        sum([lat[1] - symprec <= lat[0] <= lat[1] + symprec for lat in lattice_pairs])
+        == 1
+    ):
+        return int(match_id[0])
+    return None
+
+
+def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list[dict[str, Any]]:
+    try:
+        if not isinstance(cell, Cell):
+            cell = Cell(cell)
+        if isinstance(
+            rot_axis_id := test_non_canonical_hexagonal(cell, 1e2 * symprec), int
+        ):  # be more lenient with the angle
+            logger.warning(
+                'Non-canonical hexagonal cell detected. Will correct the orientation.'
+            )
+            target_axis_id = list(set(range(3)) - {rot_axis_id})[0]
+            mirror_matrix = np.eye(3)
+            mirror_matrix[target_axis_id, target_axis_id] *= -1
+            cell = Cell(mirror_matrix @ cell)
+        lattice = aselattice.get_lattice_from_canonical_cell(cell, eps=symprec)
         paths = parse_path_string(lattice.special_path)
         points = lattice.get_special_points()
     except Exception:
         logger.warning('Cannot resolve lattice paths.')
-        paths = special_paths['orthorhombic']
-        points = sc_special_points['orthorhombic']
+        paths = special_paths['orthorombic']  # TODO: remove reliance on `ase`
+        points = sc_special_points['orthorombic']  # TODO: remove reliance on `ase`
     if points is None:
         try:
             points = get_special_points(cell)

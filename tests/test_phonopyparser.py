@@ -60,3 +60,27 @@ def test_basic(parser):
 def test_vasp(parser):
     archive = EntryArchive()
     parser.parse('tests/data/phonopy/vasp/phonopy.yaml', archive, None)
+
+
+def test_hexagonal_noncanonical(parser):
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/cp2k_hexagonal_noncanonical/phonopy.yaml', archive, None
+    )
+
+    # test whether the phonon band structure is recognized as hexagonal
+    sec_band = archive.run[0].calculation[0].band_structure_phonon[0]
+    assert len(sec_band.segment) == 9
+    assert sec_band.segment[0].endpoints_labels == ['Γ', 'M']
+    assert sec_band.segment[1].endpoints_labels == ['M', 'K']
+    assert sec_band.segment[2].endpoints_labels == ['K', 'Γ']
+    assert sec_band.segment[3].endpoints_labels == ['Γ', 'A']
+    assert sec_band.segment[4].endpoints_labels == ['A', 'L']
+    assert sec_band.segment[5].endpoints_labels == ['L', 'H']
+    assert sec_band.segment[6].endpoints_labels == ['H', 'A']
+    assert sec_band.segment[7].endpoints_labels == ['L', 'M']
+    assert sec_band.segment[8].endpoints_labels == ['K', 'H']
+
+    # TODO: also update other geometry artifacts
+
+    # TODO: add test for failed lattice classification
