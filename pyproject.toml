@@ -3,21 +3,21 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = 'workflowparsers'
-version = '1.0'
-description = 'Collection of NOMAD parsers for workflow engines.'
+name = "workflowparsers"
+version = "1.0"
+description = "Collection of NOMAD parsers for workflow engines."
 readme = "README.md"
 authors = [{ name = "The NOMAD Authors" }]
 license = { file = "LICENSE" }
 dependencies = [
-    'nomad-lab[infrastructure]@git+https://github.com/nomad-coe/nomad.git@develop',
+    "nomad-lab>=1.2.0",
     "nomad-schema-plugin-simulation-workflow@git+https://github.com/nomad-coe/nomad-schema-plugin-simulation-workflow.git@develop",
     "nomad-schema-plugin-run@git+https://github.com/nomad-coe/nomad-schema-plugin-run.git@develop",
-    'lxml',
-    'asr',
-    'xarray>=0.19.0',
-    'phonopy',
-    'h5py>=3.4.0',
+    "lxml",
+    "asr",
+    "xarray>=0.19.0",
+    "phonopy",
+    "h5py>=3.4.0",
 ]
 
 [project.urls]
@@ -25,18 +25,18 @@ homepage = "https://github.com/nomad-coe/electronic-parsers"
 
 [project.optional-dependencies]
 tests = [
-    'mypy==1.0.1',
-    'pytest==3.10.0',
-    'pytest-timeout==1.4.2',
-    'pytest-cov==2.7.1',
-    'astroid==2.11.7',
-    'lxml==4.7.1',
-    'asr==0.4.1',
-    'xarray==0.20.2',
-    'phonopy==2.11.0',
-    'h5py==3.6.0',
-    'typing-extensions==4.4.0',
-    'ruff==0.1.8',
+    "mypy==1.0.1",
+    "pytest==3.10.0",
+    "pytest-timeout==1.4.2",
+    "pytest-cov==2.7.1",
+    "astroid==2.11.7",
+    "lxml==4.7.1",
+    "asr==0.4.1",
+    "xarray==0.20.2",
+    "phonopy==2.11.0",
+    "h5py==3.6.0",
+    "typing-extensions==4.4.0",
+    "ruff==0.1.8",
 ]
 
 [tool.ruff]
@@ -84,7 +84,7 @@ line-ending = "auto"
 include = ["workflowparsers*"]
 
 [tool.setuptools.package-data]
-workflowparsers = ['*/metadata.yaml', '*/README.md']
+workflowparsers = ["*/metadata.yaml", "*/README.md"]
 
 [tool.mypy]
 strict = false
