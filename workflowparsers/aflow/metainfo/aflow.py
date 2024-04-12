@@ -36,6 +36,7 @@ import runschema.calculation  # pylint: disable=unused-import
 import runschema.method  # pylint: disable=unused-import
 import runschema.system  # pylint: disable=unused-import
 
+from nomad.metainfo.data_type import m_int32
 
 m_package = Package()
 
@@ -160,7 +161,7 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_ldau_u = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies'],
         description="""
         """,
@@ -605,21 +606,21 @@ class System(runschema.system.System):
     )
 
     x_aflow_Wyckoff_letters_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
@@ -766,21 +767,21 @@ class System(runschema.system.System):
     )
 
     x_aflow_Wyckoff_letters = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries = Quantity(
-        type=np.dtype(np.int32),
+        type=m_int32().no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
