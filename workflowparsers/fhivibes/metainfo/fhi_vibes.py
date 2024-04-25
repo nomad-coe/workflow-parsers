@@ -64,7 +64,7 @@ class x_fhi_vibes_section_calculator_parameters(MSection):
     )
 
     x_fhi_vibes_calculator_parameters_k_grid = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3],
         description="""
         -
@@ -72,7 +72,7 @@ class x_fhi_vibes_section_calculator_parameters(MSection):
     )
 
     x_fhi_vibes_calculator_parameters_sc_accuracy_rho = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -173,7 +173,7 @@ class x_fhi_vibes_section_atoms(MSection):
     )
 
     x_fhi_vibes_atoms_natoms = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -189,7 +189,7 @@ class x_fhi_vibes_section_atoms(MSection):
     )
 
     x_fhi_vibes_atoms_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='meter',
         shape=[3, 3],
         description="""
@@ -198,7 +198,7 @@ class x_fhi_vibes_section_atoms(MSection):
     )
 
     x_fhi_vibes_atoms_positions = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='meter',
         shape=['x_fhi_vibes_atoms_natoms', 3],
         description="""
@@ -207,7 +207,7 @@ class x_fhi_vibes_section_atoms(MSection):
     )
 
     x_fhi_vibes_atoms_velocities = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='meter / second',
         shape=['x_fhi_vibes_atoms_natoms', 3],
         description="""
@@ -224,7 +224,7 @@ class x_fhi_vibes_section_atoms(MSection):
     )
 
     x_fhi_vibes_atoms_masses = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='kilogram',
         shape=['x_fhi_vibes_atoms_natoms'],
         description="""
@@ -265,7 +265,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_temperature = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -273,7 +273,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_friction = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -289,7 +289,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_fs = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -297,7 +297,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_kB = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -305,7 +305,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_dt = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -313,7 +313,7 @@ class x_fhi_vibes_section_MD(MSection):
     )
 
     x_fhi_vibes_MD_kg = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -329,7 +329,7 @@ class x_fhi_vibes_section_relaxation_kwargs(MSection):
     m_def = Section(validate=False)
 
     x_fhi_vibes_relaxation_kwargs_maxstep = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -369,7 +369,7 @@ class x_fhi_vibes_section_relaxation(MSection):
     )
 
     x_fhi_vibes_relaxation_maxstep = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -385,7 +385,7 @@ class x_fhi_vibes_section_relaxation(MSection):
     )
 
     x_fhi_vibes_relaxation_fmax = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -425,7 +425,7 @@ class x_fhi_vibes_section_relaxation(MSection):
     )
 
     x_fhi_vibes_relaxation_scalar_pressure = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -433,7 +433,7 @@ class x_fhi_vibes_section_relaxation(MSection):
     )
 
     x_fhi_vibes_relaxation_decimals = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -441,7 +441,7 @@ class x_fhi_vibes_section_relaxation(MSection):
     )
 
     x_fhi_vibes_relaxation_symprec = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -477,7 +477,7 @@ class x_fhi_vibes_section_phonopy(MSection):
     )
 
     x_fhi_vibes_phonopy_supercell_matrix = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3, 3],
         description="""
         -
@@ -485,7 +485,7 @@ class x_fhi_vibes_section_phonopy(MSection):
     )
 
     x_fhi_vibes_phonopy_symprec = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -621,7 +621,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_natoms = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3],
         description="""
         -
@@ -637,7 +637,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_timestep = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='second',
         shape=[],
         description="""
@@ -646,7 +646,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_nsteps = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3],
         description="""
         -
@@ -662,7 +662,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_masses = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='kilogram',
         shape=['x_fhi_vibes_attributes_system_natoms'],
         description="""
@@ -687,7 +687,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_volume = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -695,7 +695,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_sigma = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -703,7 +703,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_st_size = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -711,7 +711,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_number_of_atoms_primitive = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -719,7 +719,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_number_of_atoms_supercell = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -727,7 +727,7 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_force_constants_remapped_size = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         -
@@ -755,7 +755,7 @@ class Calculation(runschema.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)
 
     x_fhi_vibes_volume = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='meter**3',
         description="""
@@ -764,7 +764,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_displacements = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['number_of_atoms', 3, 3],
         unit='meter',
         description="""
@@ -773,7 +773,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_momenta = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['number_of_atoms', 3, 3],
         unit='kilogram * meter / second',
         description="""
@@ -782,7 +782,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_force_constants = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[
             'x_fhi_vibes_attributes_number_of_atoms_primitive',
             'x_fhi_vibes_attributes_number_of_atoms_primitive',
@@ -796,7 +796,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_force_constants_remapped = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[
             'x_fhi_vibes_attributes_force_constants_remapped_size',
             'x_fhi_vibes_attributes_force_constants_remapped_size',
@@ -808,7 +808,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_atom_forces_harmonic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['number_of_atoms', 3],
         unit='newton',
         description="""
@@ -817,7 +817,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_energy_potential_harmonic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='joule',
         description="""
@@ -826,7 +826,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_heat_flux = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         unit='kilogram / second**3',
         description="""
@@ -835,7 +835,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_heat_flux_harmonic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         unit='kilogram / second**3',
         description="""
@@ -844,7 +844,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_heat_flux_0_harmonic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         unit='kilogram / second**3',
         description="""
@@ -853,7 +853,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_sigma_per_sample = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         -
@@ -861,7 +861,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_pressure_kinetic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='pascal',
         description="""
@@ -870,7 +870,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_pressure_potential = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='pascal',
         description="""
@@ -889,7 +889,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_fhi_vibes_MD_time = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit='second',
         shape=[],
         description="""
