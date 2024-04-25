@@ -46,7 +46,7 @@ class x_elastic_section_strain_diagrams(MSection):
     m_def = Section(validate=False)
 
     x_elastic_strain_diagram_values = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[
             'x_elastic_number_of_deformations',
             'x_elastic_strain_diagram_number_of_eta',
@@ -58,7 +58,7 @@ class x_elastic_section_strain_diagrams(MSection):
     )
 
     x_elastic_strain_diagram_eta_values = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[
             'x_elastic_number_of_deformations',
             'x_elastic_strain_diagram_number_of_eta',
@@ -69,7 +69,7 @@ class x_elastic_section_strain_diagrams(MSection):
     )
 
     x_elastic_strain_diagram_number_of_eta = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         Number of strain values used in the strain diagram
@@ -86,7 +86,7 @@ class x_elastic_section_strain_diagrams(MSection):
     )
 
     x_elastic_strain_diagram_polynomial_fit_order = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         Order of the polynomial fit
@@ -102,7 +102,7 @@ class x_elastic_section_fitting_parameters(MSection):
     m_def = Section(validate=False)
 
     x_elastic_fitting_parameters_eta = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_elastic_number_of_deformations'],
         description="""
         eta values used to calculate the elastic constants
@@ -110,7 +110,7 @@ class x_elastic_section_fitting_parameters(MSection):
     )
 
     x_elastic_fitting_parameters_polynomial_order = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_elastic_number_of_deformations'],
         description="""
         polynomial order used to fit the Energy vs. volume curve and to calculate the
@@ -123,7 +123,7 @@ class Method(runschema.method.Method):
     m_def = Section(validate=False, extends_base_section=True)
 
     #     x_elastic_elastic_constant_order = Quantity(
-    #         type=np.dtype(np.int32),
+    #         type=np.int32,
     #         shape=[],
     #         description='''
     #         Order of the elastic constant
@@ -131,7 +131,7 @@ class Method(runschema.method.Method):
     #         a_legacy=LegacyDefinition(name='x_elastic_elastic_constant_order'))
 
     #     x_elastic_number_of_deformations = Quantity(
-    #         type=np.dtype(np.int32),
+    #         type=np.int32,
     #         shape=[],
     #         description='''
     #         number of deformed structures equally spaced in strain, which are generated
@@ -140,7 +140,7 @@ class Method(runschema.method.Method):
     #         a_legacy=LegacyDefinition(name='x_elastic_number_of_deformations'))
 
     #     x_elastic_deformation_types = Quantity(
-    #         type=np.dtype(np.int32),
+    #         type=np.int32,
     #         shape=['x_elastic_number_of_deformations', 6],
     #         description='''
     #         deformation types
@@ -164,7 +164,7 @@ class Method(runschema.method.Method):
     #         a_legacy=LegacyDefinition(name='x_elastic_code'))
 
     #     x_elastic_max_lagrangian_strain = Quantity(
-    #         type=np.dtype(np.float64),
+    #         type=np.float64,
     #         shape=[],
     #         description='''
     #         Maximum lagrangian strain used to calculate the elastic constants
@@ -172,7 +172,7 @@ class Method(runschema.method.Method):
     #         a_legacy=LegacyDefinition(name='x_elastic_max_lagrangian_strain'))
 
     #     x_elastic_number_of_distorted_structures = Quantity(
-    #         type=np.dtype(np.int32),
+    #         type=np.int32,
     #         shape=[],
     #         description='''
     #         Number of distorted structures used to calculate the elastic constants
@@ -189,7 +189,7 @@ class Method(runschema.method.Method):
 #     m_def = Section(validate=False, extends_base_section=True)
 
 #     x_elastic_2nd_order_constants_notation_matrix = Quantity(
-#         type=np.dtype(np.int32),
+#         type=np.int32,
 #         shape=[6, 6],
 #         description='''
 #         Symmetry of the second-order elastic constant matrix in Voigt notation
@@ -197,7 +197,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_2nd_order_constants_notation_matrix'))
 
 #     x_elastic_2nd_order_constants_matrix = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[6, 6],
 #         unit='pascal',
 #         description='''
@@ -206,7 +206,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_2nd_order_constants_matrix'))
 
 #     x_elastic_3rd_order_constants_matrix = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[6, 6, 6],
 #         unit='pascal',
 #         description='''
@@ -215,7 +215,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_3rd_order_constants_matrix'))
 
 #     x_elastic_2nd_order_constants_compliance_matrix = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[6, 6],
 #         unit='1 / pascal',
 #         description='''
@@ -224,7 +224,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_2nd_order_constants_compliance_matrix'))
 
 #     x_elastic_Voigt_bulk_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -233,7 +233,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Voigt_bulk_modulus'))
 
 #     x_elastic_Voigt_shear_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -242,7 +242,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Voigt_shear_modulus'))
 
 #     x_elastic_Reuss_bulk_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -251,7 +251,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Reuss_bulk_modulus'))
 
 #     x_elastic_Reuss_shear_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -260,7 +260,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Reuss_shear_modulus'))
 
 #     x_elastic_Hill_bulk_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -269,7 +269,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Hill_bulk_modulus'))
 
 #     x_elastic_Hill_shear_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -278,7 +278,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Hill_shear_modulus'))
 
 #     x_elastic_Voigt_Young_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -287,7 +287,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Voigt_Young_modulus'))
 
 #     x_elastic_Voigt_Poisson_ratio = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         description='''
 #         Voigt Poisson ratio
@@ -295,7 +295,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Voigt_Poisson_ratio'))
 
 #     x_elastic_Reuss_Young_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -304,7 +304,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Reuss_Young_modulus'))
 
 #     x_elastic_Reuss_Poisson_ratio = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         description='''
 #         Reuss Poisson ratio
@@ -312,7 +312,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Reuss_Poisson_ratio'))
 
 #     x_elastic_Hill_Young_modulus = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         unit='pascal',
 #         description='''
@@ -321,7 +321,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Hill_Young_modulus'))
 
 #     x_elastic_Hill_Poisson_ratio = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[],
 #         description='''
 #         Hill Poisson ratio
@@ -329,7 +329,7 @@ class Method(runschema.method.Method):
 #         a_legacy=LegacyDefinition(name='x_elastic_Hill_Poisson_ratio'))
 
 #     x_elastic_eigenvalues = Quantity(
-#         type=np.dtype(np.float64),
+#         type=np.float64,
 #         shape=[6],
 #         unit='pascal',
 #         description='''
@@ -347,7 +347,7 @@ class System(runschema.system.System):
     m_def = Section(validate=False, extends_base_section=True)
 
     x_elastic_space_group_number = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         Space-group number of the system
@@ -355,7 +355,7 @@ class System(runschema.system.System):
     )
 
     x_elastic_unit_cell_volume = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='m ** 3',
         description="""
