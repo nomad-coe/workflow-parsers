@@ -90,21 +90,21 @@ class x_qe_xspectra_n_parallel(MSection):
     m_def = Section(validate=False)
 
     x_qe_xspectra_n_parallel_min = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
     )
 
     x_qe_xspectra_n_parallel_max = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
     )
 
     x_qe_xspectra_n_parallel_sum = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
@@ -142,14 +142,14 @@ class System(runschema.system.System):
     m_def = Section(validate=False, extends_base_section=True)
 
     x_qe_xspectra_bravais_lattice_index = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_qe_xspectra_lattice_parameter = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='m',
         description="""
@@ -157,7 +157,7 @@ class System(runschema.system.System):
     )
 
     x_qe_xspectra_unit_cell_volume = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='m ** 3',
         description="""
@@ -165,14 +165,14 @@ class System(runschema.system.System):
     )
 
     x_qe_xspectra_n_atoms_cell = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_qe_xspectra_n_atomic_sites = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -211,35 +211,35 @@ class AtomParameters(runschema.method.AtomParameters):
     )
 
     x_qe_xspectra_n_radial_grid_points = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_qe_xspectra_n_beta_functions = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_qe_xspectra_l = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_qe_xspectra_n_beta_functions'],
         description="""
         """,
     )
 
     x_qe_xspectra_n_q_coefficients = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_qe_xspectra_l = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_qe_xspectra_n_q_coefficients'],
         description="""
         """,
