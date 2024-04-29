@@ -114,7 +114,7 @@ class Run(runschema.run.Run):
     )
 
     x_mp_n_tags = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -142,7 +142,7 @@ class Run(runschema.run.Run):
     )
 
     x_mp_n_tasks = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -156,14 +156,14 @@ class Run(runschema.run.Run):
     )
 
     x_mp_icsd_id = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_mp_icsd_ids = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_mp_n_tasks'],
         description="""
         """,
@@ -199,7 +199,7 @@ class Composition(MSection):
     )
 
     x_mp_value = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -210,7 +210,7 @@ class Symmetry(MSection):
     m_def = Section(validate=False)
 
     x_mp_symprec = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -238,7 +238,7 @@ class Symmetry(MSection):
     )
 
     x_mp_number = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -298,28 +298,28 @@ class System(runschema.system.System):
     )
 
     x_mp_volume = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_mp_density = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_mp_density_atomic = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_mp_nelements = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -333,7 +333,7 @@ class System(runschema.system.System):
     )
 
     x_mp_nsites = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -357,7 +357,7 @@ class Hubbard(MSection):
     )
 
     x_mp_hubbard = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -388,7 +388,7 @@ class Calculation(runschema.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)
 
     x_mp_uncorrected_energy_per_atom = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,

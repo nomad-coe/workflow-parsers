@@ -607,9 +607,9 @@ class AFLOWParser:
         for key in system_quantities:
             val = self.aflow_data.get(key)
             if val is not None:
-                if 'Wyckoff' in key:
-                    val = np.array(val, dtype=object)
-                setattr(sec_system, 'x_aflow_%s' % key, val)
+                sec_system.m_set(
+                    sec_system.m_get_quantity_definition(f'x_aflow_{key}'), val
+                )
 
         # parse method metadata from self.aflow_data
         method_quantities = [
@@ -641,7 +641,9 @@ class AFLOWParser:
         for key in method_quantities:
             val = self.aflow_data.get(key)
             if val is not None:
-                setattr(sec_method, 'x_aflow_%s' % key, val)
+                sec_method.m_set(
+                    sec_method.m_get_quantity_definition(f'x_aflow_{key}'), val
+                )
 
         # parse basic calculation quantities from self.aflow_data
         sec_scc = Calculation()

@@ -72,7 +72,7 @@ class Run(runschema.run.Run):
     )
 
     x_aflow_n_loop = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -104,7 +104,7 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_n_dft_type = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -132,7 +132,7 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_species_pp_ZVAL = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies'],
         description="""
         """,
@@ -146,84 +146,84 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_ldau_type = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ldau_l = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies'],
         description="""
         """,
     )
 
     x_aflow_ldau_u = Quantity(
-        type=np.dtype(np.int32),
+        type=np.float64,
         shape=['x_aflow_nspecies'],
         description="""
         """,
     )
 
     x_aflow_ldau_j = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies'],
         description="""
         """,
     )
 
     x_aflow_valence_cell_iupac = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_valence_cell_std = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_energy_cutoff = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_delta_electronic_energy_convergence = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_delta_electronic_energy_threshold = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_kpoints_relax = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3],
         description="""
         """,
     )
 
     x_aflow_kpoints_static = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[3],
         description="""
         """,
     )
 
     x_aflow_n_kpoints_bands_path = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -237,7 +237,7 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_kpoints_bands_nkpts = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -262,56 +262,56 @@ class System(runschema.system.System):
     )
 
     x_aflow_nspecies = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_natoms = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_natoms_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_composition = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies'],
         description="""
         """,
     )
 
     x_aflow_density = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_density_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_scintillation_attenuation_length = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_stoichiometry = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_aflow_nspecies'],
         description="""
         """,
@@ -325,49 +325,49 @@ class System(runschema.system.System):
     )
 
     x_aflow_geometry = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6],
         description="""
         """,
     )
 
     x_aflow_geometry_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6],
         description="""
         """,
     )
 
     x_aflow_volume_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_volume_atom = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_volume_cell_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_volume_atom_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_n_sg = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -388,14 +388,14 @@ class System(runschema.system.System):
     )
 
     x_aflow_spacegroup_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_spacegroup_relax = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -507,7 +507,7 @@ class System(runschema.system.System):
     )
 
     x_aflow_point_group_order_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -570,14 +570,14 @@ class System(runschema.system.System):
     )
 
     x_aflow_reciprocal_geometry_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6],
         description="""
         """,
     )
 
     x_aflow_reciprocal_volume_cell_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -598,28 +598,28 @@ class System(runschema.system.System):
     )
 
     x_aflow_n_symmetries = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_letters_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.str_,
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries_orig = Quantity(
-        type=np.dtype(np.int32),
+        type=np.str_,
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
@@ -675,7 +675,7 @@ class System(runschema.system.System):
     )
 
     x_aflow_point_group_order = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -738,14 +738,14 @@ class System(runschema.system.System):
     )
 
     x_aflow_reciprocal_geometry = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6],
         description="""
         """,
     )
 
     x_aflow_reciprocal_volume_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -766,21 +766,21 @@ class System(runschema.system.System):
     )
 
     x_aflow_Wyckoff_letters = Quantity(
-        type=np.dtype(np.int32),
+        type=np.str_,
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries = Quantity(
-        type=np.dtype(np.int32),
+        type=np.str_,
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
@@ -801,7 +801,7 @@ class System(runschema.system.System):
     )
 
     x_aflow_prototype_params_values_orig = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
@@ -822,7 +822,7 @@ class System(runschema.system.System):
     )
 
     x_aflow_prototype_params_values_relax = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
@@ -833,35 +833,35 @@ class Calculation(runschema.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)
 
     x_aflow_stress_tensor = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[9],
         description="""
         """,
     )
 
     x_aflow_pressure_residual = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_Pulay_stress = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_Egap = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_Egap_fit = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -875,7 +875,7 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_aflow_enthalpy_formation_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         unit='joule',
         description="""
@@ -883,119 +883,119 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_aflow_entropic_temperature = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_PV = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_spin_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_spinD = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_aflow_natoms'],
         description="""
         """,
     )
 
     x_aflow_spinF = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_calculation_memory = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_calculation_cores = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_nbondxx = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6],
         description="""
         """,
     )
 
     x_aflow_agl_thermal_conductivity_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_debye = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_acoustic_debye = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_gruneisen = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_heat_capacity_Cv_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_heat_capacity_Cp_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_thermal_expansion_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_bulk_modulus_static_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_bulk_modulus_isothermal_300K = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -1009,175 +1009,175 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_aflow_agl_vibrational_free_energy_300K_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_vibrational_free_energy_300K_atom = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_vibrational_entropy_300K_cell = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_agl_vibrational_entropy_300K_atom = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_poisson_ratio = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_bulk_modulus_voigt = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_bulk_modulus_reuss = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_shear_modulus_voigt = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_shear_modulus_reuss = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_bulk_modulus_vrh = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_shear_modulus_vrh = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_elastic_anisotropy = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_youngs_modulus_vrh = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_speed_sound_transverse = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_speed_sound_longitudinal = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_speed_sound_average = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_pughs_modulus_ratio = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_debye_temperature = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_applied_pressure = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_average_external_pressure = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_ael_stiffness_tensor = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6, 6],
         description="""
         """,
     )
 
     x_aflow_ael_compliance_tensor = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[6, 6],
         description="""
         """,
     )
 
     x_aflow_bader_net_charges = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_aflow_natoms'],
         description="""
         """,
     )
 
     x_aflow_bader_atomic_volumes = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=['x_aflow_natoms'],
         description="""
         """,
     )
 
     x_aflow_n_files = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -1198,21 +1198,21 @@ class Calculation(runschema.calculation.Calculation):
     )
 
     x_aflow_node_CPU_Cores = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_node_CPU_MHz = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
     )
 
     x_aflow_node_RAM_GB = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,

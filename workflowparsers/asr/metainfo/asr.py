@@ -40,7 +40,7 @@ class x_asr_parameters(MSection):
     )
 
     x_asr_fmax = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -61,14 +61,14 @@ class x_asr_parameters(MSection):
     )
 
     x_asr_rc = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_asr_d = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -82,14 +82,14 @@ class x_asr_parameters(MSection):
     )
 
     x_asr_sc = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[3],
         description="""
         """,
     )
 
     x_asr_dist_max = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -138,7 +138,7 @@ class x_asr_run_specification(MSection):
     )
 
     x_asr_version = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -162,28 +162,28 @@ class x_asr_resources(MSection):
     m_def = Section(validate=False)
 
     x_asr_execution_start = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_asr_execution_end = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_asr_execution_duration = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_asr_ncores = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
@@ -227,14 +227,14 @@ class x_asr_metadata(MSection):
     )
 
     x_asr_created = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
     )
 
     x_asr_modified = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         shape=[],
         description="""
         """,
@@ -280,7 +280,7 @@ class Run(runschema.run.Run):
     )
 
     x_asr_version = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=[],
         description="""
         """,
