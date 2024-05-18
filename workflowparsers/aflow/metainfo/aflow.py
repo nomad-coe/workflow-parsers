@@ -161,7 +161,7 @@ class Method(runschema.method.Method):
     )
 
     x_aflow_ldau_u = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies'],
         description="""
         """,
@@ -606,21 +606,21 @@ class System(runschema.system.System):
     )
 
     x_aflow_Wyckoff_letters_orig = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities_orig = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries_orig = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 'x_aflow_n_symmetries'],
         description="""
         """,
@@ -767,21 +767,21 @@ class System(runschema.system.System):
     )
 
     x_aflow_Wyckoff_letters = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_multiplicities = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
     )
 
     x_aflow_Wyckoff_site_symmetries = Quantity(
-        type=m_int32().no_type_check(),
+        type=m_int32(dtype=np.int32).no_type_check(),
         shape=['x_aflow_nspecies', 1],
         description="""
         """,
