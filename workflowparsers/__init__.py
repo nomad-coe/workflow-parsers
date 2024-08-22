@@ -16,14 +16,84 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from nomad.config.models.plugins import ParserEntryPoint
 
-# from .aflow.parser import AFLOWParser
-# from .asr.parser import ASRParser
-# from .elastic.parser import ElasticParser
-# from .fhivibes.parser import FHIVibesParser
-# from .lobster.parser import LobsterParser
-# from .atomate.parser import AtomateParser
-# from .phonopy.parser import PhonopyParser
-# from .quantum_espresso_phonon import QuantumEspressoPhononParser
-# from .quantum_espresso_epw import QuantumEspressoEPWParser
-# from .quantum_espresso_xspectra import QuantumEspressoXSpectraParser
+
+class EntryPoint(ParserEntryPoint):
+    def load(self):
+        from nomad.parsing import MatchingParserInterface
+        from . import (
+            aflow,
+            asr,
+            atomate,
+            elastic,
+            fhivibes,
+            lobster,
+            phonopy,
+            quantum_espresso_epw,
+            quantum_espresso_phonon,
+            quantum_espresso_xspectra,
+        )
+
+        return MatchingParserInterface(self.parser_class_name)
+
+
+aflow_parser_entry_point = EntryPoint(
+    name='parsers/aflow',
+    description='NOMAD parser for AFLOW.',
+    parser_class_name='workflowparsers.aflow.AFLOWParser',
+)
+
+asr_parser_entry_point = EntryPoint(
+    name='parsers/asr',
+    description='NOMAD parser for ASR.',
+    parser_class_name='workflowparsers.asr.ASRParser',
+)
+
+atomate_parser_entry_point = EntryPoint(
+    name='parsers/atomate',
+    description='NOMAD parser for ATOMATE.',
+    parser_class_name='workflowparsers.atomate.AtomateParser',
+)
+
+elastic_parser_entry_point = EntryPoint(
+    name='parsers/elastic',
+    description='NOMAD parser for ELASTIC.',
+    parser_class_name='workflowparsers.elastic.ElasticParser',
+)
+
+fhivibes_parser_entry_point = EntryPoint(
+    name='parsers/fhivibes',
+    description='NOMAD parser for FHIVIBES.',
+    parser_class_name='workflowparsers.fhivibes.FHIVibesParser',
+)
+
+lobster_parser_entry_point = EntryPoint(
+    name='parsers/lobster',
+    description='NOMAD parser for LOBSTER.',
+    parser_class_name='workflowparsers.lobster.LobsterParser',
+)
+
+phonopy_parser_entry_point = EntryPoint(
+    name='parsers/phonopy',
+    description='NOMAD parser for PHONOPY.',
+    parser_class_name='workflowparsers.phonopy.PhonopyParser',
+)
+
+quantum_espresso_epw_parser_entry_point = EntryPoint(
+    name='parsers/quantum_espresso_epw',
+    description='NOMAD parser for QUANTUM_ESPRESSO_EPW.',
+    parser_class_name='workflowparsers.quantum_espresso_epw.',
+)
+
+quantum_espresso_phonon_parser_entry_point = EntryPoint(
+    name='parsers/quantum_espresso_phonon',
+    description='NOMAD parser for QUANTUM_ESPRESSO_PHONON.',
+    parser_class_name='workflowparsers.quantum_espresso_phonon.',
+)
+
+quantum_espresso_xspectra_parser_entry_point = EntryPoint(
+    name='parsers/quantum_espresso_xspectra',
+    description='NOMAD parser for QUANTUM_ESPRESSO_XSPECTRA.',
+    parser_class_name='workflowparsers.quantum_espresso_xspectra.',
+)

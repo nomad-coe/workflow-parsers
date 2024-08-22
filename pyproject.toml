@@ -78,8 +78,17 @@ line-ending = "auto"
 [tool.setuptools.packages.find]
 include = ["workflowparsers*"]
 
-[tool.setuptools.package-data]
-workflowparsers = ["*/metadata.yaml", "*/README.md"]
+[project.entry-points.'nomad.plugin']
+aflowparser = "workflowparsers:aflow_parser_entry_point"
+asrparser = "workflowparsers:asr_parser_entry_point"
+atomateparser = "workflowparsers:atomate_parser_entry_point"
+elasticparser = "workflowparsers:elastic_parser_entry_point"
+fhivibesparser = "workflowparsers:fhivibes_parser_entry_point"
+lobsterparser = "workflowparsers:lobster_parser_entry_point"
+phonopyparser = "workflowparsers:phonopy_parser_entry_point"
+quantum_espresso_epwparser = "workflowparsers:quantum_espresso_epw_parser_entry_point"
+quantum_espresso_phononparser = "workflowparsers:quantum_espresso_phonon_parser_entry_point"
+quantum_espresso_xspectraparser = "workflowparsers:quantum_espresso_xspectra_parser_entry_point"
 
 [tool.mypy]
 strict = false
