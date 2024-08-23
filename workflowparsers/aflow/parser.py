@@ -53,6 +53,8 @@ from simulationworkflowschema import (
     Thermodynamics as WorkflowThermodynamics,
     ThermodynamicsResults,
 )
+from .metainfo import aflow  # noqa
+
 
 
 class AflowOutParser(TextParser):
