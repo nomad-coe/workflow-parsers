@@ -55,9 +55,6 @@ from simulationworkflowschema import (
 )
 
 
-from .metainfo import m_env
-
-
 class AflowOutParser(TextParser):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -191,7 +188,6 @@ class AFLOWParser:
         self.agl_parser = AflowOutParser()
         self.apl_parser = AflowOutParser()
         self.aflowin_parser = AflowInParser()
-        self._metainfo_env = m_env
 
         self._metainfo_map = {
             'stiffness_tensor': 'elastic_constants_matrix_second_order',

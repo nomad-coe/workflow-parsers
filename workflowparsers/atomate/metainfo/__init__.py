@@ -16,10 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from nomad.metainfo import Environment
-from nomad.metainfo.legacy import Environment
-
 from . import atomate
-
-m_env = Environment()
-m_env.m_add_sub_section(Environment.packages, atomate.m_package)
