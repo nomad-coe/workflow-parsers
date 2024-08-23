@@ -53,9 +53,8 @@ from simulationworkflowschema import (
     Thermodynamics as WorkflowThermodynamics,
     ThermodynamicsResults,
 )
+from .metainfo import aflow  # noqa
 
-
-from .metainfo import m_env
 
 
 class AflowOutParser(TextParser):
@@ -106,8 +105,8 @@ class AflowOutParser(TextParser):
         for section in self._results.get('section', []):
             if section.key_value is not None:
                 result = dict()
-                for key, value in section.get('key_value', []):
-                    result[key] = value
+                for k, v in section.get('key_value', []):
+                    result[k] = v
                 self._results[section.name] = result
             elif section.array is not None:
                 self._results[section.name] = section.array
@@ -163,7 +162,7 @@ class AflowInParser(AflowOutParser):
     def parse(self, key=None):
         super().parse(key)
 
-        if self.get('poscar') is not None and self._results.get('geometry') is None:
+        if self._results.get('poscar') is not None and self._results.get('geometry') is None:
             try:
                 atoms = vasp.read_vasp(StringIO(self._results['poscar'][-1]))
                 self._results['cell'] = atoms.get_cell()
@@ -191,7 +190,6 @@ class AFLOWParser:
         self.agl_parser = AflowOutParser()
         self.apl_parser = AflowOutParser()
         self.aflowin_parser = AflowInParser()
-        self._metainfo_env = m_env
 
         self._metainfo_map = {
             'stiffness_tensor': 'elastic_constants_matrix_second_order',
@@ -515,9 +513,10 @@ class AFLOWParser:
         for n, specie in enumerate(species):
             atom_labels += [specie] * self.aflow_data['composition'][n]
         sec_system.atoms.labels = atom_labels
-        sec_system.atoms.positions = (
-            self.aflow_data.get('positions_cartesian', []) * ureg.angstrom
-        )
+        if self.aflow_data.get('positions_cartesian') is not None:
+            sec_system.atoms.positions = (
+                self.aflow_data.get('positions_cartesian') * ureg.angstrom
+            )
 
         # parse system metadata from aflow_data
         system_quantities = [

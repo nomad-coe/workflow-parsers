@@ -13,11 +13,11 @@ dependencies = [
     "nomad-lab>=1.2.0",
     "nomad-schema-plugin-simulation-workflow@git+https://github.com/nomad-coe/nomad-schema-plugin-simulation-workflow.git@develop",
     "nomad-schema-plugin-run@git+https://github.com/nomad-coe/nomad-schema-plugin-run.git@develop",
-    "lxml",
-    "asr",
-    "xarray>=0.19.0",
-    "phonopy",
-    "h5py>=3.4.0",
+    "lxml>=5.2",
+    "asr==0.4.1",
+    "xarray>=0.20.1",
+    "phonopy==2.11.0",
+    "h5py>=3.11.0",
 ]
 
 [project.urls]
@@ -30,11 +30,6 @@ tests = [
     "pytest-timeout==1.4.2",
     "pytest-cov==2.7.1",
     "astroid==2.11.7",
-    "lxml==4.7.1",
-    "asr==0.4.1",
-    "xarray==0.20.2",
-    "phonopy==2.11.0",
-    "h5py==3.6.0",
     "typing-extensions==4.4.0",
     "ruff==0.1.8",
 ]
