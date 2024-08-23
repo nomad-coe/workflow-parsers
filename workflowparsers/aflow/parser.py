@@ -160,7 +160,7 @@ class AflowInParser(AflowOutParser):
     def parse(self, key=None):
         super().parse(key)
 
-        if self.get('poscar') is not None and self._results.get('geometry') is None:
+        if self._results.get('poscar') is not None and self._results.get('geometry') is None:
             try:
                 atoms = vasp.read_vasp(StringIO(self._results['poscar'][-1]))
                 self._results['cell'] = atoms.get_cell()
@@ -511,9 +511,10 @@ class AFLOWParser:
         for n, specie in enumerate(species):
             atom_labels += [specie] * self.aflow_data['composition'][n]
         sec_system.atoms.labels = atom_labels
-        sec_system.atoms.positions = (
-            self.aflow_data.get('positions_cartesian', []) * ureg.angstrom
-        )
+        if self.aflow_data.get('positions_cartesian') is not None:
+            sec_system.atoms.positions = (
+                self.aflow_data.get('positions_cartesian') * ureg.angstrom
+            )
 
         # parse system metadata from aflow_data
         system_quantities = [

@@ -336,7 +336,11 @@ class ElasticParser:
             # the peculiarity of the x_elastic_strain_diagram_values metainfo that it does
             # not have the energy unit
             energies.append((data[1] * ureg.hartree).to('J').magnitude)
-        if len(np.shape(energies)) != 2:
+        try:
+            energies = np.array(energies)
+            if len(np.shape(energies)) != 2:
+                strains, energies = [], []
+        except Exception:
             strains, energies = [], []
         return strains, energies
 
