@@ -103,8 +103,8 @@ class AflowOutParser(TextParser):
         for section in self._results.get('section', []):
             if section.key_value is not None:
                 result = dict()
-                for key, value in section.get('key_value', []):
-                    result[key] = value
+                for k, v in section.get('key_value', []):
+                    result[k] = v
                 self._results[section.name] = result
             elif section.array is not None:
                 self._results[section.name] = section.array
