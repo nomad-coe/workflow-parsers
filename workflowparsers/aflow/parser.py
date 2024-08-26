@@ -56,7 +56,6 @@ from simulationworkflowschema import (
 from .metainfo import aflow  # noqa
 
 
-
 class AflowOutParser(TextParser):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -162,7 +161,10 @@ class AflowInParser(AflowOutParser):
     def parse(self, key=None):
         super().parse(key)
 
-        if self._results.get('poscar') is not None and self._results.get('geometry') is None:
+        if (
+            self._results.get('poscar') is not None
+            and self._results.get('geometry') is None
+        ):
             try:
                 atoms = vasp.read_vasp(StringIO(self._results['poscar'][-1]))
                 self._results['cell'] = atoms.get_cell()
