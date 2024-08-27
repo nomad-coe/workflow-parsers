@@ -52,7 +52,7 @@ class EntryPoint(ParserEntryPoint):
             quantum_espresso_xspectra,
         )
 
-        return MatchingParserInterface(self.parser_class_name, **self.dict())
+        return MatchingParserInterface(**self.dict())
 
 
 aflow_parser_entry_point = EntryPoint(
@@ -247,7 +247,7 @@ quantum_espresso_epw_parser_entry_point = EntryPoint(
     description='NOMAD parser for QUANTUM_ESPRESSO_EPW.',
     python_package='workflowparsers.quantum_espresso_epw',
     mainfile_contents_re=r'Program EPW.+\s*This program is part of the open-source Quantum ESPRESSO suite',
-    parser_class_name='workflowparsers.quantum_espresso_epw.',
+    parser_class_name='workflowparsers.quantum_espresso_epw.QuantumEspressoEPWParser',
     code_name='QuantumEspressoEPW',
     code_homepage='https://www.quantum-espresso.org',
     code_category='Workflow manager',
@@ -271,7 +271,7 @@ quantum_espresso_phonon_parser_entry_point = EntryPoint(
     description='NOMAD parser for QUANTUM_ESPRESSO_PHONON.',
     python_package='workflowparsers.quantum_espresso_phonon',
     mainfile_contents_re=r'Program PHONON.+\s*This program is part of the open-source Quantum ESPRESSO suite',
-    parser_class_name='workflowparsers.quantum_espresso_phonon.',
+    parser_class_name='workflowparsers.quantum_espresso_phonon.QuantumEspressoPhononParser',
     code_name='QuantumEspressPhonon',
     code_homepage='https://www.quantum-espresso.org',
     code_category='Workflow manager',
@@ -296,7 +296,7 @@ quantum_espresso_xspectra_parser_entry_point = EntryPoint(
     python_package='workflowparsers.quantum_espresso_xspectra',
     mainfile_contents_re=r'\s*Program XSpectra\s*',
     mainfile_mime_re='(application/.*)|(text/.*)',
-    parser_class_name='workflowparsers.quantum_espresso_xspectra.',
+    parser_class_name='workflowparsers.quantum_espresso_xspectra.QuantumEspressoXSpectraParser',
     code_name='QuantumESPRESSOXSpectra',
     code_homepage='https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt',
     code_category='Workflow manager',
