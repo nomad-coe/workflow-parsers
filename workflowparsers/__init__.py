@@ -52,7 +52,7 @@ class EntryPoint(ParserEntryPoint):
             quantum_espresso_xspectra,
         )
 
-        return MatchingParserInterface(**self.dict())
+        return MatchingParserInterface(self.parser_class_name, **self.dict())
 
 
 aflow_parser_entry_point = EntryPoint(
