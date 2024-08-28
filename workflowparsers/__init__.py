@@ -39,18 +39,6 @@ class EntryPoint(ParserEntryPoint):
 
     def load(self):
         from nomad.parsing import MatchingParserInterface
-        from . import (
-            aflow,
-            asr,
-            atomate,
-            elastic,
-            fhivibes,
-            lobster,
-            phonopy,
-            quantum_espresso_epw,
-            quantum_espresso_phonon,
-            quantum_espresso_xspectra,
-        )
 
         return MatchingParserInterface(**self.dict())
 
