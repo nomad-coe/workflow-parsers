@@ -45,6 +45,7 @@ class EntryPoint(ParserEntryPoint):
 
 aflow_parser_entry_point = EntryPoint(
     name='parsers/aflow',
+    aliases=['parsers/aflow'],
     description='NOMAD parser for AFLOW.',
     python_package='workflowparsers.aflow',
     mainfile_contents_re=(
@@ -79,6 +80,7 @@ aflow_parser_entry_point = EntryPoint(
 
 asr_parser_entry_point = EntryPoint(
     name='parsers/asr',
+    aliases=['parsers/asr'],
     description='NOMAD parser for ASR.',
     python_package='workflowparsers.asr',
     mainfile_contents_re='"name": "ASR"',
@@ -105,6 +107,7 @@ asr_parser_entry_point = EntryPoint(
 
 atomate_parser_entry_point = EntryPoint(
     name='parsers/atomate',
+    aliases=['parsers/atomate'],
     description='NOMAD parser for ATOMATE.',
     python_package='workflowparsers.atomate',
     mainfile_contents_re='"pymatgen_version":',
@@ -131,6 +134,7 @@ atomate_parser_entry_point = EntryPoint(
 
 elastic_parser_entry_point = EntryPoint(
     name='parsers/elastic',
+    aliases=['parsers/elastic'],
     description='NOMAD parser for ELASTIC.',
     python_package='workflowparsers.elastic',
     mainfile_contents_re=r'\s*Order of elastic constants\s*=\s*[0-9]+\s*',
@@ -156,6 +160,7 @@ elastic_parser_entry_point = EntryPoint(
 
 fhivibes_parser_entry_point = EntryPoint(
     name='parsers/fhivibes',
+    aliases=['parsers/fhivibes'],
     description='NOMAD parser for FHIVIBES.',
     python_package='workflowparsers.fhivibes',
     mainfile_binary_header_re=b'^\\x89HDF',
@@ -183,6 +188,7 @@ fhivibes_parser_entry_point = EntryPoint(
 
 lobster_parser_entry_point = EntryPoint(
     name='parsers/lobster',
+    aliases=['parsers/lobster'],
     description='NOMAD parser for LOBSTER.',
     python_package='workflowparsers.lobster',
     mainfile_contents_re=r'^LOBSTER\s*v[\d\.]+.*',
@@ -208,6 +214,7 @@ lobster_parser_entry_point = EntryPoint(
 
 phonopy_parser_entry_point = EntryPoint(
     name='parsers/phonopy',
+    aliases=['parsers/phonopy'],
     description='NOMAD parser for PHONOPY.',
     python_package='workflowparsers.phonopy',
     mainfile_name_re='(.*/phonopy-FHI-aims-displacement-0*1/control.in$)|(.*/phon[^/]+yaml)',
@@ -232,6 +239,7 @@ phonopy_parser_entry_point = EntryPoint(
 
 quantum_espresso_epw_parser_entry_point = EntryPoint(
     name='parsers/quantum_espresso_epw',
+    aliases=['parsers/quantum_espresso_epw'],
     description='NOMAD parser for QUANTUM_ESPRESSO_EPW.',
     python_package='workflowparsers.quantum_espresso_epw',
     mainfile_contents_re=r'Program EPW.+\s*This program is part of the open-source Quantum ESPRESSO suite',
@@ -256,6 +264,7 @@ quantum_espresso_epw_parser_entry_point = EntryPoint(
 
 quantum_espresso_phonon_parser_entry_point = EntryPoint(
     name='parsers/quantum_espresso_phonon',
+    aliases=['parsers/quantum_espresso_phonon'],
     description='NOMAD parser for QUANTUM_ESPRESSO_PHONON.',
     python_package='workflowparsers.quantum_espresso_phonon',
     mainfile_contents_re=r'Program PHONON.+\s*This program is part of the open-source Quantum ESPRESSO suite',
@@ -280,6 +289,7 @@ quantum_espresso_phonon_parser_entry_point = EntryPoint(
 
 quantum_espresso_xspectra_parser_entry_point = EntryPoint(
     name='parsers/quantum_espresso_xspectra',
+    aliases=['parsers/quantum_espresso_xspectra'],
     description='NOMAD parser for QUANTUM_ESPRESSO_XSPECTRA.',
     python_package='workflowparsers.quantum_espresso_xspectra',
     mainfile_contents_re=r'\s*Program XSpectra\s*',
