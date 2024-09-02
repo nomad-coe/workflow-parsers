@@ -259,6 +259,7 @@ class ElasticParser:
                 for d in self._dirs
                 if d.startswith(self._deform_dir_prefix)
             ]
+            self._deform_dirs.sort()
 
         return self._deform_dirs
 
