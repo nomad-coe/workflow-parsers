@@ -562,3 +562,5 @@ class FHIVibesParser:
         # To resolve this, we can redefine single_point workflow to be consistent with
         # the idea of vibes single point but I do not like it.
         self.parse_configurations()
+
+        self.parser.close()
