@@ -201,7 +201,7 @@ class AtomateParser:
                 )
                 sec_segment.kpoints = qpoints[endpoints[0] : endpoints[1] + 1]
                 sec_segment.endpoints_labels = [
-                    labels[hisym_qpts.index(qpoints[i])] for i in endpoints
+                    labels[hisym_qpts.index(qpoint)] for i in endpoints
                 ]
                 endpoints = []
 
