@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "workflowparsers"
+name = "nomad-parser-plugins-workflow"
 version = "1.0"
 description = "Collection of NOMAD parsers for workflow engines."
 readme = "README.md"
@@ -11,8 +11,8 @@ authors = [{ name = "The NOMAD Authors" }]
 license = { file = "LICENSE" }
 dependencies = [
     "nomad-lab>=1.3.6.dev1",
-    "nomad-schema-plugin-simulation-workflow@git+https://github.com/nomad-coe/nomad-schema-plugin-simulation-workflow.git@develop",
-    "nomad-schema-plugin-run@git+https://github.com/nomad-coe/nomad-schema-plugin-run.git@develop",
+    "nomad-schema-plugin-simulation-workflow>=1.0.1",
+    "nomad-schema-plugin-run>=1.0.1",
     "lxml>=5.2",
     "asr==0.4.1",
     "xarray>=0.20.1",
