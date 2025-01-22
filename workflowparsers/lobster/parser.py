@@ -36,7 +36,7 @@ from runschema.calculation import Calculation, Dos, DosValues, Charges
 
 from nomad.parsing.file_parser import TextParser, Quantity
 
-from .metainfo.lobster import x_lobster_section_cohp, x_lobster_section_coop
+from .metainfo.lobster import x_lobster_section_cohp, x_lobster_section_coop, x_lobster_section_cobi
 
 """
 This is a LOBSTER code parser.
@@ -55,7 +55,7 @@ def get_lobster_file(filename):
     return filename
 
 
-def parse_ICOXPLIST(fname, scc, method):
+def parse_ICOXPLIST(fname, scc, method, version):
     def icoxp_line_split(string):
         tmp = string.split()
         # LOBSTER version 3 and above
@@ -71,28 +71,52 @@ def parse_ICOXPLIST(fname, scc, method):
         elif len(tmp) == 6:
             return [tmp[1], tmp[2], float(tmp[3]), float(tmp[4]), int(tmp[5])]
 
-    icoxplist_parser = TextParser(
-        quantities=[
-            Quantity(
-                'icoxpslist_for_spin',
-                r'\s*CO[OH]P.*spin\s*\d\s*([^#]+[-\d\.]+)',
-                repeats=True,
-                sub_parser=TextParser(
-                    quantities=[
-                        Quantity(
-                            'line',
-                            # LOBSTER version 3 and above
-                            r'(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s*)|'
-                            # LOBSTER versions below 3
-                            r'(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\.\d]+\s+[\d]+\s*)',
-                            repeats=True,
-                            str_operation=icoxp_line_split,
-                        )
-                    ]
-                ),
-            )
-        ]
-    )
+    if float(version.split(".")[0]) > 2:
+        icoxplist_parser = TextParser(
+            quantities=[
+                Quantity(
+                    "icoxpslist_for_spin",
+                    r"\s*(CO[O,H,B,I,P]).*spin\s*\d\s*([^#]+[-\d\.]+)",
+                    repeats=True,
+                    sub_parser=TextParser(
+                        quantities=[
+                            Quantity(
+                                "line",
+                                # LOBSTER version 3 and above
+                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s*)",
+                                # LOBSTER versions below 3
+                                # r'(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\.\d]+\s+[\d]+\s*)',
+                                repeats=True,
+                                str_operation=icoxp_line_split,
+                            )
+                        ]
+                    ),
+                )
+            ]
+        )
+    else:
+        icoxplist_parser = TextParser(
+            quantities=[
+                Quantity(
+                    "icoxpslist_for_spin",
+                    r"\s*(CO[OH]P).*spin\s*\d\s*([^#]+[-\d\.]+)",
+                    repeats=True,
+                    sub_parser=TextParser(
+                        quantities=[
+                            Quantity(
+                                "line",
+                                # LOBSTER version 3 and above
+                                # r'(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s*)',
+                                # LOBSTER versions below 3
+                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\.\d]+\s+[\d]+\s*)",
+                                repeats=True,
+                                str_operation=icoxp_line_split,
+                            )
+                        ]
+                    ),
+                )
+            ]
+        )
 
     if not os.path.isfile(fname):
         return
@@ -111,38 +135,40 @@ def parse_ICOXPLIST(fname, scc, method):
         icoxp.append(0)
         icoxp[-1] = list(tmp)
         if spin == 0:
-            if method == 'o':
+            if method == 'op':
                 section = x_lobster_section_coop()
                 scc.x_lobster_section_coop = section
-            elif method == 'h':
+            elif method == 'hp':
                 section = x_lobster_section_cohp()
                 scc.x_lobster_section_cohp = section
+            elif method == "bi":
+                section = scc.m_create(x_lobster_section_cobi)
 
             setattr(
                 section, 'x_lobster_number_of_co{}p_pairs'.format(method), len(list(a1))
             )
-            setattr(section, 'x_lobster_co{}p_atom1_labels'.format(method), list(a1))
-            setattr(section, 'x_lobster_co{}p_atom2_labels'.format(method), list(a2))
+            setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
+            setattr(section, 'x_lobster_co{}_atom2_labels'.format(method), list(a2))
             setattr(
                 section,
-                'x_lobster_co{}p_distances'.format(method),
+                'x_lobster_co{}_distances'.format(method),
                 np.array(distances) * units.angstrom,
             )
 
             # version specific entries
             if 'v' in locals():
-                setattr(section, 'x_lobster_co{}p_translations'.format(method), list(v))
+                setattr(section, 'x_lobster_co{}_translations'.format(method), list(v))
             if 'bonds' in locals():
                 setattr(
                     section,
-                    'x_lobster_co{}p_number_of_bonds'.format(method),
+                    'x_lobster_co{}_number_of_bonds'.format(method),
                     list(bonds),
                 )
 
     if len(icoxp) > 0:
         setattr(
             section,
-            'x_lobster_integrated_co{}p_at_fermi_level'.format(method),
+            'x_lobster_integrated_co{}_at_fermi_level'.format(method),
             np.array(icoxp) * units.eV,
         )
 
@@ -151,12 +177,12 @@ def parse_COXPCAR(fname, scc, method, logger):
     coxpcar_parser = TextParser(
         quantities=[
             Quantity(
-                'coxp_pairs',
-                r'No\.\d+:(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\)\s*?',
+                "coxp_pairs",
+                r"No\.\d+:(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\)\s*?|No\.\d+:(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\)\s*?",
                 repeats=True,
             ),
             Quantity(
-                'coxp_lines', r'\n\s*(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
+                "coxp_lines", r"\n\s*(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)", repeats=True
             ),
         ]
     )
@@ -166,23 +192,28 @@ def parse_COXPCAR(fname, scc, method, logger):
     coxpcar_parser.mainfile = fname
     coxpcar_parser.parse()
 
-    if method == 'o':
+    if method == 'op':
         if not scc.x_lobster_section_coop:
             section = x_lobster_section_coop()
             section.x_lobster_section_coop = section
         else:
             section = scc.x_lobster_section_coop
-    elif method == 'h':
+    elif method == 'hp':
         if not scc.x_lobster_section_cohp:
             section = x_lobster_section_cohp()
             scc.x_lobster_section_cohp = section
         else:
             section = scc.x_lobster_section_cohp
+    elif method == "bi":
+        if not scc.x_lobster_section_cobi:
+            section = scc.m_create(x_lobster_section_cobi)
+        else:
+            section = scc.x_lobster_section_cobi
 
     pairs = coxpcar_parser.get('coxp_pairs')
     if pairs is None:
         logger.warning(
-            'No CO{}P values detected in CO{}PCAR.lobster.'.format(
+            'No CO{}P values detected in CO{}CAR.lobster.'.format(
                 method.upper(), method.upper()
             )
         )
@@ -190,30 +221,30 @@ def parse_COXPCAR(fname, scc, method, logger):
     a1, a2, distances = zip(*pairs)
     number_of_pairs = len(list(a1))
 
-    setattr(section, 'x_lobster_number_of_co{}p_pairs'.format(method), number_of_pairs)
-    setattr(section, 'x_lobster_co{}p_atom1_labels'.format(method), list(a1))
-    setattr(section, 'x_lobster_co{}p_atom2_labels'.format(method), list(a2))
+    setattr(section, 'x_lobster_number_of_co{}_pairs'.format(method), number_of_pairs)
+    setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
+    setattr(section, 'x_lobster_co{}_atom2_labels'.format(method), list(a2))
     setattr(
         section,
-        'x_lobster_co{}p_distances'.format(method),
+        'x_lobster_co{}_distances'.format(method),
         np.array(distances) * units.angstrom,
     )
 
     coxp_lines = coxpcar_parser.get('coxp_lines')
     if coxp_lines is None:
         logger.warning(
-            'No CO{}P values detected in CO{}PCAR.lobster.'
+            'No CO{} values detected in CO{}CAR.lobster.'
             'The file is likely incomplete'.format(method.upper(), method.upper())
         )
         return
     coxp_lines = list(zip(*coxp_lines))
 
     setattr(
-        section, 'x_lobster_number_of_co{}p_values'.format(method), len(coxp_lines[0])
+        section, 'x_lobster_number_of_co{}_values'.format(method), len(coxp_lines[0])
     )
     setattr(
         section,
-        'x_lobster_co{}p_energies'.format(method),
+        'x_lobster_co{}_energies'.format(method),
         np.array(coxp_lines[0]) * units.eV,
     )
 
@@ -241,28 +272,28 @@ def parse_COXPCAR(fname, scc, method, logger):
         aicoxp = [coxp_lines[2], coxp_lines[4]]
     else:
         logger.warning(
-            'Unexpected number of columns {} ' 'in CO{}PCAR.lobster.'.format(
+            'Unexpected number of columns {} ' 'in CO{}CAR.lobster.'.format(
                 len(coxp_lines), method.upper()
             )
         )
         return
 
     # FIXME: correct magnitude?
-    setattr(section, 'x_lobster_co{}p_values'.format(method), np.array(coxp))
-    setattr(section, 'x_lobster_average_co{}p_values'.format(method), np.array(acoxp))
+    setattr(section, 'x_lobster_co{}_values'.format(method), np.array(coxp))
+    setattr(section, 'x_lobster_average_co{}_values'.format(method), np.array(acoxp))
     setattr(
         section,
-        'x_lobster_integrated_co{}p_values'.format(method),
+        'x_lobster_integrated_co{}_values'.format(method),
         np.array(icoxp) * units.eV,
     )
     setattr(
         section,
-        'x_lobster_average_integrated_co{}p_values'.format(method),
+        'x_lobster_average_integrated_co{}_values'.format(method),
         np.array(aicoxp) * units.eV,
     )
     setattr(
         section,
-        'x_lobster_integrated_co{}p_values'.format(method),
+        'x_lobster_integrated_co{}_values'.format(method),
         np.array(icoxp) * units.eV,
     )
 
@@ -597,18 +628,26 @@ class LobsterParser:
                 ]
 
         parse_ICOXPLIST(
-            get_lobster_file(mainfile_path + '/ICOHPLIST.lobster'), scc, 'h'
+            get_lobster_file(mainfile_path + '/ICOHPLIST.lobster'), scc, 'hp',
+            version=run.program.version
         )
         parse_ICOXPLIST(
-            get_lobster_file(mainfile_path + '/ICOOPLIST.lobster'), scc, 'o'
+            get_lobster_file(mainfile_path + '/ICOOPLIST.lobster'), scc, 'op',
+            version=run.program.version
         )
 
         parse_COXPCAR(
-            get_lobster_file(mainfile_path + '/COHPCAR.lobster'), scc, 'h', logger
+            get_lobster_file(mainfile_path + '/COHPCAR.lobster'), scc, 'hp', logger
         )
         parse_COXPCAR(
-            get_lobster_file(mainfile_path + '/COOPCAR.lobster'), scc, 'o', logger
+            get_lobster_file(mainfile_path + '/COOPCAR.lobster'), scc, 'op', logger
         )
+
+        if run.program.version == "4.1.0":
+            parse_ICOXPLIST(
+                mainfile_path + "/ICOBILIST.lobster", scc, "bi", version=run.program.version
+            )
+            parse_COXPCAR(mainfile_path + "/COBICAR.lobster", scc, "bi", logger)
 
         parse_CHARGE(get_lobster_file(mainfile_path + '/CHARGE.lobster'), scc)
 

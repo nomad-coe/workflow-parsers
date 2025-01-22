@@ -64,6 +64,10 @@ class Calculation(runschema.calculation.Calculation):
         sub_section=SectionProxy('x_lobster_section_coop')
     )
 
+    x_lobster_section_cobi = SubSection(
+        sub_section=SectionProxy("x_lobster_section_cobi")
+    )
+
     x_lobster_section_atom_projected_dos = SubSection(
         sub_section=SectionProxy('x_lobster_section_atom_projected_dos'), repeats=True
     )
@@ -76,6 +80,123 @@ class Method(runschema.method.Method):
         type=str,
         description="""
         Used PAW program
+        """,
+    )
+
+class x_lobster_section_cobi(MSection):
+    """
+    This is a section containing the crystal orbital bond index (COBI)
+    and integrated cobi (iCOBI) values.
+    """
+
+    m_def = Section(validate=False)
+
+    x_lobster_number_of_cobi_pairs = Quantity(
+        type=int,
+        description="""
+        Number of atom pairs for which are the COBIs and iCOBIs calculated.
+        """,
+    )
+
+    x_lobster_cobi_atom1_labels = Quantity(
+        type=str,
+        shape=["x_lobster_number_of_cobi_pairs"],
+        description="""
+        Species and indices of the first atom for which is the specific COBI/iCOBI calculated
+        """,
+    )
+
+    x_lobster_cobi_atom2_labels = Quantity(
+        type=str,
+        shape=["x_lobster_number_of_cobi_pairs"],
+        description="""
+        Species and indices of the second atom for which is the specific COBI/iCOBI calculated
+        """,
+    )
+
+    x_lobster_cobi_distances = Quantity(
+        type=np.dtype(np.float64),
+        unit="meter",
+        shape=["x_lobster_number_of_cobi_pairs"],
+        description="""
+        Distance between atoms of the pair for which is the specific COBI/iCOBI calculated.
+        """,
+    )
+
+    x_lobster_cobi_translations = Quantity(
+        type=np.dtype(np.int32),
+        shape=["x_lobster_number_of_cobi_pairs", 3],
+        description="""
+        Vector connecting the unit-cell of the first atom with the one of the second atom
+
+        This is only used with LOBSTER versions 4.1.0 and above.
+        """,
+    )
+
+    x_lobster_integrated_cobi_at_fermi_level = Quantity(
+        type=np.dtype(np.float32),
+        unit="joule",
+        shape=["number_of_spin_channels", "x_lobster_number_of_cobi_pairs"],
+        description="""
+        Calculated iCOBI values ingregrated up to the Fermi level.
+        """,
+    )
+
+    x_lobster_number_of_cobi_values = Quantity(
+        type=int,
+        description="""
+        Number of energy values for the COBI and iCOBI.
+        """,
+    )
+
+    x_lobster_cobi_energies = Quantity(
+        type=np.dtype(np.float32),
+        unit="joule",
+        shape=["x_lobster_number_of_cobi_values"],
+        description="""
+        Array containing the set of discrete energy values for COBI and iCOBI.
+        """,
+    )
+
+    x_lobster_cobi_values = Quantity(
+        type=np.dtype(np.float32),
+        shape=[
+            "x_lobster_number_of_cobi_pairs",
+            "number_of_spin_channels",
+            "x_lobster_number_of_cobi_values",
+        ],
+        description="""
+        Calculated COBI values.
+        """,
+    )
+
+    x_lobster_integrated_cobi_values = Quantity(
+        type=np.dtype(np.float32),
+        unit="joule",
+        shape=[
+            "x_lobster_number_of_cobi_pairs",
+            "number_of_spin_channels",
+            "x_lobster_number_of_cobi_values",
+        ],
+        description="""
+        Calculated iCOBI values.
+        """,
+    )
+
+    x_lobster_average_cobi_values = Quantity(
+        type=np.dtype(np.float32),
+        shape=["number_of_spin_channels", "x_lobster_number_of_cobi_values"],
+        description="""
+        Calculated COBI values averaged over all pairs.
+        """,
+    )
+
+    x_lobster_average_integrated_cobi_values = Quantity(
+        type=np.dtype(np.float32),
+        unit="joule",
+        shape=["number_of_spin_channels", "x_lobster_number_of_cobi_values"],
+        description="""
+        Calculated iCOBI values averaged over all pairs.
         """,
     )
 
