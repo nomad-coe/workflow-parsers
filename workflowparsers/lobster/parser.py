@@ -143,9 +143,10 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 scc.x_lobster_section_cohp = section
             elif method == "bi":
                 section = scc.m_create(x_lobster_section_cobi)
+                scc.x_lobster_section_cobi = section
 
             setattr(
-                section, 'x_lobster_number_of_co{}p_pairs'.format(method), len(list(a1))
+                section, 'x_lobster_number_of_co{}_pairs'.format(method), len(list(a1))
             )
             setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
             setattr(section, 'x_lobster_co{}_atom2_labels'.format(method), list(a2))
