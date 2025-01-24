@@ -523,7 +523,7 @@ def test_Si(parser):
     """
 
     archive = EntryArchive()
-    parser.parse('tests/data/lobster/Si/lobsterout', archive, logging)
+    parser.parse('tests/data/lobster/Si/lobsterout.gz', archive, logging)
 
     run = archive.run[0]
     assert run.program.name == 'LOBSTER'
@@ -600,7 +600,7 @@ def test_BaTiO3(parser):
     """
 
     archive = EntryArchive()
-    parser.parse('tests/data/lobster/BaTiO3/lobsterout', archive, logging)
+    parser.parse('tests/data/lobster/BaTiO3/lobsterout.gz', archive, logging)
 
     run = archive.run[0]
     assert run.program.name == 'LOBSTER'
