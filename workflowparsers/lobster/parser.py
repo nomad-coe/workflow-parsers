@@ -802,23 +802,19 @@ class LobsterParser:
             get_lobster_file(mainfile_path + '/ICOOPLIST.lobster'), scc, 'op',
             version=run.program.version
         )
-
+        parse_ICOXPLIST(
+            get_lobster_file(mainfile_path + '/ICOBILIST.lobster'), scc, "bi",
+            version=run.program.version
+        )
         parse_COXPCAR(
             get_lobster_file(mainfile_path + '/COHPCAR.lobster'), scc, 'hp', logger
         )
         parse_COXPCAR(
             get_lobster_file(mainfile_path + '/COOPCAR.lobster'), scc, 'op', logger
         )
-
-        float_version = float(run.program.version.split(".")[0]+"."+run.program.version.split(".")[1])
-        if float_version >= 4.1:
-            if os.path.isfile(mainfile_path + "/ICOBILIST.lobster"):
-                parse_ICOXPLIST(
-                    mainfile_path + "/ICOBILIST.lobster", scc, "bi", version=run.program.version
-                )
-            if os.path.isfile(mainfile_path + "/COBICAR.lobster"):
-                parse_COXPCAR(mainfile_path + "/COBICAR.lobster", scc, "bi", logger)
-
+        parse_COXPCAR(
+            get_lobster_file(mainfile_path + "/COBICAR.lobster"), scc, "bi", logger
+        )
         parse_CHARGE(get_lobster_file(mainfile_path + '/CHARGE.lobster'), scc)
 
         parse_DOSCAR(get_lobster_file(mainfile_path + '/DOSCAR.lobster'), run, logger)

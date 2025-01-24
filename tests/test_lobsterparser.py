@@ -516,6 +516,129 @@ def test_QE_Ni(parser):
     assert run.clean_end is True
 
 
+def test_Si(parser):
+    """
+    Test spin-polarized orbitalwise Si calculation with LOBSTER 4.1.0,
+    it has different ICOHPLIST.lobster and ICOOPLIST.lobster scheme.
+    """
+
+    archive = EntryArchive()
+    parser.parse('tests/data/lobster/Si/lobsterout', archive, logging)
+
+    run = archive.run[0]
+    assert run.program.name == 'LOBSTER'
+    assert run.clean_end is True
+    assert run.program.version == '4.1.0'
+
+    assert len(run.calculation) == 1
+    scc = run.calculation[0]
+    assert len(scc.x_lobster_abs_total_spilling) == 2
+    assert scc.x_lobster_abs_total_spilling[0] == approx(17.91)
+    assert len(scc.x_lobster_abs_charge_spilling) == 2
+    assert scc.x_lobster_abs_charge_spilling[0] == approx(1.42)
+
+    # backup partial system parsing
+    system = run.system
+    assert len(system) == 1
+    assert len(system[0].atoms.labels) == 2
+    assert system[0].atoms.labels == ['Si', 'Si']
+    assert system[0].atoms.periodic == [True, True, True]
+
+    # method
+    method = run.method
+    assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+
+    # ICOHPLIST.lobster
+    cohp = scc.x_lobster_section_cohp
+    assert cohp.x_lobster_number_of_cohp_pairs == 64
+    assert len(cohp.x_lobster_cohp_atom1_labels) == 64
+    assert len(cohp.x_lobster_cohp_atom2_labels) == 64
+    assert len(cohp.x_lobster_cohp_distances) == 64
+    assert cohp.x_lobster_cohp_distances[0].magnitude == approx(A_to_m(5.468728))
+    assert cohp.x_lobster_cohp_distances[47].magnitude == approx(A_to_m(3.866974))
+    assert cohp.x_lobster_cohp_distances[23].magnitude == approx(A_to_m(4.53443))
+    assert np.array_equal(cohp.x_lobster_cohp_translations[26],[-1,   1,  -1])
+    assert np.shape(cohp.x_lobster_integrated_cohp_at_fermi_level) == (2, 64)
+    assert cohp.x_lobster_integrated_cohp_at_fermi_level[0, 0].magnitude == approx(
+        eV_to_J(-0.00058)
+    )
+    assert cohp.x_lobster_integrated_cohp_at_fermi_level[0, 31].magnitude == approx(
+        eV_to_J(-2.24755)
+    )
+
+    # ICOOPLIST.lobster
+    coop = scc.x_lobster_section_coop
+    assert coop.x_lobster_number_of_coop_pairs == 64
+    assert len(coop.x_lobster_coop_atom1_labels) == 64
+    assert len(coop.x_lobster_coop_atom2_labels) == 64
+    assert len(coop.x_lobster_coop_distances) == 64
+
+    # check if ICOBILIST.lobster is correctly read
+    cobi = scc.x_lobster_section_cobi
+    assert cobi.x_lobster_number_of_cobi_pairs == 64
+    assert len(cobi.x_lobster_cobi_atom1_labels) == 64
+    assert len(cobi.x_lobster_cobi_atom2_labels) == 64
+    assert len(cobi.x_lobster_cobi_distances) == 64
+
+    # check if orbital-wise data is correctly read
+    assert coop.x_lobster_number_of_coop_orbital_pairs == 1024
+    assert cohp.x_lobster_number_of_cohp_orbital_pairs == 1024
+    assert cobi.x_lobster_number_of_cobi_orbital_pairs == 1024
+    assert coop.x_lobster_coop_atom1_orbital_labels[2] == "Si1[3p_z]"
+    assert coop.x_lobster_coop_atom2_orbital_labels[0] == "Si1[3s]"
+    assert cohp.x_lobster_integrated_cohp_orbital_values.shape == (1024, 2, 11)
+    assert cobi.x_lobster_integrated_cobi_orbital_values.shape == (1024, 2, 11)
+    assert coop.x_lobster_integrated_coop_orbital_values.shape == (1024, 2, 11)
+    assert cohp.x_lobster_integrated_cohp_orbital_values[509, 0, 5].magnitude == approx(
+        eV_to_J(-0.14927)
+    )
+
+def test_BaTiO3(parser):
+    """
+    Test non-spin-polarized BaTiO3 calculation with LOBSTER 4.1.0,
+    it has different ICOHPLIST.lobster and ICOOPLIST.lobster scheme.
+    """
+
+    archive = EntryArchive()
+    parser.parse('tests/data/lobster/BaTiO3/lobsterout', archive, logging)
+
+    run = archive.run[0]
+    assert run.program.name == 'LOBSTER'
+    assert run.clean_end is True
+    assert run.program.version == '4.1.0'
+
+    assert len(run.calculation) == 1
+    scc = run.calculation[0]
+    assert len(scc.x_lobster_abs_total_spilling) == 1
+    assert scc.x_lobster_abs_total_spilling[0] == approx(7.25)
+    assert len(scc.x_lobster_abs_charge_spilling) == 1
+    assert scc.x_lobster_abs_charge_spilling[0] == approx(1.65)
+
+    # backup partial system parsing
+    system = run.system
+    assert len(system) == 1
+    assert len(system[0].atoms.labels) == 5
+    assert system[0].atoms.labels == ['Ba', 'Ti', 'O', 'O', 'O']
+    assert system[0].atoms.periodic == [True, True, True]
+
+    # method
+    method = run.method
+    assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+
+    # ICOHPLIST.lobster
+    cohp = scc.x_lobster_section_cohp
+    assert cohp.x_lobster_number_of_cohp_pairs == 176
+    assert len(cohp.x_lobster_cohp_atom1_labels) == 176
+    assert len(cohp.x_lobster_cohp_atom2_labels) == 176
+    assert len(cohp.x_lobster_cohp_distances) == 176
+    assert cohp.x_lobster_cohp_distances[1].magnitude == approx(A_to_m(5.33154))
+    assert cohp.x_lobster_cohp_distances[99].magnitude == approx(A_to_m(3.297793))
+
+    # test for orbital wise data shape
+    assert cohp.x_lobster_number_of_cohp_orbital_pairs == 5074
+    assert cohp.x_lobster_integrated_cohp_orbital_values.shape == (5074, 1, 11)
+
+
 def test_failed_case(parser):
     """
     Check that we also handle gracefully a case where the lobster ends very early.

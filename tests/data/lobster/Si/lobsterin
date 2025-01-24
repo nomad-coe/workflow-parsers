@@ -1,0 +1,11 @@
+COHPstartEnergy -13.1134
+COHPendEnergy 16.3852
+COHPSteps 10
+basisSet pbeVaspFit2015
+cohpGenerator from 0.1 to 6.0 orbitalwise
+!saveProjectionToFile
+loadprojectionfromfile
+LSODOS
+BWDF
+BWDFCOHP
+basisfunctions Si 3p 3s
