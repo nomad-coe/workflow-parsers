@@ -199,6 +199,50 @@ class x_lobster_section_cobi(MSection):
         Calculated iCOBI values averaged over all pairs.
         """,
     )
+    x_lobster_number_of_cobi_orbital_pairs = Quantity(
+        type=int,
+        description="""
+            Number of atom orbital pairs for which are the COBIs and iCOBIs calculated.
+            """,
+    )
+    x_lobster_cobi_atom1_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_cobi_orbital_pairs'],
+        description="""
+                Species, indices and orbitals of the first atom for which is the specific COBI/iCOBI calculated
+                """,
+    )
+    x_lobster_cobi_atom2_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_cobi_orbital_pairs'],
+        description="""
+                Species and indices of the second atom for which is the specific COBI/iCOBI calculated
+                """,
+    )
+    x_lobster_cobi_orbital_values = Quantity(
+        type=np.float32,
+        shape=[
+            'x_lobster_number_of_cobi_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_cobi_values',
+        ],
+        description="""
+            Calculated COBI values for the orbitals.
+            """,
+    )
+
+    x_lobster_integrated_cobi_orbital_values = Quantity(
+        type=np.float32,
+        unit='joule',
+        shape=[
+            'x_lobster_number_of_cobi_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_cobi_values',
+        ],
+        description="""
+            Calculated iCOBI values for the orbitals.
+            """,
+    )
 
 
 class x_lobster_section_cohp(MSection):
@@ -332,6 +376,50 @@ class x_lobster_section_cohp(MSection):
         in the COPHCAR in the new format.
         """,
     )
+    x_lobster_number_of_cohp_orbital_pairs = Quantity(
+        type=int,
+        description="""
+            Number of atom orbital pairs for which are the COHPs and iCOHPs calculated.
+            """,
+    )
+    x_lobster_cohp_atom1_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_cohp_orbital_pairs'],
+        description="""
+                Species, indices and orbitals of the first atom for which is the specific COHP/iCOHP calculated
+                """,
+    )
+    x_lobster_cohp_atom2_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_cohp_orbital_pairs'],
+        description="""
+                Species and indices of the second atom for which is the specific COHP/iCOHP calculated
+                """,
+    )
+    x_lobster_cohp_orbital_values = Quantity(
+        type=np.float32,
+        shape=[
+            'x_lobster_number_of_cohp_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_cohp_values',
+        ],
+        description="""
+            Calculated COHP values for the orbitals.
+            """,
+    )
+
+    x_lobster_integrated_cohp_orbital_values = Quantity(
+        type=np.float32,
+        unit='joule',
+        shape=[
+            'x_lobster_number_of_cohp_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_cohp_values',
+        ],
+        description="""
+            Calculated iCOHP values for the orbitals.
+            """,
+    )
 
 
 class x_lobster_section_coop(MSection):
@@ -364,7 +452,6 @@ class x_lobster_section_coop(MSection):
         Species and indices of the second atom for which is the specific COOP/iCOOP calculated
         """,
     )
-
     x_lobster_coop_distances = Quantity(
         type=np.float64,
         unit='meter',
@@ -465,6 +552,51 @@ class x_lobster_section_coop(MSection):
         in the COOPCAR in the new format.
         """,
     )
+    x_lobster_number_of_coop_orbital_pairs = Quantity(
+        type=int,
+        description="""
+            Number of atom orbital pairs for which are the COOPs and iCOOPs calculated.
+            """,
+    )
+    x_lobster_coop_atom1_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_coop_orbital_pairs'],
+        description="""
+                Species, indices and orbitals of the first atom for which is the specific COOP/iCOOP calculated
+                """,
+    )
+    x_lobster_coop_atom2_orbital_labels = Quantity(
+        type=str,
+        shape=['x_lobster_number_of_coop_orbital_pairs'],
+        description="""
+                Species and indices of the second atom for which is the specific COOP/iCOOP calculated
+                """,
+    )
+    x_lobster_coop_orbital_values = Quantity(
+        type=np.float32,
+        shape=[
+            'x_lobster_number_of_coop_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_coop_values',
+        ],
+        description="""
+            Calculated COOP values for the orbitals.
+            """,
+    )
+
+    x_lobster_integrated_coop_orbital_values = Quantity(
+        type=np.float32,
+        unit='joule',
+        shape=[
+            'x_lobster_number_of_coop_orbital_pairs',
+            'number_of_spin_channels',
+            'x_lobster_number_of_coop_values',
+        ],
+        description="""
+            Calculated iCOOP values for the orbitals.
+            """,
+    )
+
 
 
 class x_lobster_section_atom_projected_dos(MSection):
