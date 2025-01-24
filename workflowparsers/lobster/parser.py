@@ -264,6 +264,7 @@ def parse_COXPCAR(fname, scc, method, logger):
                 atom1_orb.append(at1)
                 atom2_orb.append(at2)
                 distance_orb.append(dist)
+
         return atom1, atom2, distance, atom1_orb, atom2_orb, distance_orb
 
 
@@ -415,12 +416,12 @@ def parse_COXPCAR(fname, scc, method, logger):
         )
         setattr(
             section,
-            'x_lobster_co{}_orbital_atom1_labels'.format(method),
+            'x_lobster_co{}_atom1_orbital_labels'.format(method),
             list(a1_orb),
         )
         setattr(
             section,
-            'x_lobster_co{}_orbital_atom2_labels'.format(method),
+            'x_lobster_co{}_atom2_orbital_labels'.format(method),
             list(a2_orb),
         )
         setattr(
