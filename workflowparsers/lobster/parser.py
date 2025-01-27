@@ -200,9 +200,9 @@ def parse_ICOXPLIST(fname, scc, method, version):
         lines = [x for x in raw_lines if x[1].count("_") == 0]
 
 
-        orb_data = {l[0]: [] for l in lines}
-        atom_orb_pairs = {l[0]: [] for l in lines}
-        atom_orb_icoxps = {l[0]: [] for l in lines}
+        orb_data = {line[0]: [] for line in lines}
+        atom_orb_pairs = {line[0]: [] for line in lines}
+        atom_orb_icoxps = {line[0]: [] for line in lines}
 
         for line in raw_lines:
             if line[1].count("_") > 0:
