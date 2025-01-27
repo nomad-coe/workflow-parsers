@@ -380,8 +380,8 @@ def parse_COXPCAR(fname, scc, method, logger):
                 # Separate COXP and iCOXP for non-spin-polarized data
                 coxps = values[0::2]
                 icoxps = values[1::2]
-                orb_coxp.append(np.array(coxps))
-                orb_icoxp.append(np.array(icoxps))
+                orb_coxp.append(coxps)
+                orb_icoxp.append(icoxps)
 
         return orb_coxp, orb_icoxp
 
