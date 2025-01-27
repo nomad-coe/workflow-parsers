@@ -111,20 +111,20 @@ def test_Fe(parser):
     assert cohp.x_lobster_cohp_energies[200].magnitude == approx(eV_to_J(3.00503))
     assert np.shape(cohp.x_lobster_average_cohp_values) == (2, 201)
     assert cohp.x_lobster_average_cohp_values[0][196] == approx(0.02406)
-    assert cohp.x_lobster_average_cohp_values[1][200] == approx(0.01816)
+    assert cohp.x_lobster_average_cohp_values[1][200] == approx(0.014390)
     assert np.shape(cohp.x_lobster_average_integrated_cohp_values) == (2, 201)
     assert cohp.x_lobster_average_integrated_cohp_values[0][200].magnitude == approx(
         eV_to_J(-0.06616)
     )
     assert cohp.x_lobster_average_integrated_cohp_values[1][200].magnitude == approx(
-        eV_to_J(-0.02265)
+        eV_to_J(-0.11366)
     )
     assert np.shape(cohp.x_lobster_cohp_values) == (20, 2, 201)
     assert cohp.x_lobster_cohp_values[10][1][200] == approx(0.02291)
-    assert cohp.x_lobster_cohp_values[19][0][200] == approx(0.01439)
+    assert cohp.x_lobster_cohp_values[19][0][200] == approx(0.01816)
     assert np.shape(cohp.x_lobster_integrated_cohp_values) == (20, 2, 201)
     assert cohp.x_lobster_integrated_cohp_values[10][0][200].magnitude == approx(
-        eV_to_J(-0.12881)
+        eV_to_J(-0.11401)
     )
     assert cohp.x_lobster_integrated_cohp_values[19][1][200].magnitude == approx(
         eV_to_J(-0.06876)
@@ -165,20 +165,20 @@ def test_Fe(parser):
     assert coop.x_lobster_coop_energies[200].magnitude == approx(eV_to_J(3.00503))
     assert np.shape(coop.x_lobster_average_coop_values) == (2, 201)
     assert coop.x_lobster_average_coop_values[0][196] == approx(-0.04773)
-    assert coop.x_lobster_average_coop_values[1][200] == approx(-0.04542)
+    assert coop.x_lobster_average_coop_values[1][200] == approx(-0.00788)
     assert np.shape(coop.x_lobster_average_integrated_coop_values) == (2, 201)
     assert coop.x_lobster_average_integrated_coop_values[0][200].magnitude == approx(
         eV_to_J(-0.12265)
     )
     assert coop.x_lobster_average_integrated_coop_values[1][200].magnitude == approx(
-        eV_to_J(-0.14690)
+        eV_to_J(-0.10557)
     )
     assert np.shape(coop.x_lobster_coop_values) == (20, 2, 201)
     assert coop.x_lobster_coop_values[3][1][200] == approx(-0.01346)
     assert coop.x_lobster_coop_values[0][0][200] == approx(-0.04542)
     assert np.shape(coop.x_lobster_integrated_coop_values) == (20, 2, 201)
     assert coop.x_lobster_integrated_coop_values[10][0][199].magnitude == approx(
-        eV_to_J(-0.07360)
+        eV_to_J(-0.11299)
     )
     assert coop.x_lobster_integrated_coop_values[19][1][200].magnitude == approx(
         eV_to_J(-0.13041)
@@ -581,17 +581,23 @@ def test_Si(parser):
     assert len(cobi.x_lobster_cobi_distances) == 64
 
     # check if orbital-wise data is correctly read
-    assert coop.x_lobster_number_of_coop_orbital_pairs == 1024
-    assert cohp.x_lobster_number_of_cohp_orbital_pairs == 1024
-    assert cobi.x_lobster_number_of_cobi_orbital_pairs == 1024
-    assert coop.x_lobster_coop_atom1_orbital_labels[2] == "Si1[3p_z]"
-    assert coop.x_lobster_coop_atom2_orbital_labels[0] == "Si1[3s]"
-    assert cohp.x_lobster_integrated_cohp_orbital_values.shape == (1024, 2, 11)
-    assert cobi.x_lobster_integrated_cobi_orbital_values.shape == (1024, 2, 11)
-    assert coop.x_lobster_integrated_coop_orbital_values.shape == (1024, 2, 11)
-    assert cohp.x_lobster_integrated_cohp_orbital_values[509, 0, 5].magnitude == approx(
-        eV_to_J(-0.14927)
+    assert len(coop.x_lobster_coop_orbital_pairs) == 64
+    assert len(cohp.x_lobster_cohp_orbital_pairs) == 64
+    assert len(cobi.x_lobster_cobi_orbital_pairs) == 64
+    assert coop.x_lobster_coop_orbital_pairs[-1][0] == ["Si2_3s", "Si2_3s"]
+    assert coop.x_lobster_coop_orbital_pairs[10][1] == ["Si1_3p_y", "Si1_3s"]
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 64
+    assert cohp.x_lobster_integrated_cohp_orbital_values[24][1][0][5] == approx(
+        -0.2004
     )
+    assert cobi.x_lobster_integrated_cobi_orbital_values[20][1][0][5] == approx(0.00052)
+    assert coop.x_lobster_integrated_coop_values[24,1,5].magnitude == coop.x_lobster_integrated_coop_at_fermi_level[0][24].magnitude
+
+    # test if data is parsed correctly by matching data from icoxplist with coxpcar
+    for spin in [0,1]:
+        for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[spin]):
+            assert icohp.magnitude == approx(cohp.x_lobster_integrated_cohp_values[ix, spin, 5].magnitude)
+
 
 def test_BaTiO3(parser):
     """
@@ -635,8 +641,15 @@ def test_BaTiO3(parser):
     assert cohp.x_lobster_cohp_distances[99].magnitude == approx(A_to_m(3.297793))
 
     # test for orbital wise data shape
-    assert cohp.x_lobster_number_of_cohp_orbital_pairs == 5074
-    assert cohp.x_lobster_integrated_cohp_orbital_values.shape == (5074, 1, 11)
+    assert len(cohp.x_lobster_cohp_orbital_pairs) == 176
+    assert len(cohp.x_lobster_cohp_orbital_pairs[0]) == 25
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 176
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30]) == 20
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30][0]) == 11
+
+    # test if data is parsed correctly by matching data from icoxplist with coxpcar
+    for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[0]):
+        assert icohp.magnitude == approx(cohp.x_lobster_integrated_cohp_values[ix, 0, 8].magnitude)
 
 
 def test_failed_case(parser):
