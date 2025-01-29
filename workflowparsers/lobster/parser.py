@@ -55,6 +55,42 @@ def get_lobster_file(filename):
     return filename
 
 
+def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type:str):
+    """
+    Convert the COXP/ICOXP values to joules
+
+    Args:
+        icoxp_pairs: list of COXP/ICOXP pairs
+        conversion_factor: conversion factor to joules
+        data_type: type of input data (hp or op or bi)
+    """
+    if data_type == 'hp' and isinstance(icoxp_pairs[0][0], np.ndarray):
+        return [
+            [[orb * conversion_factor for orb in orb_pair] for orb_pair in bond]
+            for bond in icoxp_pairs
+        ]
+    elif data_type == 'hp' and isinstance(icoxp_pairs[0][0], float):
+        return [
+            [[orb_pair * conversion_factor] for orb_pair in bond]
+            for bond in icoxp_pairs
+        ]
+    elif data_type == 'hp' and isinstance(icoxp_pairs[0][0], tuple) and len(icoxp_pairs[0][0]) != 2:
+        return [
+            [[orb * conversion_factor for orb in orb_pair] for orb_pair in bond]
+            for bond in icoxp_pairs
+        ]
+    elif data_type == 'hp' and isinstance(icoxp_pairs[0][0], list) and len(icoxp_pairs[0][0]) == 2:
+        return [
+            [
+                [[spin * conversion_factor for spin in orb] for orb in orb_pair]
+                for orb_pair in bond
+            ]
+            for bond in icoxp_pairs
+        ]
+    else:
+        return icoxp_pairs
+
+
 def parse_ICOXPLIST(fname, scc, method, version):
 
     def icoxp_line_split(string):
@@ -99,14 +135,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
             quantities=[
                 Quantity(
                     "icoxpslist_for_spin",
-                    r"\s*(CO[O,H,B,I,P]).*spin\s*\d\s*([^#]+[-\d\.]+)",
+                    r" *(CO[O,H,B,I,P]).*spin *\d *([^#]+[-\d\.]+)",
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
                                 "line",
                                 # LOBSTER version 3 and above
-                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s*)",
+                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)",
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -120,14 +156,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
             quantities=[
                 Quantity(
                     "icoxpslist_for_spin",
-                    r"\s*(CO[O,H,B,I,P]).*\n\s.*([^#]+[-\d\.]+)",
+                    r" *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)",
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
                                 "line",
                                 # LOBSTER version 5.1 and above
-                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s+[-\.\d]+)",
+                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ +[-\.\d]+)",
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -136,14 +172,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 ),
                 Quantity(
                     "icoxpslist_for_nsp",
-                    r"\s*(CO[O,H,B,I,P]).*\n\s.*([^#]+[-\d\.]+)",
+                    r" *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)",
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
                                 "line",
                                 # LOBSTER version 5.1 and above
-                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\d]+\s+[-\d]+\s+[-\d]+\s+[-\.\d]+\s*)",
+                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)",
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -157,14 +193,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
             quantities=[
                 Quantity(
                     "icoxpslist_for_spin",
-                    r"\s*(CO[OH]P).*spin\s*\d\s*([^#]+[-\d\.]+)",
+                    r" *(CO[OH]P).*spin *\d *([^#]+[-\d\.]+)",
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
                                 "line",
                                 # LOBSTER versions below 3
-                                r"(\s*\d+\s+\w+\s+\w+\s+[\.\d]+\s+[-\.\d]+\s+[\d]+\s*)",
+                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\.\d]+ +[\d]+ *)",
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             ),
@@ -183,7 +219,11 @@ def parse_ICOXPLIST(fname, scc, method, version):
     icoxps_orb_list = []
     orb_pair_list = []
     for spin, icoxplist in enumerate(icoxplist_parser.get('icoxpslist_for_spin')):
-        raw_lines_sp = icoxplist.get('line')
+        if icoxplist.get('line') is not None:
+            raw_lines_sp = icoxplist.get('line')
+        else:
+            raw_lines_sp = []
+
         if icoxplist_parser.get('icoxpslist_for_nsp') is not None:
             raw_lines_nsp = icoxplist_parser.get('icoxpslist_for_nsp')[spin].get('line')
         else:
@@ -211,7 +251,11 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 atom_orb_icoxps[line[0]].append(line[-1])
 
         if atom_orb_icoxps:
-            icoxps_orb_list.append(list(atom_orb_icoxps.values()))
+            orb_icoxps = list(atom_orb_icoxps.values())
+            if len(orb_icoxps[0]) > 0:
+                orb_icoxps = orb_coxp_icoxp_to_joule(icoxp_pairs=list(atom_orb_icoxps.values()),
+                                        conversion_factor=eV, data_type=method)
+            icoxps_orb_list.append(orb_icoxps)
             if list(atom_orb_pairs.values()) not in orb_pair_list:
                 orb_pair_list.append(list(atom_orb_pairs.values()))
 
@@ -257,13 +301,13 @@ def parse_ICOXPLIST(fname, scc, method, version):
         setattr(
             section,
             'x_lobster_integrated_co{}_at_fermi_level'.format(method),
-             np.array(icoxp) * units.eV,
+             np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
         )
     elif len(icoxp) > 0 and isinstance(icoxp[0][0], np.ndarray):
         setattr(
             section,
             'x_lobster_integrated_co{}_at_fermi_level'.format(method),
-            np.array(icoxp[0]).T * units.eV,
+            np.array(icoxp[0]).T * units.eV if method == 'hp' else np.array(icoxp[0]).T,
         )
 
     if len(icoxps_orb_list)> 0:
@@ -390,11 +434,11 @@ def parse_COXPCAR(fname, scc, method, logger):
         quantities=[
             Quantity(
                 "coxp_pairs",
-                r"No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\)\s*?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\)\s*?",
+                r"No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?",
                 repeats=True,
             ),
             Quantity(
-                "coxp_lines", r"\n\s*(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)", repeats=True
+                "coxp_lines", r"\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)", repeats=True
             ),
         ]
     )
@@ -466,6 +510,8 @@ def parse_COXPCAR(fname, scc, method, logger):
         coxp = [[coxp_icoxp[0], coxp_icoxp[2]] for coxp_icoxp in list(atom_pair_cohp.values())]
         icoxp = [[coxp_icoxp[1], coxp_icoxp[3]] for coxp_icoxp in list(atom_pair_cohp.values())]
         coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(atom_orb_cohp, spin_polarized=spin_polarized)
+        if len(icoxp_orb[0])>0:
+            icoxp_orb = orb_coxp_icoxp_to_joule(icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method)
 
     setattr(section, 'x_lobster_number_of_co{}_pairs'.format(method), number_of_pairs)
     setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
@@ -485,18 +531,17 @@ def parse_COXPCAR(fname, scc, method, logger):
         np.array(coxp_lines[0]) * units.eV,
     )
 
-    # FIXME: correct magnitude?
     setattr(section, 'x_lobster_average_co{}_values'.format(method), np.array(acoxp))
     setattr(
         section,
         'x_lobster_average_integrated_co{}_values'.format(method),
-        np.array(aicoxp) * units.eV,
+        np.array(aicoxp) * units.eV if method == 'hp' else np.array(aicoxp),
     )
     setattr(section, 'x_lobster_co{}_values'.format(method), np.array(coxp))
     setattr(
         section,
         'x_lobster_integrated_co{}_values'.format(method),
-        np.array(icoxp) * units.eV,
+        np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
     )
     if len(coxp_orb)>0:
         setattr(
@@ -516,7 +561,7 @@ def parse_CHARGE(fname, scc):
         quantities=[
             Quantity(
                 'charges',
-                r'\s*\d+\s+[A-Za-z]{1,2}\s+([-\d\.]+)\s+([-\d\.]+)\s*',
+                r' *\d+ +[A-Za-z]{1,2} +([-\d\.]+) +([-\d\.]+) *',
                 repeats=True,
             )
         ]
@@ -688,7 +733,7 @@ def parse_DOSCAR(fname, run, logger):
 
 mainfile_parser = TextParser(
     quantities=[
-        Quantity('program_version', r'^LOBSTER\s*v([\d\.]+)\s*', repeats=False),
+        Quantity('program_version', r'^LOBSTER *v([\d\.]+) *', repeats=False),
         Quantity(
             'datetime',
             r'starting on host \S* on (\d{4}-\d\d-\d\d\sat\s\d\d:\d\d:\d\d)\s[A-Z]{3,4}',
@@ -716,7 +761,7 @@ mainfile_parser = TextParser(
         ),
         Quantity(
             'spilling',
-            r'((?:spillings|abs. tot)[\s\S]*?charge\s*spilling:\s*\d+\.\d+%)',
+            r'((?:spillings|abs. )[\s\S]*?charge\s*spilling:\s*\d+\.\d+%)',
             repeats=True,
             sub_parser=TextParser(
                 quantities=[
@@ -837,7 +882,6 @@ class LobsterParser:
             total_spilling = []
             charge_spilling = []
             for s in spilling:
-
                 total_spilling.append(s.get('abs_total_spilling'))
                 charge_spilling.append(s.get('abs_charge_spilling'))
             if total_spilling[0] is not None:

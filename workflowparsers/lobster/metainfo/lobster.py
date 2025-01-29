@@ -116,7 +116,7 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_cobi_distances = Quantity(
-        type=np.dtype(np.float64),
+        type=np.float64,
         unit="meter",
         shape=["x_lobster_number_of_cobi_pairs"],
         description="""
@@ -125,7 +125,7 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_cobi_translations = Quantity(
-        type=np.dtype(np.int32),
+        type=np.int32,
         shape=["x_lobster_number_of_cobi_pairs", 3],
         description="""
         Vector connecting the unit-cell of the first atom with the one of the second atom
@@ -135,8 +135,8 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_integrated_cobi_at_fermi_level = Quantity(
-        type=np.dtype(np.float32),
-        unit="joule",
+        type=np.float64,
+        unit="dimensionless",
         shape=["number_of_spin_channels", "x_lobster_number_of_cobi_pairs"],
         description="""
         Calculated iCOBI values integrated up to the Fermi level.
@@ -151,7 +151,7 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_cobi_energies = Quantity(
-        type=np.dtype(np.float32),
+        type=np.float64,
         unit="joule",
         shape=["x_lobster_number_of_cobi_values"],
         description="""
@@ -160,7 +160,7 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_cobi_values = Quantity(
-        type=np.dtype(np.float32),
+        type=np.float64,
         shape=[
             "x_lobster_number_of_cobi_pairs",
             "number_of_spin_channels",
@@ -172,8 +172,8 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_integrated_cobi_values = Quantity(
-        type=np.dtype(np.float32),
-        unit="joule",
+        type=np.float64,
+        unit="dimensionless",
         shape=[
             "x_lobster_number_of_cobi_pairs",
             "number_of_spin_channels",
@@ -185,16 +185,17 @@ class x_lobster_section_cobi(MSection):
     )
 
     x_lobster_average_cobi_values = Quantity(
-        type=np.dtype(np.float32),
+        type=np.float64,
         shape=["number_of_spin_channels", "x_lobster_number_of_cobi_values"],
+        unit="dimensionless",
         description="""
-        Calculated COBI values averaged over all pairs.
-        """,
+                Calculated COBI values averaged over all pairs.
+                """,
     )
 
     x_lobster_average_integrated_cobi_values = Quantity(
-        type=np.dtype(np.float32),
-        unit="joule",
+        type=np.float64,
+        unit="dimensionless",
         shape=["number_of_spin_channels", "x_lobster_number_of_cobi_values"],
         description="""
         Calculated iCOBI values averaged over all pairs.
@@ -202,7 +203,7 @@ class x_lobster_section_cobi(MSection):
     )
     x_lobster_integrated_orbital_cobi_at_fermi_level = Quantity(
         type=typing.Any,
-        unit='joule',
+        unit='dimensionless',
         shape=["*"],
         description="""
                 Calculated orbital iCOBI values integrated up to the Fermi level.
@@ -217,6 +218,7 @@ class x_lobster_section_cobi(MSection):
     )
     x_lobster_cobi_orbital_values = Quantity(
         type=typing.Any,
+        unit='dimensionless',
         shape=[
             'x_lobster_number_of_cobi_pairs',
             '*',
@@ -230,7 +232,7 @@ class x_lobster_section_cobi(MSection):
 
     x_lobster_integrated_cobi_orbital_values = Quantity(
         type=typing.Any,
-        unit='joule',
+        unit='dimensionless',
         shape=[
             'x_lobster_number_of_cobi_pairs',
             '*',
@@ -295,7 +297,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_integrated_cohp_at_fermi_level = Quantity(
-        type=np.float32,
+        type=np.float64,
         unit='joule',
         shape=['number_of_spin_channels', 'x_lobster_number_of_cohp_pairs'],
         description="""
@@ -311,7 +313,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_cohp_energies = Quantity(
-        type=np.float32,
+        type=np.float64,
         unit='joule',
         shape=['x_lobster_number_of_cohp_values'],
         description="""
@@ -320,7 +322,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_cohp_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         shape=[
             'x_lobster_number_of_cohp_pairs',
             'number_of_spin_channels',
@@ -332,7 +334,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_integrated_cohp_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         unit='joule',
         shape=[
             'x_lobster_number_of_cohp_pairs',
@@ -345,7 +347,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_average_cohp_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         shape=['number_of_spin_channels', 'x_lobster_number_of_cohp_values'],
         description="""
         Calculated COHP values averaged over all pairs.
@@ -353,7 +355,7 @@ class x_lobster_section_cohp(MSection):
     )
 
     x_lobster_average_integrated_cohp_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         unit='joule',
         shape=['number_of_spin_channels', 'x_lobster_number_of_cohp_values'],
         description="""
@@ -468,8 +470,8 @@ class x_lobster_section_coop(MSection):
     )
 
     x_lobster_integrated_coop_at_fermi_level = Quantity(
-        type=np.float32,
-        unit='joule',
+        type=np.float64,
+        unit='dimensionless',
         shape=['number_of_spin_channels', 'x_lobster_number_of_coop_pairs'],
         description="""
         Calculated iCOOP values integrated up to the Fermi level.
@@ -484,7 +486,7 @@ class x_lobster_section_coop(MSection):
     )
 
     x_lobster_coop_energies = Quantity(
-        type=np.float32,
+        type=np.float64,
         unit='joule',
         shape=['x_lobster_number_of_coop_values'],
         description="""
@@ -493,7 +495,7 @@ class x_lobster_section_coop(MSection):
     )
 
     x_lobster_coop_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         shape=[
             'x_lobster_number_of_coop_pairs',
             'number_of_spin_channels',
@@ -505,8 +507,8 @@ class x_lobster_section_coop(MSection):
     )
 
     x_lobster_integrated_coop_values = Quantity(
-        type=np.float32,
-        unit='joule',
+        type=np.float64,
+        unit='dimensionless',
         shape=[
             'x_lobster_number_of_coop_pairs',
             'number_of_spin_channels',
@@ -518,7 +520,7 @@ class x_lobster_section_coop(MSection):
     )
 
     x_lobster_average_coop_values = Quantity(
-        type=np.float32,
+        type=np.float64,
         shape=['number_of_spin_channels', 'x_lobster_number_of_coop_values'],
         description="""
         Calculated COOP values averaged over all pairs.
@@ -527,7 +529,7 @@ class x_lobster_section_coop(MSection):
 
     x_lobster_average_integrated_coop_values = Quantity(
         type=np.float32,
-        unit='joule',
+        unit='dimensionless',
         shape=['number_of_spin_channels', 'x_lobster_number_of_coop_values'],
         description="""
         Calculated iCOOP values averaged over all pairs.
@@ -549,7 +551,7 @@ class x_lobster_section_coop(MSection):
     )
     x_lobster_integrated_orbital_coop_at_fermi_level = Quantity(
         type=typing.Any,
-        unit='joule',
+        unit='dimensionless',
         shape=["*"],
         description="""
             Calculated orbital iCOOP values integrated up to the Fermi level.
