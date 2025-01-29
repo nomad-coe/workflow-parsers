@@ -893,9 +893,10 @@ class LobsterParser:
         if (basis := mainfile_parser.get('x_lobster_basis')) is not None:
             if (species := basis.get('x_lobster_basis_species')) is not None:
                 basis_used = species[0][1]
+                # checks necessary as LOBSTER 5.1.1 writes basis names now in lower case
                 if basis_used == "pbevaspfit2015":
                     basis_used = self.capitalize_positions(string=species[0][1], positions=[3,7])
-                elif basis_used == "bunge":
+                elif basis_used in ["bunge", "koga"]:
                     basis_used = self.capitalize_positions(string=species[0][1], positions=[0])
                 method.electrons_representation = [
                     BasisSetContainer(
