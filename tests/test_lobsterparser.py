@@ -23,7 +23,6 @@ import numpy as np
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
 
-from check_lobster import archive
 from workflowparsers.lobster import LobsterParser
 
 e = (1 * units.e).to_base_units().magnitude
