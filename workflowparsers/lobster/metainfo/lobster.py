@@ -27,11 +27,10 @@ from nomad.metainfo import (
     SectionProxy,
     Package,
 )
-import runschema.run  # pylint: disable=unused-import
-import runschema.calculation  # pylint: disable=unused-import
-import runschema.method  # pylint: disable=unused-import
-import runschema.system  # pylint: disable=unused-import
-from numpy.ma.core import shape
+
+import runschema.calculation
+import runschema.method
+import runschema.system
 
 m_package = Package()
 
