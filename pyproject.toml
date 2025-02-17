@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://github.com/nomad-coe/electronic-parsers"
+homepage = "https://github.com/nomad-coe/workflow-parsers"
 
 [project.optional-dependencies]
 tests = [
