@@ -92,4 +92,4 @@ pip install -e workflow-parsers
 Running the parser now, will use the parser's Python code from the clone project.
 
 ## How to cite this work
-Ladines, A.N., ..., Workflow Parsers (all versions) [Computer software]. https://doi.org/10.xxx/zenodo.xxx
+Ladines, A. N., Daelman, N., Pizarro, J. M., Ondračka, P., Himanen, L., Fekete, A., Scheidgen, M., Chang, T., Ilyas, A., & Rudzinski, J. F. (2025). Workflow Parsers (all versions). Zenodo. https://doi.org/10.5281/zenodo.14900119
