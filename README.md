@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/461070260.svg)](https://zenodo.org/badge/latestdoi/461070260)
+
 This is a collection of the NOMAD parsers for the following workflow codes:
 
 1. [AFLOW](http://www.aflowlib.org/)
@@ -88,3 +90,6 @@ pip install -e workflow-parsers
 ```
 
 Running the parser now, will use the parser's Python code from the clone project.
+
+## How to cite this work
+Ladines, A.N., ..., Workflow Parsers (all versions) [Computer software]. https://doi.org/10.xxx/zenodo.xxx
