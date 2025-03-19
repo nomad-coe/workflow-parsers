@@ -499,12 +499,16 @@ class QuantumEspressoEPWParser:
             alat = self.mainfile_parser.lattice_parameter
             lattice_vectors = self.mainfile_parser.lattice_vectors
             if lattice_vectors is not None:
-                sec_atoms.lattice_vectors = np.dot(lattice_vectors, alat)
+                sec_atoms.lattice_vectors = np.dot(
+                    lattice_vectors, alat.magnitude
+                ) * alat.units
 
             cartesian_axes = self.mainfile_parser.cartesian_axes
             if cartesian_axes is not None:
                 sec_atoms.labels = cartesian_axes[0]
-                sec_atoms.positions = np.dot(cartesian_axes[2], alat)
+                sec_atoms.positions = np.dot(
+                    cartesian_axes[2], alat.magnitude
+                ) * alat.units
 
             system_keys = [
                 'bravais_lattice_index',
