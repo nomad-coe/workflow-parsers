@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+title: Workflow Parsers
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Alvin Noe
+    family-names: Ladines
+    orcid: 'https://orcid.org/0000-0003-0077-2097'
+  - given-names: Nathan
+    family-names: Daelman
+    orcid: 'https://orcid.org/0000-0002-7647-1816'
+  - given-names: José M.
+    family-names: Pizarro
+    orcid: 'https://orcid.org/0000-0002-6751-8192'
+  - given-names: Pavel
+    family-names: Ondračka
+    orcid: 'https://orcid.org/0000-0003-0729-629X'
+  - given-names: Lauri
+    family-names: Himanen
+    orcid: 'https://orcid.org/0000-0002-3130-8193'
+  - given-names: Adam
+    family-names: Fekete
+    orcid: 'https://orcid.org/0000-0002-6263-897X'
+  - given-names: Markus
+    family-names: Scheidgen
+    orcid: 'https://orcid.org/0000-0002-8038-2277'
+  - given-names: Theodore
+    family-names: Chang
+    orcid: 'https://orcid.org/0000-0002-4911-0230'
+  - given-names: Ahmed
+    family-names: Ilyas
+    orcid: 'https://orcid.org/0009-0009-8636-5740'
+  - given-names: Joseph F.
+    family-names: Rudzinski
+    orcid: 'https://orcid.org/0000-0003-3403-640X'
+doi: 10.5281/zenodo.14900119
+repository-code: 'https://github.com/nomad-coe/workflow-parsers'
+url: 'https://github.com/nomad-coe/workflow-parsers'
+abstract: >-
+  `workflow-parsers` is a plugin for the NOMAD
+  software (https://zenodo.org/doi/10.5281/zenodo.8366162) that contains a series of parsers
+  for codes that execute workflows, including:
+    AFLOW,
+    ASR,
+    Atomate,
+    ElaStic,
+    FHI-vibes,
+    LOBSTER,
+    phonopy,
+    QuantumEspressoEPW,
+    QuantumEspressPhonon,
+    QuantumEspressoXSpectra.
+
+license: Apache-2.0
