@@ -52,18 +52,20 @@ nomad parse --show-archive <path-to-file>
 To parse a file in Python, you can program something like this:
 ```python
 import sys
-from nomad.cli.parse import parse, normalize_all
+from nomad.client import parse, normalize_all
 
 # match and run the parser
-archive = parse(sys.argv[1])
-# run all normalizers
-normalize_all(archive)
+archives = parse(sys.argv[1])
 
-# get the 'main section' section_run as a metainfo object
-section_run = archive.section_run[0]
+# Run all normalizers
+for archive in archives:
+    normalize_all(archive)
 
-# get the same data as JSON serializable Python dict
-python_dict = section_run.m_to_dict()
+    # Get the 'main section' section_run as a metainfo object
+    section_run = archive.run[0]
+
+    # Get the same data as JSON serializable Python dict
+    python_dict = section_run.m_to_dict()
 ```
 
 ## Developing the parser
