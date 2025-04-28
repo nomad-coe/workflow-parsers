@@ -35,7 +35,7 @@ class EntryPoint(ParserEntryPoint):
     metadata: Optional[dict] = Field(
         None,
         description="""
-        Metadata passed to the UI. Deprecated. """
+        Metadata passed to the UI. Deprecated. """,
     )
 
     def load(self):
@@ -246,14 +246,14 @@ quantum_espresso_epw_parser_entry_point = EntryPoint(
     mainfile_contents_re=r'Program EPW.+\s*This program is part of the open-source Quantum ESPRESSO suite',
     parser_class_name='workflowparsers.quantum_espresso_epw.QuantumEspressoEPWParser',
     code_name='QuantumEspressoEPW',
-    code_homepage='https://www.quantum-espresso.org',
+    code_homepage='https://www.quantum-espresso.org/documentation/',
     code_category='Workflow manager',
     metadata={
         'codeCategory': 'Workflow manager',
         'codeLabel': 'QuantumEspressoEPW',
         'codeLabelStyle': 'Capitals: Q, E, E, P, W',
         'codeName': 'quantumespressoepw',
-        'codeUrl': 'https://www.quantum-espresso.org',
+        'codeUrl': 'https://www.quantum-espresso.org/documentation/',
         'parserDirName': 'dependencies/workflow/workflowparsers/quantum_espresso_epw',
         'parserGitUrl': 'https://github.com/nomad-coe/workflow-parsers.git',
         'parserSpecific': '',
@@ -271,15 +271,15 @@ quantum_espresso_phonon_parser_entry_point = EntryPoint(
     mainfile_contents_re=r'Program PHONON.+\s*This program is part of the open-source Quantum ESPRESSO suite',
     parser_class_name='workflowparsers.quantum_espresso_phonon.QuantumEspressoPhononParser',
     code_name='QuantumEspressPhonon',
-    code_homepage='https://www.quantum-espresso.org',
+    code_homepage='https://www.quantum-espresso.org/documentation/input-data-description/',
     code_category='Workflow manager',
     metadata={
         'codeCategory': 'Workflow manager',
         'codeLabel': 'QuantumEspressPhonon',
         'codeLabelStyle': 'Capitals: Q, E, P',
         'codeName': 'quantumespressophonon',
-        'codeUrl': 'https://www.quantum-espresso.org',
-        'parserDirName': 'dependencies/workflow/workflowparsers/quantumespressophonon',
+        'codeUrl': 'https://www.quantum-espresso.org/documentation/input-data-description/',
+        'parserDirName': 'dependencies/workflow/workflowparsers/quantum_espresso_phonon',
         'parserGitUrl': 'https://github.com/nomad-coe/workflow-parsers.git',
         'parserSpecific': '',
         'preamble': '',
@@ -297,19 +297,45 @@ quantum_espresso_xspectra_parser_entry_point = EntryPoint(
     mainfile_mime_re='(application/.*)|(text/.*)',
     parser_class_name='workflowparsers.quantum_espresso_xspectra.QuantumEspressoXSpectraParser',
     code_name='QuantumESPRESSOXSpectra',
-    code_homepage='https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt',
+    code_homepage='https://www.quantum-espresso.org/Doc/INPUT_XSPECTRA',
     code_category='Workflow manager',
     metadata={
         'codeCategory': 'Workflow manager',
         'codeLabel': 'QuantumESPRESSOXSpectra',
         'codeLabelStyle': 'Capitals: Q, ESPRESSO, X, S',
         'codeName': 'quantumespressoxspectra',
-        'codeUrl': 'https://www.quantum-espresso.org/Doc/INPUT_XSpectra.txt',
-        'parserDirName': 'dependencies/workflow/workflowparsers/quantumespressoxspectra',
+        'codeUrl': 'https://www.quantum-espresso.org/Doc/INPUT_XSPECTRA',
+        'parserDirName': 'dependencies/workflow/workflowparsers/quantum_espresso_xspectra',
         'parserGitUrl': 'https://github.com/nomad-coe/workflow-parsers.git',
         'parserSpecific': '',
         'preamble': '',
         'status': 'production',
         'tableOfFiles': '| Input Filename | Description |\n| --- | --- |\n| `*.out` | **Mainfile:** text output file |\n| `*.dat` | output data file with the Absorption Spectra |\n',
+    },
+)
+
+quantum_espresso_bands_parser_entry_point = EntryPoint(
+    name='parsers/quantum_espresso_bands',
+    aliases=['parsers/quantum_espresso_bands'],
+    description='NOMAD parser for QUANTUM_ESPRESSO_BANDS.',
+    python_package='workflowparsers.quantum_espresso_bands',
+    mainfile_contents_re=r'\s*Program BANDS\s*',
+    mainfile_mime_re='(application/.*)|(text/.*)',
+    parser_class_name='workflowparsers.quantum_espresso_bands.QuantumEspressoBandsParser',
+    code_name='QuantumESPRESSOBands',
+    code_homepage='https://www.quantum-espresso.org',
+    code_category='Workflow manager',
+    metadata={
+        'codeCategory': 'Workflow manager',
+        'codeLabel': 'QuantumESPRESSOBands',
+        'codeLabelStyle': 'Capitals: Q, ESPRESSO, X, S',
+        'codeName': 'quantumespressobands',
+        'codeUrl': 'https://www.quantum-espresso.org',
+        'parserDirName': 'dependencies/workflow/workflowparsers/quantum_espresso_bands',
+        'parserGitUrl': 'https://github.com/nomad-coe/workflow-parsers.git',
+        'parserSpecific': '',
+        'preamble': '',
+        'status': 'production',
+        'tableOfFiles': '| Input Filename | Description |\n| --- | --- |\n| `*.out` | **Mainfile:** text output file |\n| `*.dat` | output data file with the Band Structure over the k-path segments |\n',
     },
 )
