@@ -213,46 +213,32 @@ class BandsFileParser(TextParser):
         return bool(pattern.search(content))
 
     @staticmethod
-    def determine_calculation_type(filepath: str) -> str:
+    def is_scf_calculation(filepath: str) -> bool:
         """
         Determine the type of calculation in a QE output file.
+        Reads file in chunks to avoid loading entire large files.
 
         Returns:
-            str: 'scf' for self-consistent calculation, 'bands' for band structure,
-                 'other' for other calculation types, 'unknown' if can't determine
+            bool: `True` for self-consistent calculation, `False` for any other type.
         """
-        # Patterns to identify different calculation types
-        scf_pattern = re.compile(r'Self-consistent Calculation')
-        bands_pattern = re.compile(r'Band Structure Calculation')
-        other_calc_patterns = [
-            re.compile(r'Geometry Optimization'),
-            re.compile(r'Molecular Dynamics'),
-            re.compile(r'Post-processing Calculation'),
-        ]
+        calc_pattern = r'Calculation\n'
+        generic_pattern = re.compile(calc_pattern)
+        scf_pattern = re.compile(r'Self-consistent ' + calc_pattern)
 
         with open(filepath, 'r') as f:
-            # Read file in chunks to avoid loading entire large files
             chunk_size = 100000  # 100KB chunks
 
             while True:
                 chunk = f.read(chunk_size)
                 if not chunk:
                     break
+                elif generic_pattern.search(chunk):
+                    if scf_pattern.search(chunk):
+                        return True
+                    else:
+                        return False
 
-                # Check for SCF calculation
-                if scf_pattern.search(chunk):
-                    return 'scf'
-
-                # Check for band structure calculation
-                if bands_pattern.search(chunk):
-                    return 'bands'
-
-                # Check for other calculation types - if found, no need to read further
-                for pattern in other_calc_patterns:
-                    if pattern.search(chunk):
-                        return 'other'
-
-        return 'unknown'
+        return False
 
     @staticmethod
     def points_to_segments(kpoints: list, symmetries: list) -> list[list[KPoint]]:
@@ -325,21 +311,13 @@ class QuantumEspressoBandsParser:
 
         for filepath in out_files:
             with open(filepath, 'r') as f:
-                content = f.read(
-                    5000
-                )  # Read first 5KB, enough for program identification
-
+                content = f.read(5000)  # First 5KB
             if self.bands_parser.is_bands_file(content):
                 bands_files.append(filepath)
             elif self.bands_parser.is_pwscf_file(content):
-                # Determine calculation type more efficiently
-                calc_type = self.bands_parser.determine_calculation_type(filepath)
-
-                if calc_type == 'scf':
+                if self.bands_parser.is_scf_calculation(filepath):
                     scf_pwscf_files.append(filepath)
-
-                # Keep all PWSCF files as fallback
-                pwscf_files.append(filepath)
+                pwscf_files.append(filepath)  # Retain all PWSCF files as fallback
 
         # If multiple SCF files are found, raise an error
         if len(scf_pwscf_files) > 1:
@@ -505,7 +483,6 @@ class QuantumEspressoBandsParser:
         bands = self.bands_parser.get('band', [])
 
         if kpoints and symmetries and bands:
-            # Create band structure segments
             band_segments = []
             kpoint_segments = self.bands_parser.points_to_segments(kpoints, symmetries)
 
