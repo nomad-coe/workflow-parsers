@@ -142,40 +142,6 @@ class MainfileParser(TextParser):
             ),
         ]
 
-    @staticmethod
-    def is_pwscf_file(content: str) -> bool:
-        """Check if the content is from a PWSCF calculation output."""
-        pattern = re.compile(r'Program PWSCF v\.\d+\.\d+')
-        return bool(pattern.search(content))
-
-    @staticmethod
-    def is_scf_calculation(filepath: str) -> bool:
-        """
-        Determine the type of calculation in a QE output file.
-        Reads file in chunks to avoid loading entire large files.
-
-        Returns:
-            bool: `True` for self-consistent calculation, `False` for any other type.
-        """
-        calc_pattern = r'Calculation\n'
-        generic_pattern = re.compile(calc_pattern)
-        scf_pattern = re.compile(r'Self-consistent ' + calc_pattern)
-
-        with open(filepath, 'r') as f:
-            chunk_size = 100000  # 100KB chunks
-
-            while True:
-                chunk = f.read(chunk_size)
-                if not chunk:
-                    break
-                elif generic_pattern.search(chunk):
-                    if scf_pattern.search(chunk):
-                        return True
-                    else:
-                        return False
-
-        return False
-
 
 class BandsFileParser(TextParser):
     """Parser for Quantum ESPRESSO BANDS output files."""
@@ -228,19 +194,6 @@ class BandsFileParser(TextParser):
         return glob.glob(os.path.join(directory, pattern))
 
     @staticmethod
-    def read_header(filepath: str, num_lines: int = 2) -> str:
-        """Read the first few lines of a file."""
-        with open(filepath, 'r') as file:
-            header = ''.join([file.readline() for _ in range(num_lines)])
-        return header
-
-    @staticmethod
-    def is_bands_file(content: str) -> bool:
-        """Check if the content is from a BANDS calculation output."""
-        pattern = re.compile(r'Program BANDS v\.\d+\.\d+')
-        return bool(pattern.search(content))
-
-    @staticmethod
     def points_to_segments(kpoints: list, symmetries: list) -> list[list[KPoint]]:
         """Split the k-points by segment based on differing symmetry group."""
 
@@ -290,40 +243,33 @@ class QuantumEspressoBandsParser:
     def __init__(self):
         self.bands_parser = BandsFileParser()
         self.pwscf_parser = MainfileParser()
-        self.logger = None
-        self.archive = None
-        self.filepath = None
-        self.maindir = None
-        self.pwscf_file = None
 
-    def _init_parsers(self):
-        """Initialize parser objects and reset state."""
-        self.bands_parser = BandsFileParser()
-        self.pwscf_parser = MainfileParser()
-
-    def _find_files(self):
+    def _find_files(self) -> Optional[str]:
         """Find BANDS and PWSCF files in the directory."""
+        pw_patt = re.compile(r'Program PWSCF')
+        scf_patt = re.compile(r'Self-consistent Calculation')
+
         out_files = self.bands_parser.scan_dir_for_files(self.maindir)
-        bands_files, pwscf_files, scf_pwscf_files = [], [], []
+        pwscf_file = ""
 
         for filepath in out_files:
             with open(filepath, 'r') as f:
-                content = f.read(5000)  # First 5KB
-            if self.bands_parser.is_bands_file(content):
-                bands_files.append(filepath)
-            elif self.pwscf_parser.is_pwscf_file(content):
-                if self.pwscf_parser.is_scf_calculation(filepath):
-                    scf_pwscf_files.append(filepath)
-                pwscf_files.append(filepath)  # Retain all PWSCF files as fallback
+                f.readline()  # Skip the first line
+                if not pw_patt.search(f.readline()):
+                    continue
 
-        if len(scf_pwscf_files) > 1:
-            raise ValueError(
-                f'Multiple PWSCF files with self-consistent calculations found in {self.maindir}. '
-                f'Cannot determine which one to use for electronic structure information. '
-                f'Files: {", ".join(scf_pwscf_files)}'
-            )
+                for line in f:
+                    if scf_patt.search(line):
+                        if not pwscf_file:
+                            pwscf_file = filepath
+                        else:
+                            raise ValueError(
+                                f'Multiple PWSCF files with self-consistent calculations found in {self.maindir}. '
+                                f'Cannot determine which one to use for electronic structure information. '
+                                f'Files: {", ".join([pwscf_file, filepath])}'
+                            )
 
-        return bands_files, scf_pwscf_files if scf_pwscf_files else pwscf_files
+        return pwscf_file if pwscf_file else None
 
     def parse(self, filepath, archive, logger):
         """
@@ -334,51 +280,33 @@ class QuantumEspressoBandsParser:
             archive: NOMAD archive where results will be stored
             logger: Logger for output messages
         """
-        self.filepath = os.path.abspath(filepath)
-        self.maindir = os.path.dirname(self.filepath)
+        self.bands_parser.mainfile = filepath
+        self.maindir = os.path.dirname(filepath)
         self.logger = logger if logger is not None else logging
         self.archive = archive
 
-        self._init_parsers()
-
-        # Find BANDS and matching PWSCF files
+        # Find PWSCF files and parse
         try:
-            bands_files, pwscf_files = self._find_files()
+            if (pwscf_file := self._find_files()) is not None:
+                self.pwscf_parser.mainfile = pwscf_file
+                self.pwscf_parser.parse()
+            else:
+                self.logger.warning(
+                    'No PWSCF file with self-consistent calculation found. '
+                    'Electronic structure information will be incomplete.'
+                )
         except ValueError as e:
             self.logger.error(str(e))
             raise
 
-        if not bands_files:
-            self.logger.warning('No BANDS output files found.')
-            return
-
-        self.bands_parser.mainfile = bands_files[0]
         self.bands_parser.parse()
-
-        if pwscf_files:
-            self.logger.info(
-                f'Using PWSCF file: {pwscf_files[0]} for electronic structure data'
-            )
-            self.pwscf_file = pwscf_files[0]
-            self.pwscf_parser.mainfile = self.pwscf_file
-            self.pwscf_parser.parse()
-        else:
-            self.logger.warning(
-                'No PWSCF file with self-consistent calculation found. '
-                'Electronic structure information will be incomplete.'
-            )
-
         self._process_data()
 
     def _process_data(self):
         """Process the parsed data and create the archive structure."""
-        sec_run = Run()
+        sec_run = Run(program=Program(name='Quantum ESPRESSO BANDS'))
+        sec_run.program.version = self.bands_parser.get('program_version')
         self.archive.run.append(sec_run)
-        program_version = self.bands_parser.get('program_version')
-        sec_run.program = Program(
-            name='Quantum ESPRESSO BANDS',
-            version=program_version if program_version else None,
-        )
 
         if self.pwscf_parser.results:
             self._create_system_section(sec_run)
