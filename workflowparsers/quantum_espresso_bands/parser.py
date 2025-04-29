@@ -257,7 +257,7 @@ class QuantumEspressoBandsParser:
         scf_patt = re.compile(r'Self-consistent Calculation')
 
         out_files = self.bands_parser.scan_dir_for_files(self.maindir)
-        pwscf_file = ""
+        pwscf_file = ''
 
         for filepath in out_files:
             with open(filepath, 'r') as f:
