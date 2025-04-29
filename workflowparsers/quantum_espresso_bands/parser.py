@@ -21,7 +21,8 @@ import re
 import glob
 import logging
 import numpy as np
-from typing import TypeAlias, Optional, Any
+from typing import Optional, Any
+from typing_extensions import TypeAlias
 
 from nomad.units import ureg
 from nomad.parsing.file_parser.text_parser import TextParser, Quantity
