@@ -21,7 +21,7 @@ import re
 import glob
 import logging
 import numpy as np
-from typing import Optional, Any
+from typing import TypeAlias, Optional, Any
 
 from nomad.units import ureg
 from nomad.parsing.file_parser.text_parser import TextParser, Quantity
@@ -38,7 +38,7 @@ from runschema.calculation import (
 from simulationworkflowschema import SinglePoint
 
 # Use numpy types as a parent type of pint
-type KPoint = np.ndarray[Any, np.dtype[np.float64]]
+KPoint: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
 
 # Regular expressions
 re_f = r'[-+]?\d+\.\d*(?:[Ee][-+]\d+)?'
