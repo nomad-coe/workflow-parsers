@@ -491,6 +491,7 @@ class QuantumEspressoBandsParser:
 
         if (band_gap := self.pwscf_parser.get('band_gap')) is not None:
             sec_energy.band_gap = [EnergyEntry(value=band_gap)]
+
         # Extract band structure data
         kpoints = self.bands_parser.get('kpoint', [])
         symmetries = self.bands_parser.get('symmetry', [])
@@ -535,7 +536,7 @@ class QuantumEspressoBandsParser:
                 # Add reference to Fermi energy
                 if fermi_energy is not None:
                     sec_calc.band_structure_electronic[-1].fermi = (
-                        fermi_energy * ureg.eV
+                        fermi_energy
                     )
             else:
                 self.logger.warning(
