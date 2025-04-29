@@ -261,7 +261,9 @@ class BandsFileParser(TextParser):
             return window[1:] + (elem,)
 
         previous_kpoint: Optional[KPoint] = None
-        symmetry_window: tuple[Optional[str], Optional[str], Optional[str]] = (None,) * 3
+        symmetry_window: tuple[Optional[str], Optional[str], Optional[str]] = (
+            None,
+        ) * 3
 
         segments: list[list[KPoint]] = [[]]  # segments are lists of k-point paths
         for kpoint, symmetry in zip(kpoints, symmetries):
@@ -488,7 +490,9 @@ class QuantumEspressoBandsParser:
         if (highest_occupied := self.pwscf_parser.get('highest_occupied')) is not None:
             sec_energy.highest_occupied = highest_occupied
 
-        if (lowest_unoccupied := self.pwscf_parser.get('lowest_unoccupied')) is not None:
+        if (
+            lowest_unoccupied := self.pwscf_parser.get('lowest_unoccupied')
+        ) is not None:
             sec_energy.lowest_unoccupied = lowest_unoccupied
 
         if (band_gap := self.pwscf_parser.get('band_gap')) is not None:
@@ -537,9 +541,7 @@ class QuantumEspressoBandsParser:
 
                 # Add reference to Fermi energy
                 if fermi_energy is not None:
-                    sec_calc.band_structure_electronic[-1].fermi = (
-                        fermi_energy
-                    )
+                    sec_calc.band_structure_electronic[-1].fermi = fermi_energy
             else:
                 self.logger.warning(
                     'Missing reciprocal lattice vectors for band structure.'
