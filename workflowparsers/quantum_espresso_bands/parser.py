@@ -21,22 +21,24 @@ import re
 import glob
 import logging
 import numpy as np
-from typing import Optional, List, Dict, Any, Tuple
+from typing import Optional, Any
 
 from nomad.units import ureg
 from nomad.parsing.file_parser.text_parser import TextParser, Quantity
-from runschema.run import Run, Program, TimeRun
+from runschema.run import Run, Program
 from runschema.method import Method, Electronic, DFT, XCFunctional
 from runschema.system import System, Atoms
 from runschema.calculation import (
     Calculation,
     BandEnergies,
     BandStructure,
-    BandGapDeprecated,
     Energy,
     EnergyEntry,
 )
 from simulationworkflowschema import SinglePoint
+
+# Use numpy types as a parent type of pint
+type KPoint = np.ndarray[Any, np.dtype[np.float64]]
 
 # Regular expressions
 re_f = r'[-+]?\d+\.\d*(?:[Ee][-+]\d+)?'
@@ -252,17 +254,17 @@ class BandsFileParser(TextParser):
         return 'unknown'
 
     @staticmethod
-    def points_to_segments(kpoints: list, symmetries: list) -> list[list[list[float]]]:
-        """Split the kpoints by segment based on differing symmetry group."""
+    def points_to_segments(kpoints: list, symmetries: list) -> list[list[KPoint]]:
+        """Split the k-points by segment based on differing symmetry group."""
 
         def shift_window(window: tuple, elem) -> tuple:
             return window[1:] + (elem,)
 
-        previous_point: Optional[list[float]] = None
-        symmetry_window: tuple[Optional[str]] = (None,) * 3
+        previous_kpoint: Optional[KPoint] = None
+        symmetry_window: tuple[Optional[str], Optional[str], Optional[str]] = (None,) * 3
 
-        segments: list[list[np.ndarray[float]]] = [[]]
-        for point, symmetry in zip(kpoints, symmetries):
+        segments: list[list[KPoint]] = [[]]  # segments are lists of k-point paths
+        for kpoint, symmetry in zip(kpoints, symmetries):
             symmetry_window = shift_window(symmetry_window, symmetry)
             # case enumeration for `symmetry_window`:
             # 1. (None, None, None) -> not possible
@@ -277,19 +279,19 @@ class BandsFileParser(TextParser):
             if (None not in symmetry_window) and all(
                 [symmetry_window[i] != symmetry_window[i + 1] for i in range(2)]
             ):
-                segments.append([previous_point])
-            segments[-1].append(point)
-            previous_point = point
+                segments.append([previous_kpoint])
+            segments[-1].append(kpoint)
+            previous_kpoint = kpoint
         return segments
 
     @staticmethod
     def apply_multiplicity(
-        energies: list[list[float]], multiplicity: list[int]
+        energies: list[list[float]], mults: list[list[int]]
     ) -> list[list[float]]:
         """Apply band multiplicity to energies."""
         return [
             [e for e, m in zip(energy, mult) for _ in range(m)]
-            for energy, mult in zip(energies, multiplicity)
+            for energy, mult in zip(energies, mults)
         ]
 
 
