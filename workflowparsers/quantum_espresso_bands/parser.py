@@ -186,6 +186,13 @@ class BandsFileParser(TextParser):
                     ],
                 ),
             ),
+            Quantity(
+                'failed_symmetry',
+                r'(zone border point and non-symmorphic group)',
+                repeats=True,
+                dtype=str,
+                default='',
+            ),
         ]
 
     @staticmethod
@@ -300,6 +307,11 @@ class QuantumEspressoBandsParser:
             raise
 
         self.bands_parser.parse()
+        if self.bands_parser.get('failed_symmetry'):
+            self.logger.warning(
+                'Failed symmetry analysis detected for some k-points.'
+                'This may lead to missing k-points or even k-path segments.'
+            )
         self._process_data()
 
     def _process_data(self):
