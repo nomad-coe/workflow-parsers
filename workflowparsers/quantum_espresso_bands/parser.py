@@ -149,33 +149,20 @@ class QuantumEspressoBandsParser:
     def __init__(self):
         self.bands_parser = MainfileParser()
 
-    def _find_files(self) -> Optional[str]:
-        """Find BANDS and PWSCF files in the directory."""
+    def get_mainfile_keys(self, filename: str, decoded_buffer: str) -> bool | list[str]:
         pw_patt = re.compile(r'Program PWSCF')
         scf_patt = re.compile(r'Self-consistent Calculation')
+        band_patt = re.compile(r'Band Structure Calculation')
 
-        out_files = self.bands_parser.scan_dir_for_files(self.maindir)
-        pwscf_file = ''
-
-        for filepath in out_files:
-            with open(filepath, 'r') as f:
-                f.readline()  # Skip the first line
-                if not pw_patt.search(f.readline()):
-                    continue
-
-                for line in f:
-                    if scf_patt.search(line):
-                        if pwscf_file:
-                            self.logger.error(
-                                f'Multiple PWSCF files with self-consistent calculations found in {self.maindir}. '
-                                f'Cannot determine which one to use for electronic structure information. '
-                                f'Files: {", ".join([pwscf_file, filepath])}'
-                            )
-                            return None
-                        else:
-                            pwscf_file = filepath
-
-        return pwscf_file if pwscf_file else None
+        if pw_patt.search(decoded_buffer):
+            if scf_patt.search(decoded_buffer):
+                return ['bs_analysis_pwscf']
+            elif band_patt.search(decoded_buffer):
+                return ['bs_analysis_bands']
+                # this step is currently not analyzed, but covers some edge cases:
+                # 1. no analysis was performed on the band structure
+                # 2. the symmetry analysis failed
+        return False
 
     def parse(self, filepath, archive, logger):
         """
