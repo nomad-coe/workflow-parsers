@@ -26,6 +26,8 @@ from typing_extensions import TypeAlias
 
 from nomad.units import ureg
 from nomad.parsing.file_parser.text_parser import TextParser, Quantity
+from nomad.search import search
+from nomad.app.v1.models import MetadataRequired
 from runschema.run import Run, Program
 from runschema.method import Method, Electronic, DFT, XCFunctional
 from runschema.system import System, Atoms
@@ -33,13 +35,15 @@ from runschema.calculation import (
     Calculation,
     BandEnergies,
     BandStructure,
-    Energy,
+    BandGapDeprecated,
     EnergyEntry,
 )
 from simulationworkflowschema import SinglePoint
 
 # Use numpy types as a parent type of pint
 KPoint: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
+
+re_f = r'[-+]?\d*\.\d+|\d+'
 
 
 class MainfileParser(TextParser):
@@ -148,6 +152,7 @@ class QuantumEspressoBandsParser:
 
     def __init__(self):
         self.bands_parser = MainfileParser()
+        self.pwscf_entry_id = None
 
     def get_mainfile_keys(self, filename: str, decoded_buffer: str) -> bool | list[str]:
         pw_patt = re.compile(r'Program PWSCF')
@@ -178,39 +183,42 @@ class QuantumEspressoBandsParser:
         self.logger = logger if logger is not None else logging
         self.archive = archive
 
-        # Find PWSCF files and parse
-        try:
-            if (pwscf_file := self._find_files()) is not None:
-                self.pwscf_parser.mainfile = pwscf_file
-                self.pwscf_parser.parse()
-            else:
-                self.logger.warning(
-                    'No PWSCF file with self-consistent calculation found. '
-                    'Electronic structure information will be incomplete.'
-                )
-        except ValueError as e:
-            self.logger.error(str(e))
-            return None
-
         self.bands_parser.parse()
+
         if self.bands_parser.get('failed_symmetry'):
             self.logger.warning(
                 'Failed symmetry analysis detected for some k-points.'
                 'This may lead to missing k-points or even k-path segments.'
             )
-        self._process_data()
 
-    def _process_data(self):
-        """Process the parsed data and create the archive structure."""
+        # Search NOMAD for matching SCF entry
+        upload_id = self.archive.metadata.upload_id
+        search_hits_data = search(
+            owner='visible',
+            user_id=self.archive.metadata.main_author.user_id,
+            query={'upload_id': upload_id},
+            required=MetadataRequired(include=['entry_id', 'mainfile']),
+        ).data
+        try:
+            self.pwscf_entry_id = search_hits_data[0]['entry_id']
+            search_hit = self.archive.m_context.load_archive(
+                self.pwscf_entry, upload_id, None
+            )
+        except (IndexError, AttributeError):
+            self.logger.warning(
+                'No matching SCF entry found in the same entry.'
+                'Parsing of the band structure will be incomplete.'
+            )
+            return None
+        # TODO: handle multiple hits
+
         sec_run = Run(program=Program(name='Quantum ESPRESSO BANDS'))
         sec_run.program.version = self.bands_parser.get('program_version')
         self.archive.run.append(sec_run)
 
-        if self.pwscf_parser.results:
-            self._create_system_section(sec_run)
+        self._create_calculation_section(sec_run, search_hit)
+        self._create_system_section(sec_run)
         self._create_method_section(sec_run)
-        self._create_calculation_section(sec_run)
-        self.archive.workflow2 = SinglePoint()
 
     def _create_system_section(self, sec_run):
         """Create the system section from PWSCF data."""
@@ -232,22 +240,6 @@ class QuantumEspressoBandsParser:
                     2 * np.pi / alat
                 )
 
-        # Add atom positions and labels (if available)
-        atom_data = self.pwscf_parser.get('atom_labels_positions')
-        if atom_data:
-            labels = atom_data.get('labels')
-            positions = atom_data.get('positions')
-            if labels and positions:
-                sec_atoms.labels = labels
-                if alat is not None:
-                    sec_atoms.positions = positions * alat
-                else:
-                    sec_atoms.positions = positions
-
-        n_atoms = self.pwscf_parser.get('n_atoms')
-        if n_atoms is not None:
-            sec_system.atoms.n_atoms = n_atoms
-
     def _create_method_section(self, sec_run):
         """Create the method section."""
         sec_method = Method()
@@ -255,7 +247,6 @@ class QuantumEspressoBandsParser:
 
         sec_electronic = Electronic()
         sec_method.electronic = sec_electronic
-        sec_electronic.method = 'DFT'
 
         n_electrons = self.pwscf_parser.get('number_of_electrons')
         if n_electrons is not None:
@@ -265,11 +256,7 @@ class QuantumEspressoBandsParser:
         if n_bands is not None:
             sec_electronic.n_bands = n_bands
 
-        xc_functional = self.pwscf_parser.get('xc_functional')
-        if xc_functional is not None:
-            sec_method.dft = DFT(xc_functional=XCFunctional(name=xc_functional))
-
-    def _create_calculation_section(self, sec_run):
+    def _create_calculation_section(self, sec_run: Run, search_hit: ArchiveSection):
         """Create the calculation section with band structure data."""
         sec_calc = Calculation()
         sec_run.calculation.append(sec_calc)
@@ -280,71 +267,64 @@ class QuantumEspressoBandsParser:
         if sec_run.method:
             sec_calc.method_ref = sec_run.method[-1]
 
-        # Create energy section and add Fermi energy or band gap if available
-        sec_energy = Energy()
-        sec_calc.energy = sec_energy
-
-        if (fermi_energy := self.pwscf_parser.get('fermi_energy')) is not None:
-            sec_energy.fermi = fermi_energy
-
-        if (highest_occupied := self.pwscf_parser.get('highest_occupied')) is not None:
-            sec_energy.highest_occupied = highest_occupied
-
-        if (
-            lowest_unoccupied := self.pwscf_parser.get('lowest_unoccupied')
-        ) is not None:
-            sec_energy.lowest_unoccupied = lowest_unoccupied
-
-        if (band_gap := self.pwscf_parser.get('band_gap')) is not None:
-            sec_energy.band_gap = [EnergyEntry(value=band_gap)]
-
         # Extract band structure data
         kpoints = self.bands_parser.get('kpoint', [])
         symmetries = self.bands_parser.get('symmetry', [])
-        bands = self.bands_parser.get('band', [])
-
-        if kpoints and symmetries and bands:
-            band_segments = []
+        if len(kpoints) == len(symmetries):
             kpoint_segments = self.bands_parser.points_to_segments(kpoints, symmetries)
+        else:
+            self.logger.error(
+                'Mismatch between number of k-points and symmetry labels.'
+                'Unable to create band structure segments.'
+            )
+            return None
 
-            for kpath in kpoint_segments:
-                band_split = len(kpath)
-                band_selection, bands = bands[:band_split], bands[band_split - 1 :]
+        band_segments = []
+        bands = self.bands_parser.get('band', [])
+        for kpath in kpoint_segments:
+            band_split = len(kpath)
+            band_selection, bands = bands[:band_split], bands[band_split - 1 :]
 
-                # Apply multiplicity to energies
-                desymm_energies = self.bands_parser.apply_multiplicity(
-                    [b.get('energy', []) * ureg.eV for b in band_selection],
-                    [b.get('mult', []) for b in band_selection],
-                )
+            desymm_energies = self.bands_parser.apply_multiplicity(
+                [b.get('energy', []) * ureg.eV for b in band_selection],
+                [b.get('mult', []) for b in band_selection],
+            )  # Apply multiplicity to energies
 
-                # Create band energies for this segment
-                band_energy = BandEnergies(
-                    kpoints=kpath,
-                    energies=[desymm_energies],
-                )
-                band_segments.append(band_energy)
+            band_energy = BandEnergies(
+                kpoints=kpath,
+                energies=[desymm_energies],
+            )
+            band_segments.append(band_energy)
 
-            # Add band structure to calculation
-            if (
-                sec_run.system
-                and sec_run.system[-1].atoms.lattice_vectors_reciprocal is not None
-            ):
-                sec_calc.band_structure_electronic.append(
-                    BandStructure(
-                        segment=band_segments,
-                        reciprocal_cell=sec_run.system[
-                            -1
-                        ].atoms.lattice_vectors_reciprocal,
-                    )
-                )
+        sec_band_structure = BandStructure(segment=band_segments, band_gap=[])
+        sec_calc.band_structure_electronic.append(sec_band_structure)
 
-                # Add reference to Fermi energy
-                if fermi_energy is not None:
-                    sec_calc.band_structure_electronic[-1].fermi = fermi_energy
-            else:
-                self.logger.warning(
-                    'Missing reciprocal lattice vectors for band structure.'
-                )
+        # Add reciprocal cell and alignment energies from reference SCF
+        try:
+            sec_band_structure.reciprocal_cell = search_hit.run.system[
+                    -1
+                ].atoms.lattice_vectors_reciprocal
+        except (IndexError, AttributeError):
+            self.logger.warning(f'No reciprocal lattice found in reference SCF (entry_id: {self.pwscf_entry_id}).')
+
+        try:
+            # TODO: handle multiple band gaps
+            search_hit_bg = search_hit.results.properties.electronic.band_gap[0]
+        except (IndexError, AttributeError):
+            self.logger.error(f'No energy alignment data found in reference SCF (entry_id: {self.pwscf_entry_id}).')
+
+        if (eho := search_hit_bg.energy_highest_occupied) is not None:
+            sec_band_structure.energy_fermi = eho
+            sec_band_gap = BandGapDeprecated(energy_highest_occupied=eho)
+            sec_band_structure.band_gap.append(sec_band_gap)
+        else:
+            self.logger.error(f'No energy alignment data found in reference SCF (entry_id: {self.pwscf_entry_id}).')
+
+        if (elu := search_hit_bg.energy_lowest_unoccupied) is not None:
+            sec_band_gap.energy_lowest_unoccupied = elu
+            sec_band_gap.value = sec_band_gap.energy_highest_occupied - sec_band_gap.energy_lowest_unoccupied
+        else:
+            self.logger.warning(f'No LUMO found in reference SCF (entry_id: {self.pwscf_entry_id}).')
 
     def _extract_reference_energy(self, sec_energy, band_energies=None):
         """
