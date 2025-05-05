@@ -41,109 +41,8 @@ from simulationworkflowschema import SinglePoint
 # Use numpy types as a parent type of pint
 KPoint: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
 
-# Regular expressions
-re_f = r'[-+]?\d+\.\d*(?:[Ee][-+]\d+)?'
-
 
 class MainfileParser(TextParser):
-    """Parser for PWSCF output file to extract data related to band structure calculations."""
-
-    def init_quantities(self):
-        self._quantities = [
-            Quantity(
-                'program_version',
-                r'Program\s*(\w+\s*v\.\S+\s*(?:\(svn rev\.\s*\d+\))*)',
-            ),
-            Quantity(
-                'start_date_time',
-                r'starts (?:on|\.\.\.\s*Today is)\s*(\w+)\s*at\s*([\d: ]+)',
-                flatten=False,
-            ),
-            # Lattice information
-            Quantity(
-                'alat',
-                rf'lattice parameter \((?:alat|a_0)\)\s*=\s*({re_f})',
-                unit='bohr',
-                dtype=float,
-            ),
-            Quantity(
-                'simulation_cell',
-                r'a\(1\) = \(([\-\d\. ]+)\)\s*a\(2\) = \(([\-\d\. ]+)\)\s*a\(3\) = \(([\-\d\. ]+)\)\s*',
-                dtype=float,
-                shape=(3, 3),
-            ),
-            Quantity(
-                'reciprocal_cell',
-                r'b\(1\) = \(([\-\d\. ]+)\)\s*b\(2\) = \(([\-\d\. ]+)\)\s*b\(3\) = \(([\-\d\. ]+)\)\s*',
-                dtype=float,
-                shape=(3, 3),
-            ),
-            # Electronic structure information
-            Quantity(
-                'number_of_electrons',
-                rf'number of electrons\s*=\s*({re_f})',
-                dtype=float,
-            ),
-            Quantity(
-                'number_of_bands',
-                r'number of Kohn-Sham states\s*=\s*(\d+)',
-                dtype=int,
-            ),
-            Quantity(
-                'fermi_energy',
-                rf'the\s+Fermi\s+energy\s+is\s+({re_f})\s+ev',
-                dtype=float,
-                unit='eV',
-            ),
-            Quantity(
-                'highest_occupied',
-                rf'highest\s+occupied\s+level\s+\(ev\):\s+({re_f})',
-                dtype=float,
-                unit='eV',
-            ),
-            Quantity(
-                'lowest_unoccupied',
-                rf'lowest\s+unoccupied\s+level\s+\(ev\):\s+({re_f})',
-                dtype=float,
-                unit='eV',
-            ),
-            Quantity(
-                'band_gap',
-                rf'the\s+gap\s+is\s+({re_f})\s+ev',
-                dtype=float,
-                unit='eV',
-            ),
-            # Positions and atomic information
-            Quantity(
-                'n_atoms',
-                r'number of atoms/cell\s*=\s*(\d+)',
-                dtype=int,
-            ),
-            Quantity(
-                'atom_labels_positions',
-                r'site n.\s+atom\s+positions \(alat units\)([\s\S]+?)\n\s*\n',
-                sub_parser=TextParser(
-                    quantities=[
-                        Quantity('labels', r'\d+\s+(\w+)', repeats=True),
-                        Quantity(
-                            'positions',
-                            rf'tau\(\s*\d+\s*\)\s*=\s*\(\s*({re_f})\s+({re_f})\s+({re_f})',
-                            repeats=True,
-                            dtype=float,
-                        ),
-                    ]
-                ),
-            ),
-            # XC functional information
-            Quantity(
-                'xc_functional',
-                r'Exchange-correlation\s*=\s*(.+)',
-                flatten=False,
-            ),
-        ]
-
-
-class BandsFileParser(TextParser):
     """Parser for Quantum ESPRESSO BANDS output files."""
 
     def init_quantities(self):
@@ -248,8 +147,7 @@ class QuantumEspressoBandsParser:
     """Parser for Quantum ESPRESSO BANDS calculations."""
 
     def __init__(self):
-        self.bands_parser = BandsFileParser()
-        self.pwscf_parser = MainfileParser()
+        self.bands_parser = MainfileParser()
 
     def _find_files(self) -> Optional[str]:
         """Find BANDS and PWSCF files in the directory."""
