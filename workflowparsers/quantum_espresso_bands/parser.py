@@ -267,14 +267,15 @@ class QuantumEspressoBandsParser:
 
                 for line in f:
                     if scf_patt.search(line):
-                        if not pwscf_file:
-                            pwscf_file = filepath
-                        else:
-                            raise ValueError(
+                        if pwscf_file:
+                            self.logger.error(
                                 f'Multiple PWSCF files with self-consistent calculations found in {self.maindir}. '
                                 f'Cannot determine which one to use for electronic structure information. '
                                 f'Files: {", ".join([pwscf_file, filepath])}'
                             )
+                            return None
+                        else:
+                            pwscf_file = filepath
 
         return pwscf_file if pwscf_file else None
 
@@ -304,7 +305,7 @@ class QuantumEspressoBandsParser:
                 )
         except ValueError as e:
             self.logger.error(str(e))
-            raise
+            return None
 
         self.bands_parser.parse()
         if self.bands_parser.get('failed_symmetry'):
