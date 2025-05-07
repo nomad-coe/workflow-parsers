@@ -27,6 +27,7 @@ from runschema.run import Run, Program, TimeRun
 from runschema.method import Method, Electronic, KMesh, AtomParameters
 from runschema.system import System, Atoms
 from runschema.calculation import Calculation, Energy
+from simulationworkflowschema import SinglePoint
 from .metainfo.quantum_espresso_epw import (
     x_qe_epw_irreducible_q_point,
     x_qe_epw_self_energy_migdal,
@@ -499,16 +500,16 @@ class QuantumEspressoEPWParser:
             alat = self.mainfile_parser.lattice_parameter
             lattice_vectors = self.mainfile_parser.lattice_vectors
             if lattice_vectors is not None:
-                sec_atoms.lattice_vectors = np.dot(
-                    lattice_vectors, alat.magnitude
-                ) * alat.units
+                sec_atoms.lattice_vectors = (
+                    np.dot(lattice_vectors, alat.magnitude) * alat.units
+                )
 
             cartesian_axes = self.mainfile_parser.cartesian_axes
             if cartesian_axes is not None:
                 sec_atoms.labels = cartesian_axes[0]
-                sec_atoms.positions = np.dot(
-                    cartesian_axes[2], alat.magnitude
-                ) * alat.units
+                sec_atoms.positions = (
+                    np.dot(cartesian_axes[2], alat.magnitude) * alat.units
+                )
 
             system_keys = [
                 'bravais_lattice_index',
@@ -585,3 +586,5 @@ class QuantumEspressoEPWParser:
                 sec_timing.x_qe_epw_cpu_time = timing[1]
                 sec_timing.x_qe_epw_wall_time = timing[2]
                 sec_timing.x_qe_epw_n_calls = timing[3]
+
+        archive.workflow2 = SinglePoint()
