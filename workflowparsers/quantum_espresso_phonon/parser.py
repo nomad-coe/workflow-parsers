@@ -26,6 +26,7 @@ from runschema.run import Run, Program
 from runschema.method import Method, AtomParameters, Electronic, Smearing
 from runschema.system import System, Atoms
 from runschema.calculation import Calculation, VibrationalFrequencies
+from simulationworkflowschema import Phonon
 
 from .metainfo.quantum_espresso_phonon import (
     x_qe_phonon_n_parallel,
@@ -481,3 +482,5 @@ class QuantumEspressoPhononParser:
                                         n * n_modes : n * n_modes + 2
                                     ]
                                 )
+
+        archive.workflow2 = Phonon()
