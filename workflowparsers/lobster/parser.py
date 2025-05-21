@@ -32,6 +32,7 @@ from runschema.method import (
     BasisSet,
     BasisSetContainer,
 )
+from simulationworkflowschema import SinglePoint
 from runschema.calculation import Calculation, Dos, DosValues, Charges
 
 from nomad.parsing.file_parser import TextParser, Quantity
@@ -940,6 +941,9 @@ class LobsterParser:
         parse_DOSCAR(get_lobster_file(mainfile_path + '/DOSCAR.lobster'), run, logger)
 
         parse_DOSCAR(get_lobster_file(mainfile_path + '/DOSCAR.LSO.lobster'), run, logger)
+
+        workflow = SinglePoint()
+        archive.workflow2 = workflow
 
         if run.system:
             scc.system_ref = run.system[0]
