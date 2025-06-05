@@ -17,8 +17,8 @@ m_package = SchemaPackage()
 
 class LOBSTERWorkflow(SimulationWorkflow):
     """
-    A base section used to define LOBSTER workflows. These workflows are used to analyze bonds in materials. 
-    It involves a single point DFT run to generate wavefunction followed by projection of this wavefunction 
+    A base section used to define LOBSTER workflows. These workflows are used to analyze bonds in materials.
+    It involves a single point DFT run to generate wavefunction followed by projection of this wavefunction
     on a local atomic orbital basis with LOBSTER program. Depending on number of available projection basis,
     LOBSTER runs can be more than one.
 
