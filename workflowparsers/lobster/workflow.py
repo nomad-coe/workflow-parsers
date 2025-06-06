@@ -23,7 +23,7 @@ class LOBSTERWorkflow(SimulationWorkflow):
         description='Name of the workflow. Default set to `LOBSTER`.',
     )
 
-    def normalize(self, archive: EntryArchive, logger: logging) -> None:
+    def normalize(self, archive: EntryArchive, logger: logging.Logger) -> None:
         super().normalize(archive, logger)
 
 
