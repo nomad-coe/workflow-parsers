@@ -20,7 +20,7 @@ class LOBSTERWorkflow(SimulationWorkflow):
     name = Quantity(
         type=str,
         default='LOBSTER Workflow',
-        description='Name of the workflow. Default set to `LOBSTER`.',
+        description='Name of the workflow. Default set to `LOBSTER Workflow`.',
     )
 
     def normalize(self, archive: EntryArchive, logger: logging.Logger) -> None:
