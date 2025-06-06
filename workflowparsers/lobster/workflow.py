@@ -1,11 +1,12 @@
 import logging
+from nomad.utils import configure_logging
 from nomad.datamodel.datamodel import EntryArchive
 from nomad.metainfo import SchemaPackage, Quantity
 from simulationworkflowschema.general import SimulationWorkflow
 
 m_package = SchemaPackage()
 
-
+configure_logging(console_log_level=logging.DEBUG)
 
 class LOBSTERWorkflow(SimulationWorkflow):
     """
@@ -22,7 +23,7 @@ class LOBSTERWorkflow(SimulationWorkflow):
         description='Name of the workflow. Default set to `LOBSTER`.',
     )
 
-    def normalize(self, archive: EntryArchive, logger: logging.DEBUG) -> None:
+    def normalize(self, archive: EntryArchive, logger: logging) -> None:
         super().normalize(archive, logger)
 
 
