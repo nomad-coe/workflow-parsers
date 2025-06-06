@@ -213,6 +213,24 @@ lobster_parser_entry_point = EntryPoint(
     },
 )
 
+lobster_workflow_entry_point = EntryPoint(
+    name='parsers/lobster',
+    aliases=['parsers/lobster'],
+    description='NOMAD parser for LOBSTER workflow.',
+    python_package='workflowparsers.lobster.workflow',
+    mainfile_name_re='.*archive.yaml*',
+    supported_compressions=['gz', 'bz2', 'xz'],
+    parser_class_name='workflowparsers.lobster.workflow.LOBSTERWorkflow',
+    code_category='Workflow manager',
+    metadata={
+        'codeCategory': 'Workflow manager',
+        'parserDirName': 'dependencies/workflow/workflowparsers/lobster/',
+        'parserGitUrl': 'https://github.com/nomad-coe/workflow-parsers.git',
+        'preamble': '',
+        'status': 'production',
+    },
+)
+
 phonopy_parser_entry_point = EntryPoint(
     name='parsers/phonopy',
     aliases=['parsers/phonopy'],
