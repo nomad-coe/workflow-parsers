@@ -1,8 +1,19 @@
 import os
 import yaml
+from monty.os.path import zpath
 
-def generate_vasp_lobster_workflow_yaml(parent_directory, filename="workflow.archive.yaml",
+def generate_vasp_lobster_workflow_yaml(parent_directory,
+                                        filename="workflow.archive.yaml",
                                         output_path="."):
+    """
+    Helper function to generate workflow yaml files from LOBSTER calc directory.
+
+    The calc directory contains both VASP and LOBSTER run files. If multiple
+    directories are found in the provided parent_directory,
+    all will be grouped together. Thus, please ensure that the directories contain calculation files
+    of the same structure with different projection basis in LOBSTER runs
+    to work as expected.
+    """
 
     # Check if directory exists
     if not os.path.isdir(parent_directory):
@@ -22,11 +33,17 @@ def generate_vasp_lobster_workflow_yaml(parent_directory, filename="workflow.arc
     inputs = []
     outputs = []
 
-    #if os.path.exists(get_lobster_file(f"{parent_directory}/{dirs[0]}/")
-
     # Define a single DFT run task (using the first directory for paths)
     ref_dir = dirs[0]
-    vasprun_path = f"../upload/archive/mainfile/{ref_dir}/vasprun.xml.gz"
+    local_vasprun_path = zpath(os.path.join(parent_directory, ref_dir, "vasprun.xml"))
+
+    if os.path.isfile(local_vasprun_path):
+        vasprun_file_name = os.path.basename(local_vasprun_path)
+    else:
+        raise ValueError(f"vasprun.xml file not found in the {ref_dir} directory required"
+                         " for generating the LOBSTERWorkflow yaml")
+
+    vasprun_path = f"../upload/archive/mainfile/{ref_dir}/{vasprun_file_name}"
 
     dft_task = {
         'm_def': 'nomad.datamodel.metainfo.workflow.TaskReference',
@@ -51,7 +68,15 @@ def generate_vasp_lobster_workflow_yaml(parent_directory, filename="workflow.arc
 
     # Add LOBSTER run tasks for each directory
     for i, d in enumerate(dirs):
-        lobsterout_path = f"../upload/archive/mainfile/{d}/lobsterout.gz"
+        local_lobsterout_path = zpath(os.path.join(parent_directory, ref_dir, "lobsterout"))
+
+        if os.path.isfile(local_lobsterout_path):
+            lobsterout_file_name = os.path.basename(zpath(os.path.join(parent_directory, ref_dir, "lobsterout")))
+        else:
+            raise ValueError(f"lobsterout file not found in the {d} directory required"
+                             " for generating the LOBSTERWorkflow yaml")
+
+        lobsterout_path = f"../upload/archive/mainfile/{d}/{lobsterout_file_name}"
 
         lobster_task = {
             'task': f"{lobsterout_path}#/workflow2",
