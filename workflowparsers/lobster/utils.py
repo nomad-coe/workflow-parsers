@@ -35,7 +35,7 @@ def generate_vasp_lobster_workflow_yaml(parent_directory,
 
     # Check if directory exists
     if not os.path.isdir(parent_directory):
-        print(f"Directory '{parent_directory}' not found.")
+        print(f"Directory {parent_directory} not found.")
         return
 
     # List all subdirectories inside the given directory
@@ -44,7 +44,7 @@ def generate_vasp_lobster_workflow_yaml(parent_directory,
     dirs.sort()
 
     if not dirs:
-        print(f"No subdirectories found in '{parent_directory}'.")
+        print(f"No subdirectories found in {parent_directory}.")
         return
 
     tasks = []
