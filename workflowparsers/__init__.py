@@ -20,7 +20,6 @@ from pydantic import Field
 from typing import Optional
 
 from nomad.config.models.plugins import ParserEntryPoint
-from nomad.parsing import MatchingParserInterface
 
 
 class EntryPoint(ParserEntryPoint):
@@ -40,6 +39,8 @@ class EntryPoint(ParserEntryPoint):
     )
 
     def load(self):
+
+        from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
 
         return MatchingParserInterface(**self.dict())
 
