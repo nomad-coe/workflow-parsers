@@ -916,22 +916,22 @@ class LobsterParser:
                 ]
 
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , '/ICOHPLIST.lobster')), scc, 'hp',
+            get_lobster_file(os.path.join(mainfile_path , "ICOHPLIST.lobster")), scc, 'hp',
             version=run.program.version
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path ,'ICOOPLIST.lobster')), scc, 'op',
+            get_lobster_file(os.path.join(mainfile_path ,"ICOOPLIST.lobster")), scc, 'op',
             version=run.program.version
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , 'ICOBILIST.lobster')), scc, "bi",
+            get_lobster_file(os.path.join(mainfile_path , "ICOBILIST.lobster")), scc, "bi",
             version=run.program.version
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path , 'COHPCAR.lobster')), scc, 'hp', logger
+            get_lobster_file(os.path.join(mainfile_path , "COHPCAR.lobster")), scc, 'hp', logger
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path ,'COOPCAR.lobster')), scc, 'op', logger
+            get_lobster_file(os.path.join(mainfile_path ,"COOPCAR.lobster")), scc, 'op', logger
         )
         parse_COXPCAR(
             get_lobster_file(os.path.join(mainfile_path ,"COBICAR.lobster")), scc, "bi", logger
