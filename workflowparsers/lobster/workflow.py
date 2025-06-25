@@ -68,12 +68,10 @@ class LOBSTERWorkflow(SerialSimulation):
         # Append the charge spillings for each of the LOBSTER runs
         charge_spillings = []
         for output in self.outputs:
-            if output.section.x_lobster_abs_charge_spilling is not None:
+            if output.section is not None:
                 charge_spillings.append(
                     output.section.x_lobster_abs_charge_spilling
                 )
-            else:
-                charge_spillings.append(None)  # Handle missing values
 
         return charge_spillings
 
@@ -81,25 +79,16 @@ class LOBSTERWorkflow(SerialSimulation):
 
         super().normalize(archive, logger)
 
-        try:
-            self.charge_spillings = self.extract_charge_spillings(
-                logger=logger
-            )
-        except Exception:
-            logger.error('Could not set LOBSTERWorkflow.charge_spillings.')
-
+        self.charge_spillings = self.extract_charge_spillings(
+            logger=logger
+        )
 
         # Extract system name from input structure (chemical composition from DFT run)
+        archive.metadata.entry_type = 'LOBSTER Workflow'
         try:
             system_name = self.tasks[0].inputs[0].section.chemical_composition_hill
-        except (KeyError, IndexError, AttributeError):
-            system_name = None
-
-        # Dynamically set entry name
-        archive.metadata.entry_type = 'LOBSTER Workflow'
-        if system_name is not None:
             archive.metadata.entry_name = f'{system_name} LOBSTER Calculations'
-        else:
+        except (KeyError, IndexError, AttributeError):
             archive.metadata.entry_name = 'LOBSTER Calculations'
 
 m_package.__init_metainfo__()
