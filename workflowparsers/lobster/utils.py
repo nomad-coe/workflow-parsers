@@ -20,9 +20,11 @@ import os
 import yaml
 from monty.os.path import zpath
 
-def generate_vasp_lobster_workflow_yaml(parent_directory,
-                                        filename="workflow.archive.yaml",
-                                        output_path="."):
+def generate_vasp_lobster_workflow_yaml(
+    parent_directory,
+    filename="workflow.archive.yaml",
+    output_path="."
+    ):
     """
     Helper function to generate workflow yaml files from LOBSTER calc directory.
 
