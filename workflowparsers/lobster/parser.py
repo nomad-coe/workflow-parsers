@@ -1060,7 +1060,7 @@ class LobsterParser:
                         )
                         # add DFT run to workflow tasks
                         dft_task = TaskReference(task=entry_archive.workflow2)
-                        
+
                         # Extract DFT Inputs and Outputs
                         input_structure = extract_section(entry_archive, ['run', 'system'])
                         dft_calculation = extract_section(entry_archive, ['run', 'calculation'])
@@ -1084,7 +1084,7 @@ class LobsterParser:
             lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
             lobster_task.inputs = [
                 Link(
-                section=dft_task.outputs[0].section, 
+                section=dft_task.outputs[0].section,
                 name='Structure and PlaneWavefunctions')
                 ]
             lobster_task.outputs = [
