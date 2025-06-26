@@ -878,6 +878,24 @@ class LobsterParser:
         # Join the list back into a string
         return ''.join(char_list)
 
+    @staticmethod
+    def get_basis_function_dict(lobster_basis_species:list):
+        """
+        Returns a dict with specie symbol as key and projection basis functions as values.
+
+        Args:
+            lobster_basis_species (list): The input list.
+
+        Returns:
+            dict: The dictionary with per element projection basis functions.
+        """
+        specie_basis_function = {}
+        for specie_basis in lobster_basis_species:
+            specie_basis_function[specie_basis[0]] = specie_basis[2:]
+
+        return specie_basis_function
+
+
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         mainfile_parser.mainfile = mainfile
         mainfile_path = os.path.dirname(mainfile)
@@ -960,6 +978,12 @@ class LobsterParser:
 
         if (basis := mainfile_parser.get('x_lobster_basis')) is not None:
             if (species := basis.get('x_lobster_basis_species')) is not None:
+
+                # store projection basis used for calc (useful for filtering)
+                method.x_lobster_basis_functions = self.get_basis_function_dict(
+                    lobster_basis_species=species
+                )
+
                 basis_used = species[0][1]
                 # checks necessary as LOBSTER 5.1.1 writes basis names now in lower case
                 if basis_used == 'pbevaspfit2015':
