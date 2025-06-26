@@ -847,8 +847,8 @@ class LobsterParser:
 
     def get_mainfile_keys(self, **kwargs):
         filepath = kwargs.get('filename', '')
-        for filetype in ['OUTCAR', 'vasprun.xml']:
-            files = self.get_files(filetype, filepath)
+        for filetype in ['OUTCAR', 'vasp']:
+            files = self.get_files(f'{filetype}*', filepath)
             if files:
                 return ['workflow']
         return True
