@@ -39,7 +39,7 @@ class EntryPoint(ParserEntryPoint):
     )
 
     def load(self):
-        from nomad.parsing import MatchingParserInterface
+        from nomad.parsing import MatchingParserInterface  # noqa
 
         return MatchingParserInterface(**self.dict())
 
@@ -196,6 +196,7 @@ lobster_parser_entry_point = EntryPoint(
     mainfile_name_re='.*lobsterout.*',
     supported_compressions=['gz', 'bz2', 'xz'],
     parser_class_name='workflowparsers.lobster.LobsterParser',
+    level=2,
     code_name='LOBSTER',
     code_homepage='http://schmeling.ac.rwth-aachen.de/cohp/',
     code_category='Workflow manager',
