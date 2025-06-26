@@ -8,6 +8,5 @@ calculations (remember that you can provide more files if you want):
 |Input Filename| Description|
 |--- | --- |
 |`lobsterout` | **Mainfile** in LOBSTER specific plain-text |
-|`*.archive.yaml` | **Mainfile** in LOBSTER Workflow definition |
 
 
