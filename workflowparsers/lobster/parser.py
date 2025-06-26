@@ -827,7 +827,7 @@ mainfile_parser = TextParser(
 
 class LobsterParser:
     def __init__(self):
-        pass
+        self._child_archives = {}
 
     def get_files(self, pattern, filepath):
         for _ in range(10):
