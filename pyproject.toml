@@ -16,7 +16,7 @@ dependencies = [
     "lxml>=5.2",
     "asr==0.4.1",
     "xarray>=0.20.1",
-    "phonopy>=2.35",
+    "phonopy>=2.35,<=2.38",
     "h5py>=3.11.0",
     "pydantic>=1.10.8",
 ]
