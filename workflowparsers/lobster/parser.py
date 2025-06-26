@@ -1004,12 +1004,16 @@ class LobsterParser:
         )
         parse_COXPCAR(
             get_lobster_file(os.path.join(mainfile_path ,'COBICAR.lobster')), scc, 'bi', logger
-
-        parse_CHARGE(get_lobster_file(os.path.join(mainfile_path ,'CHARGE.lobster')), scc)
-
-        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.lobster')), run, logger)
-
-        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.LSO.lobster')), run, logger)
+        )
+        parse_CHARGE(
+            get_lobster_file(os.path.join(mainfile_path ,'CHARGE.lobster')), scc
+        )
+        parse_DOSCAR(
+            get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.lobster')), run, logger
+        )
+        parse_DOSCAR(
+            get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.LSO.lobster')), run, logger
+        )
 
 
         workflow = SinglePoint()
