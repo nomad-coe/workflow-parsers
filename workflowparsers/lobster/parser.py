@@ -23,6 +23,7 @@ import os
 
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
+from nomad.utils import extract_section
 from nomad.parsing.parsers import _compressions
 from runschema.run import Run, Program, TimeRun
 from runschema.system import System, Atoms
@@ -44,6 +45,7 @@ from .metainfo.lobster import (
     x_lobster_section_coop,
     x_lobster_section_cobi,
 )
+from .workflow import LOBSTERWorkflow
 
 """
 This is a LOBSTER code parser.
@@ -1025,7 +1027,8 @@ class LobsterParser:
         if self._child_archives:
             # link vasp entries to lobster in a generic workflow
             workflow_archive = self._child_archives.get('workflow')
-            workflow_archive.workflow2 = SimulationWorkflow()
+            workflow_archive.workflow2 = LOBSTERWorkflow()
+
             try:
                 from nomad.search import search  # noqa
                 from nomad.app.v1.models import MetadataRequired  # noqa
@@ -1055,22 +1058,44 @@ class LobsterParser:
                         entry_archive = archive.m_context.load_archive(
                             entry_id, upload_id, None
                         )
-                        # add vasp workflow to generic workflow tasks
-                        workflow_archive.workflow2.tasks.append(
-                            TaskReference(task=entry_archive.workflow2)
-                        )
+                        # add DFT run to workflow tasks
+                        dft_task = TaskReference(task=entry_archive.workflow2)
+                        
+                        # Extract DFT Inputs and Outputs
+                        input_structure = extract_section(entry_archive, ['run', 'system'])
+                        dft_calculation = extract_section(entry_archive, ['run', 'calculation'])
+
+                        dft_task.name = "DFT run"
+                        dft_task.inputs = [Link(section=input_structure, name='Input Structure')]
+                        dft_task.outputs = [
+                            Link(section=dft_calculation, name='Output DFT calculation')
+                        ]
+
+                        # Set the DFT task as an input for the workflow
+                        workflow_archive.workflow2.inputs = [Link(section=input_structure, name='Structure')]
+
+                        # add DFT task to the workflow tasks
+                        workflow_archive.workflow2.tasks.append(dft_task)
             except Exception:
                 logger.warning(f'Error linking VASP entries.')
 
-            # add lobster archive workflow to generic workflow tasks
-            workflow_archive.workflow2.tasks.append(
-                TaskReference(task=archive.workflow2)
-            )
+            # add lobster archive to the workflow tasks
+            lobster_calculation = extract_section(archive, ['run', 'calculation'])
+            lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
+            lobster_task.inputs = [
+                Link(
+                section=dft_task.outputs[0].section, 
+                name='Structure and PlaneWavefunctions')
+                ]
+            lobster_task.outputs = [
+                Link(section=lobster_calculation, name='Output LOBSTER calculation')
+            ]
+            workflow_archive.workflow2.tasks.append(lobster_task)
 
-            # add vasp task as input to lobster task
-            for task in workflow_archive.workflow2.tasks[:-1]:
-                archive.workflow2.inputs.append(Link(section=task.task))
-
-            # set in(out)puts of lobster to worklow outputs
-            workflow_archive.workflow2.inputs = archive.workflow2.inputs
-            workflow_archive.workflow2.outputs = archive.workflow2.outputs
+            # Set workflow outputs
+            workflow_archive.workflow2.outputs = [
+                    Link(
+                        section=lobster_task.outputs[0].section,
+                        name='LOBSTER Outputs'
+                    )
+            ]
