@@ -32,12 +32,18 @@ from runschema.method import (
     BasisSet,
     BasisSetContainer,
 )
-from simulationworkflowschema import SinglePoint
+from simulationworkflowschema import SinglePoint, SimulationWorkflow
+from nomad.datamodel.metainfo.workflow import TaskReference, Link
 from runschema.calculation import Calculation, Dos, DosValues, Charges
 
 from nomad.parsing.file_parser import TextParser, Quantity
+from glob import glob
 
-from .metainfo.lobster import x_lobster_section_cohp, x_lobster_section_coop, x_lobster_section_cobi
+from .metainfo.lobster import (
+    x_lobster_section_cohp,
+    x_lobster_section_coop,
+    x_lobster_section_cobi,
+)
 
 """
 This is a LOBSTER code parser.
@@ -56,7 +62,7 @@ def get_lobster_file(filename):
     return filename
 
 
-def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type:str):
+def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type: str):
     """
     Convert the COXP/ICOXP values to joules
 
@@ -75,12 +81,20 @@ def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type:str):
             [[orb_pair * conversion_factor] for orb_pair in bond]
             for bond in icoxp_pairs
         ]
-    elif data_type == 'hp' and isinstance(icoxp_pairs[0][0], tuple) and len(icoxp_pairs[0][0]) != 2:
+    elif (
+        data_type == 'hp'
+        and isinstance(icoxp_pairs[0][0], tuple)
+        and len(icoxp_pairs[0][0]) != 2
+    ):
         return [
             [[orb * conversion_factor for orb in orb_pair] for orb_pair in bond]
             for bond in icoxp_pairs
         ]
-    elif data_type == 'hp' and isinstance(icoxp_pairs[0][0], list) and len(icoxp_pairs[0][0]) == 2:
+    elif (
+        data_type == 'hp'
+        and isinstance(icoxp_pairs[0][0], list)
+        and len(icoxp_pairs[0][0]) == 2
+    ):
         return [
             [
                 [[spin * conversion_factor for spin in orb] for orb in orb_pair]
@@ -93,7 +107,6 @@ def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type:str):
 
 
 def parse_ICOXPLIST(fname, scc, method, version):
-
     def icoxp_line_split(string):
         tmp = string.split()
         # LOBSTER version 3 and above
@@ -130,20 +143,20 @@ def parse_ICOXPLIST(fname, scc, method, version):
         elif len(tmp) == 6:
             return [tmp[0], tmp[1], tmp[2], float(tmp[3]), float(tmp[4]), int(tmp[5])]
 
-    float_version = float(version.split(".")[0]+"."+version.split(".")[1])
+    float_version = float(version.split('.')[0] + '.' + version.split('.')[1])
     if 5 > float_version > 2:
         icoxplist_parser = TextParser(
             quantities=[
                 Quantity(
-                    "icoxpslist_for_spin",
-                    r" *(CO[O,H,B,I,P]).*spin *\d *([^#]+[-\d\.]+)",
+                    'icoxpslist_for_spin',
+                    r' *(CO[O,H,B,I,P]).*spin *\d *([^#]+[-\d\.]+)',
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
-                                "line",
+                                'line',
                                 # LOBSTER version 3 and above
-                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)",
+                                r'( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)',
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -152,19 +165,19 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 )
             ]
         )
-    elif float_version >=5:
+    elif float_version >= 5:
         icoxplist_parser = TextParser(
             quantities=[
                 Quantity(
-                    "icoxpslist_for_spin",
-                    r" *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)",
+                    'icoxpslist_for_spin',
+                    r' *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)',
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
-                                "line",
+                                'line',
                                 # LOBSTER version 5.1 and above
-                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ +[-\.\d]+)",
+                                r'( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ +[-\.\d]+)',
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -172,15 +185,15 @@ def parse_ICOXPLIST(fname, scc, method, version):
                     ),
                 ),
                 Quantity(
-                    "icoxpslist_for_nsp",
-                    r" *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)",
+                    'icoxpslist_for_nsp',
+                    r' *(CO[O,H,B,I,P]).*\n .*([^#]+[-\d\.]+)',
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
-                                "line",
+                                'line',
                                 # LOBSTER version 5.1 and above
-                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)",
+                                r'( *\d+ +\w+ +\w+ +[\.\d]+ +[-\d]+ +[-\d]+ +[-\d]+ +[-\.\d]+ *)',
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             )
@@ -193,15 +206,15 @@ def parse_ICOXPLIST(fname, scc, method, version):
         icoxplist_parser = TextParser(
             quantities=[
                 Quantity(
-                    "icoxpslist_for_spin",
-                    r" *(CO[OH]P).*spin *\d *([^#]+[-\d\.]+)",
+                    'icoxpslist_for_spin',
+                    r' *(CO[OH]P).*spin *\d *([^#]+[-\d\.]+)',
                     repeats=True,
                     sub_parser=TextParser(
                         quantities=[
                             Quantity(
-                                "line",
+                                'line',
                                 # LOBSTER versions below 3
-                                r"( *\d+ +\w+ +\w+ +[\.\d]+ +[-\.\d]+ +[\d]+ *)",
+                                r'( *\d+ +\w+ +\w+ +[\.\d]+ +[-\.\d]+ +[\d]+ *)',
                                 repeats=True,
                                 str_operation=icoxp_line_split,
                             ),
@@ -238,15 +251,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
         if raw_lines is None:
             break
 
-        lines = [x for x in raw_lines if x[1].count("_") == 0]
-
+        lines = [x for x in raw_lines if x[1].count('_') == 0]
 
         orb_data = {line[0]: [] for line in lines}
         atom_orb_pairs = {line[0]: [] for line in lines}
         atom_orb_icoxps = {line[0]: [] for line in lines}
 
         for line in raw_lines:
-            if line[1].count("_") > 0:
+            if line[1].count('_') > 0:
                 orb_data[line[0]].append(line[1:])
                 atom_orb_pairs[line[0]].append([line[1], line[2]])
                 atom_orb_icoxps[line[0]].append(line[-1])
@@ -254,8 +266,11 @@ def parse_ICOXPLIST(fname, scc, method, version):
         if atom_orb_icoxps:
             orb_icoxps = list(atom_orb_icoxps.values())
             if len(orb_icoxps[0]) > 0:
-                orb_icoxps = orb_coxp_icoxp_to_joule(icoxp_pairs=list(atom_orb_icoxps.values()),
-                                        conversion_factor=eV, data_type=method)
+                orb_icoxps = orb_coxp_icoxp_to_joule(
+                    icoxp_pairs=list(atom_orb_icoxps.values()),
+                    conversion_factor=eV,
+                    data_type=method,
+                )
             icoxps_orb_list.append(orb_icoxps)
             if list(atom_orb_pairs.values()) not in orb_pair_list:
                 orb_pair_list.append(list(atom_orb_pairs.values()))
@@ -273,7 +288,7 @@ def parse_ICOXPLIST(fname, scc, method, version):
             elif method == 'hp':
                 section = x_lobster_section_cohp()
                 scc.x_lobster_section_cohp = section
-            elif method == "bi":
+            elif method == 'bi':
                 section = x_lobster_section_cobi()
                 scc.x_lobster_section_cobi = section
 
@@ -302,7 +317,7 @@ def parse_ICOXPLIST(fname, scc, method, version):
         setattr(
             section,
             'x_lobster_integrated_co{}_at_fermi_level'.format(method),
-             np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
+            np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
         )
     elif len(icoxp) > 0 and isinstance(icoxp[0][0], np.ndarray):
         setattr(
@@ -311,7 +326,7 @@ def parse_ICOXPLIST(fname, scc, method, version):
             np.array(icoxp[0]).T * units.eV if method == 'hp' else np.array(icoxp[0]).T,
         )
 
-    if len(icoxps_orb_list)> 0:
+    if len(icoxps_orb_list) > 0:
         setattr(
             section,
             'x_lobster_integrated_orbital_co{}_at_fermi_level'.format(method),
@@ -325,7 +340,6 @@ def parse_ICOXPLIST(fname, scc, method, version):
 
 
 def parse_COXPCAR(fname, scc, method, logger):
-
     def _separate_orbital_data(pairs_list, coxp_lines_list):
         """
         Separate the data for atom pairs cohps and atom orbitals cohps
@@ -335,29 +349,32 @@ def parse_COXPCAR(fname, scc, method, logger):
             coxp_lines_list: list of COXP lines
         """
         # Filter average coxp/icoxp for spin up and spin down
-        filtered_coxp_lines = coxp_lines_list[3: (len(pairs_list)*2)+3] + coxp_lines_list[(len(pairs_list)*2)+5:]
+        filtered_coxp_lines = (
+            coxp_lines_list[3 : (len(pairs_list) * 2) + 3]
+            + coxp_lines_list[(len(pairs_list) * 2) + 5 :]
+        )
 
         atom_pair_cohp = {pair[0]: [] for pair in pairs_list}
         atom_orb_cohp = {pair[0]: [] for pair in pairs_list}
 
-        if len(pairs_list) * 4  + 5 == len(coxp_lines_list): # spin polarized data
+        if len(pairs_list) * 4 + 5 == len(coxp_lines_list):  # spin polarized data
             pairs_list = [pair for pair in pairs_list for _ in range(2)] * 2
-            for ix , (p,c) in enumerate(zip(pairs_list, filtered_coxp_lines)):
-                if "[" not in p[1]:
+            for ix, (p, c) in enumerate(zip(pairs_list, filtered_coxp_lines)):
+                if '[' not in p[1]:
                     atom_pair_cohp[p[0]].append(filtered_coxp_lines[ix])
                 else:
                     atom_orb_cohp[p[0]].append(filtered_coxp_lines[ix])
 
-        elif len(pairs_list) * 2 + 3 == len(coxp_lines_list): # non spin polarized data
+        elif len(pairs_list) * 2 + 3 == len(coxp_lines_list):  # non spin polarized data
             pairs_list = [pair for pair in pairs_list for _ in range(2)]
             for ix, (p, c) in enumerate(zip(pairs_list, coxp_lines_list[3:])):
-                if "[" not in p[1]:
+                if '[' not in p[1]:
                     atom_pair_cohp[p[0]].append(coxp_lines_list[3:][ix])
                 else:
                     atom_orb_cohp[p[0]].append(coxp_lines_list[3:][ix])
         else:
             logger.warning(
-                'Unexpected number of columns {} ' 'in CO{}CAR.lobster.'.format(
+                'Unexpected number of columns {} in CO{}CAR.lobster.'.format(
                     len(coxp_lines), method.upper()
                 )
             )
@@ -365,7 +382,7 @@ def parse_COXPCAR(fname, scc, method, logger):
 
         return atom_pair_cohp, atom_orb_cohp
 
-    def _get_pair_label_distance(pairs_list:list[list]):
+    def _get_pair_label_distance(pairs_list: list[list]):
         """
         Get the atom pair label and distance seperately for
         orbital and non-orbital pairs.
@@ -381,8 +398,8 @@ def parse_COXPCAR(fname, scc, method, logger):
         atom1_orb = []
         atom2_orb = []
         distance_orb = []
-        for lab ,at1, at2, dist in pairs_list:
-            if "[" not in at1:
+        for lab, at1, at2, dist in pairs_list:
+            if '[' not in at1:
                 atom1.append(at1)
                 atom2.append(at2)
                 distance.append(dist)
@@ -393,9 +410,18 @@ def parse_COXPCAR(fname, scc, method, logger):
                 distance_orb.append(dist)
                 label_orb.append(lab)
 
-        return label, atom1, atom2, distance, label_orb, atom1_orb, atom2_orb, distance_orb
+        return (
+            label,
+            atom1,
+            atom2,
+            distance,
+            label_orb,
+            atom1_orb,
+            atom2_orb,
+            distance_orb,
+        )
 
-    def _group_orb_coxp_spin_data(orb_cohp_data: dict, spin_polarized: bool=False):
+    def _group_orb_coxp_spin_data(orb_cohp_data: dict, spin_polarized: bool = False):
         """
         Group the orbital COXP/iCOXP data for spin polarized calculations
 
@@ -417,8 +443,8 @@ def parse_COXPCAR(fname, scc, method, logger):
                 icoxps_up = spin_up[1::2]
                 icoxps_dn = spin_dn[1::2]
                 # Group spin-polarized data as [spin_up, spin_dn] for each pair
-                coxps = [[up,dn] for up, dn in zip(coxps_up, coxps_dn)]
-                icoxps = [[up,dn] for up, dn in zip(icoxps_up, icoxps_dn)]
+                coxps = [[up, dn] for up, dn in zip(coxps_up, coxps_dn)]
+                icoxps = [[up, dn] for up, dn in zip(icoxps_up, icoxps_dn)]
                 orb_coxp.append(coxps)
                 orb_icoxp.append(icoxps)
             else:
@@ -430,16 +456,15 @@ def parse_COXPCAR(fname, scc, method, logger):
 
         return orb_coxp, orb_icoxp
 
-
     coxpcar_parser = TextParser(
         quantities=[
             Quantity(
-                "coxp_pairs",
-                r"No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?",
+                'coxp_pairs',
+                r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
                 repeats=True,
             ),
             Quantity(
-                "coxp_lines", r"\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)", repeats=True
+                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
             ),
         ]
     )
@@ -461,7 +486,7 @@ def parse_COXPCAR(fname, scc, method, logger):
             scc.x_lobster_section_cohp = section
         else:
             section = scc.x_lobster_section_cohp
-    elif method == "bi":
+    elif method == 'bi':
         if not scc.x_lobster_section_cobi:
             section = x_lobster_section_cobi()
             scc.x_lobster_section_cobi = section
@@ -490,29 +515,45 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     spin_polarized = len(coxp_lines) == 4 * len(pairs) + 5
 
-    _lab, a1, a2, distances, _lab_orb, _a1_orb, _a2_orb, _distances_orb = _get_pair_label_distance(pairs)
+    _lab, a1, a2, distances, _lab_orb, _a1_orb, _a2_orb, _distances_orb = (
+        _get_pair_label_distance(pairs)
+    )
     atom_pair_cohp, atom_orb_cohp = _separate_orbital_data(pairs, coxp_lines)
 
-    number_of_pairs = len(list(a1)) # excluding orbital pairs (atom pairs only)
-    tot_interactions = len(pairs) # including orbital pairs
+    number_of_pairs = len(list(a1))  # excluding orbital pairs (atom pairs only)
+    tot_interactions = len(pairs)  # including orbital pairs
 
     if not spin_polarized:
         acoxp = [coxp_lines[1]]
         aicoxp = [coxp_lines[2]]
         coxp = [[coxp_icoxp[0]] for coxp_icoxp in list(atom_pair_cohp.values())]
         icoxp = [[coxp_icoxp[1]] for coxp_icoxp in list(atom_pair_cohp.values())]
-        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(atom_orb_cohp, spin_polarized=spin_polarized)
+        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(
+            atom_orb_cohp, spin_polarized=spin_polarized
+        )
 
     elif spin_polarized:
-        spin_dn_coxp_icoxp = coxp_lines[(tot_interactions * 2) + 3: (tot_interactions * 2) + 5]
+        spin_dn_coxp_icoxp = coxp_lines[
+            (tot_interactions * 2) + 3 : (tot_interactions * 2) + 5
+        ]
         acoxp = [coxp_lines[1], spin_dn_coxp_icoxp[0]]
         aicoxp = [coxp_lines[2], spin_dn_coxp_icoxp[1]]
 
-        coxp = [[coxp_icoxp[0], coxp_icoxp[2]] for coxp_icoxp in list(atom_pair_cohp.values())]
-        icoxp = [[coxp_icoxp[1], coxp_icoxp[3]] for coxp_icoxp in list(atom_pair_cohp.values())]
-        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(atom_orb_cohp, spin_polarized=spin_polarized)
-        if len(icoxp_orb[0])>0:
-            icoxp_orb = orb_coxp_icoxp_to_joule(icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method)
+        coxp = [
+            [coxp_icoxp[0], coxp_icoxp[2]]
+            for coxp_icoxp in list(atom_pair_cohp.values())
+        ]
+        icoxp = [
+            [coxp_icoxp[1], coxp_icoxp[3]]
+            for coxp_icoxp in list(atom_pair_cohp.values())
+        ]
+        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(
+            atom_orb_cohp, spin_polarized=spin_polarized
+        )
+        if len(icoxp_orb[0]) > 0:
+            icoxp_orb = orb_coxp_icoxp_to_joule(
+                icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method
+            )
 
     setattr(section, 'x_lobster_number_of_co{}_pairs'.format(method), number_of_pairs)
     setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
@@ -544,7 +585,7 @@ def parse_COXPCAR(fname, scc, method, logger):
         'x_lobster_integrated_co{}_values'.format(method),
         np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
     )
-    if len(coxp_orb)>0:
+    if len(coxp_orb) > 0:
         setattr(
             section,
             'x_lobster_co{}_orbital_values'.format(method),
@@ -786,7 +827,31 @@ mainfile_parser = TextParser(
 
 class LobsterParser:
     def __init__(self):
-        pass
+        self._child_archives = {}
+
+    def get_files(self, pattern, filepath):
+        for _ in range(10):
+            filenames = glob(f'{os.path.dirname(filepath)}/{pattern}')
+            pattern = os.path.join('**', pattern)
+            if filenames:
+                break
+
+        if len(filenames) > 1:
+            # filter files that match
+            suffix = os.path.basename(filepath).strip('lobsterout')
+            matches = [f for f in filenames if suffix in f]
+            filenames = matches if matches else filenames
+
+        filenames = [f for f in filenames if os.access(f, os.F_OK)]
+        return filenames
+
+    def get_mainfile_keys(self, **kwargs):
+        filepath = kwargs.get('filename', '')
+        for filetype in ['OUTCAR', 'vasp']:
+            files = self.get_files(f'{filetype}*', filepath)
+            if files:
+                return ['workflow']
+        return True
 
     @staticmethod
     def capitalize_positions(string, positions):
@@ -895,10 +960,14 @@ class LobsterParser:
             if (species := basis.get('x_lobster_basis_species')) is not None:
                 basis_used = species[0][1]
                 # checks necessary as LOBSTER 5.1.1 writes basis names now in lower case
-                if basis_used == "pbevaspfit2015":
-                    basis_used = self.capitalize_positions(string=species[0][1], positions=[3,7])
-                elif basis_used in ["bunge", "koga"]:
-                    basis_used = self.capitalize_positions(string=species[0][1], positions=[0])
+                if basis_used == 'pbevaspfit2015':
+                    basis_used = self.capitalize_positions(
+                        string=species[0][1], positions=[3, 7]
+                    )
+                elif basis_used in ['bunge', 'koga']:
+                    basis_used = self.capitalize_positions(
+                        string=species[0][1], positions=[0]
+                    )
                 method.electrons_representation = [
                     BasisSetContainer(
                         type='atom-centered orbitals',  # https://pubs.acs.org/doi/pdf/10.1021/j100135a014
@@ -916,34 +985,88 @@ class LobsterParser:
                 ]
 
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , "ICOHPLIST.lobster")), scc, 'hp',
+            get_lobster_file(os.path.join(mainfile_path , 'ICOHPLIST.lobster')), scc, 'hp',
             version=run.program.version
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path ,"ICOOPLIST.lobster")), scc, 'op',
+            get_lobster_file(os.path.join(mainfile_path ,'ICOOPLIST.lobster')), scc, 'op',
             version=run.program.version
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , "ICOBILIST.lobster")), scc, "bi",
+            get_lobster_file(os.path.join(mainfile_path , 'ICOBILIST.lobster')), scc, 'bi',
             version=run.program.version
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path , "COHPCAR.lobster")), scc, 'hp', logger
+            get_lobster_file(os.path.join(mainfile_path , 'COHPCAR.lobster')), scc, 'hp', logger
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path ,"COOPCAR.lobster")), scc, 'op', logger
+            get_lobster_file(os.path.join(mainfile_path ,'COOPCAR.lobster')), scc, 'op', logger
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path ,"COBICAR.lobster")), scc, "bi", logger
-        )
-        parse_CHARGE(get_lobster_file(os.path.join(mainfile_path ,"CHARGE.lobster")), scc)
+            get_lobster_file(os.path.join(mainfile_path ,'COBICAR.lobster')), scc, 'bi', logger
 
-        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,"DOSCAR.lobster")), run, logger)
+        parse_CHARGE(get_lobster_file(os.path.join(mainfile_path ,'CHARGE.lobster')), scc)
 
-        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,"DOSCAR.LSO.lobster")), run, logger)
+        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.lobster')), run, logger)
+
+        parse_DOSCAR(get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.LSO.lobster')), run, logger)
+
 
         workflow = SinglePoint()
         archive.workflow2 = workflow
 
         if run.system:
             scc.system_ref = run.system[0]
+
+        if self._child_archives:
+            # link vasp entries to lobster in a generic workflow
+            workflow_archive = self._child_archives.get('workflow')
+            workflow_archive.workflow2 = SimulationWorkflow()
+            try:
+                from nomad.search import search  # noqa
+                from nomad.app.v1.models import MetadataRequired  # noqa
+
+                parent_file = mainfile.split('raw/')[-1]
+                parent_dir = os.path.dirname(parent_file)
+
+                upload_id = archive.metadata.upload_id
+                metadata = search(
+                    owner='visible',
+                    user_id=archive.metadata.main_author.user_id,
+                    query={'upload_id': upload_id},
+                    required=MetadataRequired(
+                        include=['entry_id', 'mainfile', 'parser_name']
+                    ),
+                ).data
+                for result in metadata:
+                    # skip non-vasp files
+                    if 'vasp' not in result.get('parser_name', '').lower():
+                        continue
+                    entry_id = result.get('entry_id')
+                    if not entry_id:
+                        continue
+                    entry_mainfile = result.get('mainfile')
+                    # link only entries in the same directory or sub-directories
+                    if entry_mainfile.startswith(parent_dir):
+                        entry_archive = archive.m_context.load_archive(
+                            entry_id, upload_id, None
+                        )
+                        # add vasp workflow to generic workflow tasks
+                        workflow_archive.workflow2.tasks.append(
+                            TaskReference(task=entry_archive.workflow2)
+                        )
+            except Exception:
+                logger.warning(f'Error linking VASP entries.')
+
+            # add lobster archive workflow to generic workflow tasks
+            workflow_archive.workflow2.tasks.append(
+                TaskReference(task=archive.workflow2)
+            )
+
+            # add vasp task as input to lobster task
+            for task in workflow_archive.workflow2.tasks[:-1]:
+                archive.workflow2.inputs.append(Link(section=task.task))
+
+            # set in(out)puts of lobster to worklow outputs
+            workflow_archive.workflow2.inputs = archive.workflow2.inputs
+            workflow_archive.workflow2.outputs = archive.workflow2.outputs
