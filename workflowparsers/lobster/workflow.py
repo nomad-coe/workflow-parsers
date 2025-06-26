@@ -42,46 +42,10 @@ class LOBSTERWorkflow(SerialSimulation):
         description='Name of the workflow. Default set to `LOBSTER Workflow`.',
     )
 
-    charge_spillings = Quantity(
-        type=np.float64,
-        shape=["*", "*"],
-        description="""
-        Absolute charge spilling of density (in occupied levels)
-        when projecting from the original wave functions into the local basis
-        for each of the LOBSTER runs of shape [spilling x number_of_spin_channels].
-        """,
-    )
-
-    def extract_charge_spillings(
-        self, logger: logging.Logger
-    ):
-        """
-        Extracts the charge spillings from the task outputs of the LOBSTER workflow.
-
-        Args:
-            logger: The logger to log messages.
-
-        Returns:
-            : The charge spillings for each of the LOBSTER runs in the workflow.
-        """
-
-        # Append the charge spillings for each of the LOBSTER runs
-        charge_spillings = []
-        for output in self.outputs:
-            if output.section is not None:
-                charge_spillings.append(
-                    output.section.x_lobster_abs_charge_spilling
-                )
-
-        return charge_spillings
-
     def normalize(self, archive: EntryArchive, logger: logging.Logger) -> None:
 
         super().normalize(archive, logger)
 
-        self.charge_spillings = self.extract_charge_spillings(
-            logger=logger
-        )
 
         # Extract system name from input structure (chemical composition from DFT run)
         archive.metadata.entry_type = 'LOBSTER Workflow'
