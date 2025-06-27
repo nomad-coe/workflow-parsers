@@ -503,6 +503,19 @@ def test_QE_Ni(parser):
     assert len(method) == 1
     assert method[0].x_lobster_code == 'Quantum Espresso'
     assert method[0].electrons_representation[0].basis_set[0].type == 'Bunge'
+    assert method[0].x_lobster_basis_functions == {
+            "Ni": [
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     assert len(run.calculation) == 1
     scc = run.calculation[0]
@@ -512,6 +525,19 @@ def test_QE_Ni(parser):
     assert len(scc.x_lobster_abs_charge_spilling) == 2
     assert scc.x_lobster_abs_charge_spilling[0] == approx(4.02)
     assert scc.x_lobster_abs_charge_spilling[1] == approx(3.37)
+    assert method[0].x_lobster_basis_functions == {
+            "Ni": [
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     assert run.clean_end is True
 
@@ -547,6 +573,14 @@ def test_Si(parser):
     # method
     method = run.method
     assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+    assert method[0].x_lobster_basis_functions == {
+            "Si": [
+              "3s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+            ]
+          }
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -630,6 +664,33 @@ def test_BaTiO3(parser):
     # method
     method = run.method
     assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+    assert method[0].x_lobster_basis_functions == {
+            "O": [
+              "2s",
+              "2p_y",
+              "2p_z",
+              "2p_x"
+            ],
+            "Ba": [
+              "5s",
+              "6s",
+              "5p_y",
+              "5p_z",
+              "5p_x"
+            ],
+            "Ti": [
+              "3s",
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -689,6 +750,23 @@ def test_AlN_v51(parser):
     for spin in [0, 1]:
         for ix, icobi in enumerate(cobi.x_lobster_integrated_cobi_at_fermi_level[spin]):
             assert np.isclose(icobi.magnitude, cobi.x_lobster_integrated_cobi_values[ix, spin, 4].magnitude, atol=1e-4)
+
+    # Method basis functions
+    method = run.method
+    assert method[0].x_lobster_basis_functions == {
+            "N": [
+              "2s",
+              "2p_y",
+              "2p_z",
+              "2p_x"
+            ],
+            "Al": [
+              "3s",
+              "3p_y",
+              "3p_z",
+              "3p_x"
+            ]
+          }
 
 
 def test_BaTiO3_v5(parser):

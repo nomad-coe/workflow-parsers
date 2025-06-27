@@ -39,7 +39,8 @@ class EntryPoint(ParserEntryPoint):
     )
 
     def load(self):
-        from nomad.parsing import MatchingParserInterface  # noqa
+
+        from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
 
         return MatchingParserInterface(**self.dict())
 

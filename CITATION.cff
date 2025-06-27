@@ -35,6 +35,9 @@ authors:
   - given-names: Joseph F.
     family-names: Rudzinski
     orcid: 'https://orcid.org/0000-0003-3403-640X'
+  - given-names: Aakash Ashok
+    family-names: Naik
+    orcid: 'https://orcid.org/0000-0002-6071-6786'
 doi: 10.5281/zenodo.14900119
 repository-code: 'https://github.com/nomad-coe/workflow-parsers'
 url: 'https://github.com/nomad-coe/workflow-parsers'
