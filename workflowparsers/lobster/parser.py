@@ -1054,6 +1054,7 @@ class LobsterParser:
             workflow_archive.workflow2 = LOBSTERWorkflow()
 
             try:
+                logger.info(f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.')
                 from nomad.search import search  # noqa
                 from nomad.app.v1.models import MetadataRequired  # noqa
 
@@ -1101,19 +1102,25 @@ class LobsterParser:
                         # add DFT task to the workflow tasks
                         workflow_archive.workflow2.tasks.append(dft_task)
             except Exception:
-                logger.warning(f'Error linking VASP entries.')
+                logger.warning(f'Error setting workflow inputs, i.e., VASP entries.')
 
             # add lobster archive to the workflow tasks
             lobster_calculation = extract_section(archive, ['run', 'calculation'])
             lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
-            lobster_task.inputs = [
-                Link(
-                section=dft_task.outputs[0].section,
-                name='Structure and PlaneWavefunctions')
-                ]
+
+            try:
+                lobster_task.inputs = [
+                    Link(
+                    section=dft_task.outputs[0].section,
+                    name='Structure and PlaneWavefunctions')
+                    ]
+            except UnboundLocalError:
+                logger.warning(f'Error connecting VASP with LOBSTER entry.')
+
             lobster_task.outputs = [
                 Link(section=lobster_calculation, name='Output LOBSTER calculation')
             ]
+
             workflow_archive.workflow2.tasks.append(lobster_task)
 
             # Set workflow outputs
