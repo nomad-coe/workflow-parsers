@@ -74,15 +74,14 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --all-extras
-        # install nomad infra deps
-        uv pip install nomad-lab[infrastructure] --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 
     - name: mypy
       run: |
         uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
     - name: Test with pytest
+      working-directory: tests
       run: |
-        uv run python -m coverage run -m pytest -sv tests
+        uv run python -m coverage run -m pytest -sv
     - name: Submit to coveralls
       continue-on-error: true
       env:

@@ -25,7 +25,6 @@ from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.utils.exampledata import ExampleData
 from nomad import infrastructure
 from nomad.datamodel.context import ClientContext
-from nomad.parsing.parser import ArchiveParser
 from nomad.utils import create_uuid
 
 
@@ -49,6 +48,14 @@ def upload_id():
 @pytest.fixture(scope='module')
 def main_author():
     return infrastructure.user_management.get_user(username='test')
+
+
+@pytest.fixture(scope="session")
+def auth():
+    from nomad.client import Auth  # noqa
+    from nomad.config import config  # noqa
+
+    return Auth(user=config.client.user, password=config.client.password, from_api=True)
 
 
 @pytest.fixture(scope='session')
@@ -90,5 +97,5 @@ def upload_data(upload_id, main_author, upload_archives):
 
 
 @pytest.fixture(scope='session')
-def context():
-    return ClientContext(username='test', password='password')
+def context(auth):
+    return ClientContext(auth=auth)
