@@ -79,9 +79,8 @@ jobs:
       run: |
         uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
     - name: Test with pytest
-      working-directory: tests
       run: |
-        uv run python -m coverage run -m pytest -sv
+        uv run python -m coverage run -m pytest -sv tests
     - name: Submit to coveralls
       continue-on-error: true
       env:
