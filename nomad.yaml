@@ -1,5 +1,5 @@
 keycloak:
-  server_url: "http://keycloak:8080/"
+  server_url: "http://localhost:8080/"
   realm_name: "fairdi_nomad_test"
 client:
   url: "http://localhost:8000/fairdi/nomad/latest/api"
