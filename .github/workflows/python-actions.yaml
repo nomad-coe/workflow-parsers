@@ -35,16 +35,16 @@ jobs:
       - name: Update lock file
         run: uv lock
       # Commits any changes made to the lockfile
-      - name: Commit lock file changes
-        if: github.ref_type != 'tag'
-        run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          git add uv.lock
-          if [[ `git status --porcelain` ]]; then
-            git commit -m "Update lockfile"
-            git push origin -o ci.skip # prevent triggering the pipeline again
-          fi
+      # - name: Commit lock file changes
+      #   if: github.ref_type != 'tag'
+      #   run: |
+      #     git config --global user.name github-actions
+      #     git config --global user.email github-actions@github.com
+      #     git add uv.lock
+      #     if [[ `git status --porcelain` ]]; then
+      #       git commit -m "Update lockfile"
+      #       git push origin -o ci.skip # prevent triggering the pipeline again
+      #     fi
   install-and-test:
     needs: update-lockfile
     runs-on: ubuntu-latest
