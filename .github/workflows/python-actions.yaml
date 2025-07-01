@@ -76,7 +76,7 @@ jobs:
 
     - name: mypy
       run: |
-        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
+        uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
     - name: Test with pytest
       run: |
         uv run python -m coverage run -m pytest -sv tests
