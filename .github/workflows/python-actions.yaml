@@ -72,7 +72,10 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install dependencies
-      run: uv sync --all-extras
+      run: |
+        uv sync --all-extras
+        # install nomad infra deps
+        uv pip install nomad-lab[infrastructure] --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
 
     - name: mypy
       run: |
