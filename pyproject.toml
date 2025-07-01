@@ -92,6 +92,7 @@ phonopyparser = "workflowparsers:phonopy_parser_entry_point"
 quantum_espresso_epwparser = "workflowparsers:quantum_espresso_epw_parser_entry_point"
 quantum_espresso_phononparser = "workflowparsers:quantum_espresso_phonon_parser_entry_point"
 quantum_espresso_xspectraparser = "workflowparsers:quantum_espresso_xspectra_parser_entry_point"
+quantum_espresso_bandsparser = "workflowparsers:quantum_espresso_bands_parser_entry_point"
 
 [tool.mypy]
 strict = false
