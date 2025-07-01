@@ -24,6 +24,11 @@ dependencies = [
 [project.urls]
 homepage = "https://github.com/nomad-coe/workflow-parsers"
 
+[tool.uv]
+extra-index-url = [
+  "https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
+]
+
 [project.optional-dependencies]
 tests = [
     "astroid==2.11.7",
@@ -33,6 +38,9 @@ tests = [
     'pytest-cov>=2.7.1',
     'ruff>=0.6',
     'typing-extensions>=4.12',
+    'coverage',
+    'coveralls',
+    'types-PyYAML',
 ]
 
 [tool.ruff]
