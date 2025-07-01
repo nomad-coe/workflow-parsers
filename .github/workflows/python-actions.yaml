@@ -7,6 +7,12 @@ env:
   UV_VERSION: 0.7
   PYTHON_VERSION: 3.12
 
+permissions:
+  contents: write
+  packages: write
+  attestations: write
+  id-token: write
+
 jobs:
   update-lockfile:
     name: Update Python Lock File
