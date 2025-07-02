@@ -91,7 +91,7 @@ def upload_data(upload_id, main_author, upload_archives):
     infrastructure.setup_elastic()
 
     if not os.path.isdir(config.fs.staging):
-        os.makedirs(config.fs.staging, exists_ok=True)
+        os.makedirs(config.fs.staging)
 
     data = ExampleData(main_author=main_author)
     data.create_upload(upload_id=upload_id)
