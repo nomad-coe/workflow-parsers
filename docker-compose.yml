@@ -10,6 +10,8 @@ services:
       - RABBITMQ_DEFAULT_USER=rabbitmq
       - RABBITMQ_DEFAULT_PASS=rabbitmq
       - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "5672:5672"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     healthcheck:
@@ -27,6 +29,8 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - discovery.type=single-node
+    ports:
+      - "9200:9200"
     volumes:
       - elastic:/usr/share/elasticsearch/data
     healthcheck:
@@ -49,6 +53,8 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27017:27017"
     volumes:
       - mongo:/data/db
       - ./.volumes/mongo:/backup
@@ -84,69 +90,13 @@ services:
       - --verbose
     ports:
       - 8080:8080
+      - 9000:9000
     healthcheck:
       interval: 10s
       timeout: 10s
       retries: 5
       start_period: 30s
       test: bash /opt/keycloak/bin/healthcheck_keycloak.sh || exit 1
-
-  app:
-    restart: unless-stopped
-    image: ${APP_IMAGE:-ghcr.io/fairmat-nfdi/nomad-distro-template:main}
-    platform: linux/amd64
-    container_name: app
-    command:
-      [
-        "python",
-        "-m",
-        "nomad.cli",
-        "admin",
-        "run",
-        "appworker",
-        "--app-host",
-        "0.0.0.0",
-      ]
-    environment:
-      NOMAD_SERVICE: nomad_distro_test
-      NOMAD_SERVICES_API_PORT: 8000
-      NOMAD_FS_EXTERNAL_WORKING_DIRECTORY: "$PWD"
-      NOMAD_RABBITMQ_HOST: rabbitmq
-      NOMAD_ELASTIC_HOST: elastic
-      NOMAD_MONGO_HOST: mongo
-      NOMAD_LOGSTASH_HOST: logtransfer
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      elastic:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
-    volumes:
-      - ./nomad.yaml:/app/nomad.yaml
-    ports:
-      - 8000:8000
-    healthcheck:
-      test:
-        - "CMD"
-        - "curl"
-        - "--fail"
-        - "--silent"
-        - "http://localhost:8000/-/health"
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 10s
-
-  jupyter:
-    restart: unless-stopped
-    image: ${JUPYTER_IMAGE:-ghcr.io/fairmat-nfdi/nomad-distro-template/jupyter:main}
-    platform: linux/amd64
-    container_name: jupyter
-    ports:
-      - 8888:8888
 
 volumes:
   mongo:

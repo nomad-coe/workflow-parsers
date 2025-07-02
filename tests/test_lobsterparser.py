@@ -785,6 +785,6 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
     parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
 
     workflow_archive = parser._child_archives.get('workflow')
-    assert (workflow_archive.workflow2.tasks) == 2
+    assert len(workflow_archive.workflow2.tasks) == 2
 
     # TODO add more assertions
