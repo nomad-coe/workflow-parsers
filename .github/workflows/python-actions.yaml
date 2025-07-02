@@ -78,6 +78,9 @@ jobs:
       run: |
         uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
     - name: fs_dir
+
+    - name: Create fs directory
+      working-directory: ${{ github.workspace }}
       run: |
         mkdir -p .volumes/fs
     - name: Test with pytest
