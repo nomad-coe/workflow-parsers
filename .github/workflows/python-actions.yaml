@@ -77,6 +77,9 @@ jobs:
     - name: mypy
       run: |
         uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
+    - name: fs_dir
+      run: |
+        mkdir -p .volumes/fs
     - name: Test with pytest
       run: |
         uv run python -m coverage run -m pytest -sv tests
