@@ -8,3 +8,5 @@ client:
   url: 'http://localhost:8000/fairdi/nomad/latest/api'
   user: 'admin'
   password: 'password'
+fs:
+  staging: '/tmp/volumes/fs/staging'
