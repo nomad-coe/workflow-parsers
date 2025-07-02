@@ -85,8 +85,13 @@ def upload_archives(upload_files, main_author, upload_id):
 
 @pytest.fixture(scope='session')
 def upload_data(upload_id, main_author, upload_archives):
+    from nomad.config import config  # noqa
+
     infrastructure.setup_mongo()
     infrastructure.setup_elastic()
+
+    if not os.path.isdir(config.fs.staging):
+        os.mkdirs(config.fs.staging, exists_ok=True)
 
     data = ExampleData(main_author=main_author)
     data.create_upload(upload_id=upload_id)
