@@ -1,29 +1,53 @@
 name: install-and-test-workflow
+
 on: [push]
+
+env:
+  REGISTRY: ghcr.io
+  UV_VERSION: 0.7
+  PYTHON_VERSION: 3.12
+
+permissions:
+  contents: write
+  packages: write
+  attestations: write
+  id-token: write
+
 jobs:
   install-and-test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+
+    - uses: docker/login-action@v3
       with:
-        python-version: 3.9
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Start containers
+      run: |
+        docker compose up -d --quiet-pull
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: ${{ env.UV_VERSION }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
-        pip install '.[tests]' --index-url https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple
-        # we need the latest nomad version for testing
-        # pip install nomad-lab[infrastructure]@git+https://github.com/nomad-coe/nomad.git@develop
-        pip install coverage coveralls
-        pip install types-PyYAML
+        uv sync --all-extras
+
     - name: mypy
       run: |
-        python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
+        uv run python -m mypy --ignore-missing-imports --follow-imports=silent --no-strict-optional *parsers tests
     - name: Test with pytest
-      if: success() || failure()
       run: |
-        python -m coverage run -m pytest -sv tests
+        uv run python -m coverage run -m pytest -sv tests
     - name: Submit to coveralls
       continue-on-error: true
       env:
