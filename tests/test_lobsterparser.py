@@ -20,7 +20,7 @@ import pytest
 import logging
 import numpy as np
 
-from nomad.datamodel import EntryArchive
+from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.units import ureg as units
 
 from workflowparsers.lobster import LobsterParser
@@ -591,7 +591,7 @@ def test_Si(parser):
     assert cohp.x_lobster_cohp_distances[0].magnitude == approx(A_to_m(5.468728))
     assert cohp.x_lobster_cohp_distances[47].magnitude == approx(A_to_m(3.866974))
     assert cohp.x_lobster_cohp_distances[23].magnitude == approx(A_to_m(4.53443))
-    assert np.array_equal(cohp.x_lobster_cohp_translations[26],[-1,   1,  -1])
+    assert np.array_equal(cohp.x_lobster_cohp_translations[26], [-1, 1, -1])
     assert np.shape(cohp.x_lobster_integrated_cohp_at_fermi_level) == (2, 64)
     assert cohp.x_lobster_integrated_cohp_at_fermi_level[0, 0].magnitude == approx(
         eV_to_J(-0.00058)
@@ -618,19 +618,25 @@ def test_Si(parser):
     assert len(coop.x_lobster_coop_orbital_pairs) == 64
     assert len(cohp.x_lobster_cohp_orbital_pairs) == 64
     assert len(cobi.x_lobster_cobi_orbital_pairs) == 64
-    assert coop.x_lobster_coop_orbital_pairs[-1][0] == ["Si2_3s", "Si2_3s"]
-    assert coop.x_lobster_coop_orbital_pairs[10][1] == ["Si1_3p_y", "Si1_3s"]
+    assert coop.x_lobster_coop_orbital_pairs[-1][0] == ['Si2_3s', 'Si2_3s']
+    assert coop.x_lobster_coop_orbital_pairs[10][1] == ['Si1_3p_y', 'Si1_3s']
     assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 64
     assert cohp.x_lobster_integrated_cohp_orbital_values[24][1][0][5] == approx(
         eV_to_J(-0.2004)
     )
     assert cobi.x_lobster_integrated_cobi_orbital_values[20][1][0][5] == approx(0.00052)
-    assert coop.x_lobster_integrated_coop_values[24,1,5].magnitude == coop.x_lobster_integrated_coop_at_fermi_level[0][24].magnitude
+    assert (
+        coop.x_lobster_integrated_coop_values[24, 1, 5].magnitude
+        == coop.x_lobster_integrated_coop_at_fermi_level[0][24].magnitude
+    )
 
     # test if data is parsed correctly by matching data from icoxplist with coxpcar
-    for spin in [0,1]:
+    for spin in [0, 1]:
         for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[spin]):
-            assert np.isclose(icohp.magnitude,cohp.x_lobster_integrated_cohp_values[ix, spin, 5].magnitude)
+            assert np.isclose(
+                icohp.magnitude,
+                cohp.x_lobster_integrated_cohp_values[ix, spin, 5].magnitude,
+            )
 
 
 def test_BaTiO3(parser):
@@ -710,7 +716,10 @@ def test_BaTiO3(parser):
 
     # test if data is parsed correctly by matching data from icoxplist with coxpcar
     for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[0]):
-        assert np.isclose(icohp.magnitude,cohp.x_lobster_integrated_cohp_values[ix, 0, 8].magnitude)
+        assert np.isclose(
+            icohp.magnitude, cohp.x_lobster_integrated_cohp_values[ix, 0, 8].magnitude
+        )
+
 
 def test_AlN_v51(parser):
     """
@@ -749,7 +758,11 @@ def test_AlN_v51(parser):
 
     for spin in [0, 1]:
         for ix, icobi in enumerate(cobi.x_lobster_integrated_cobi_at_fermi_level[spin]):
-            assert np.isclose(icobi.magnitude, cobi.x_lobster_integrated_cobi_values[ix, spin, 4].magnitude, atol=1e-4)
+            assert np.isclose(
+                icobi.magnitude,
+                cobi.x_lobster_integrated_cobi_values[ix, spin, 4].magnitude,
+                atol=1e-4,
+            )
 
     # Method basis functions
     method = run.method
@@ -817,7 +830,10 @@ def test_BaTiO3_v5(parser):
 
     # test if data is parsed correctly by matching data from icoxplist with coxpcar
     for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[0]):
-        assert np.isclose(icohp.magnitude, cohp.x_lobster_integrated_cohp_values[ix, 0, 4].magnitude)
+        assert np.isclose(
+            icohp.magnitude, cohp.x_lobster_integrated_cohp_values[ix, 0, 4].magnitude
+        )
+
 
 def test_failed_case(parser):
     """
@@ -830,3 +846,23 @@ def test_failed_case(parser):
 
     run = archive.run[0]
     assert run.clean_end is False
+
+
+def test_workflow(parser, upload_data, upload_id, context, main_author):
+    archive = EntryArchive(
+        metadata=EntryMetadata(upload_id=upload_id, main_author=main_author),
+        m_context=context,
+    )
+
+    mainfile = 'tests/data/lobster/Fe/lobsterout'
+    archive_keys = parser.get_mainfile_keys(filename=mainfile)
+    assert archive_keys == ['workflow']
+
+    # mimic processing
+    parser._child_archives = {key: EntryArchive() for key in archive_keys}
+    parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
+
+    workflow_archive = parser._child_archives.get('workflow')
+    assert len(workflow_archive.workflow2.tasks) == 2
+
+    # TODO add more assertions
