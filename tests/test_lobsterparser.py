@@ -23,7 +23,7 @@ import numpy as np
 from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.units import ureg as units
 
-from workflowparsers.lobster import LobsterParser
+from workflowparsers.lobster import LobsterParser, LOBSTERWorkflow
 
 e = (1 * units.e).to_base_units().magnitude
 eV = (1 * units.e).to_base_units().magnitude
@@ -864,5 +864,7 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
 
     workflow_archive = parser._child_archives.get('workflow')
     assert len(workflow_archive.workflow2.tasks) == 2
+
+    assert isinstance(workflow_archive.workflow2, LOBSTERWorkflow)
 
     # TODO add more assertions
