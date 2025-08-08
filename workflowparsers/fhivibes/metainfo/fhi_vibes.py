@@ -622,7 +622,7 @@ class x_fhi_vibes_section_attributes(MSection):
 
     x_fhi_vibes_attributes_natoms = Quantity(
         type=np.int32,
-        shape=[3],
+        shape=[],
         description="""
         -
         """,
@@ -647,7 +647,7 @@ class x_fhi_vibes_section_attributes(MSection):
 
     x_fhi_vibes_attributes_nsteps = Quantity(
         type=np.int32,
-        shape=[3],
+        shape=[],
         description="""
         -
         """,
@@ -727,6 +727,14 @@ class x_fhi_vibes_section_attributes(MSection):
     )
 
     x_fhi_vibes_attributes_force_constants_remapped_size = Quantity(
+        type=np.int32,
+        shape=[],
+        description="""
+        -
+        """,
+    )
+
+    x_fhi_vibes_attributes_number_of_atoms_reference = Quantity(
         type=np.int32,
         shape=[],
         description="""
