@@ -263,9 +263,12 @@ class FHIVibesParser:
                 elif key == 'stress':
                     sec_stress.total = StressEntry(value=val[n_frame])
                 if key in ['temperature', 'pressure', 'volume']:
-                    setattr(sec_thermo, key, val[n_frame])
+                    sec_thermo.m_set(sec_thermo.m_get_quantity_definition(key), val[n_frame])
                 else:
-                    setattr(sec_scc, 'x_fhi_vibes_%s' % key, val[n_frame])
+                    try:
+                        sec_thermo.m_set(sec_thermo.m_get_quantity_definition(f'x_fhi_vibes_{key}'), val[n_frame])
+                    except Exception:
+                        pass
 
             return sec_scc
 
@@ -393,7 +396,7 @@ class FHIVibesParser:
                             )
                 elif key == 'Phonopy':
                     sec_phonopy = x_fhi_vibes_section_phonopy()
-                    sec_metadata.x_fhi_vibes_section_phonopy.append(sec_phonopy)
+                    sec_metadata.x_fhi_vibes_section_metadata_phonopy.append(sec_phonopy)
                     for phonopy_key in val.keys():
                         if phonopy_key == 'primitive':
                             sec_primitive = x_fhi_vibes_section_atoms()
@@ -477,9 +480,10 @@ class FHIVibesParser:
                 atoms = json.loads(val)
                 sec_atoms.x_fhi_vibes_atoms_natoms = len(atoms['positions'])
                 parse_atoms(sec_atoms, atoms)
-                setattr(
-                    sec_attrs,
-                    'x_fhi_vibes_attributes_number_of_%s' % key,
+                sec_attrs.m_set(
+                    sec_attrs.m_get_quantity_definition(
+                        f'x_fhi_vibes_attributes_number_of_{key}'
+                    ),
                     len(atoms['positions']),
                 )
             else:
@@ -489,7 +493,12 @@ class FHIVibesParser:
                     val = val * time_units.get(
                         attrs.get('time_unit').lower(), self._units.get('time')
                     )
-                setattr(sec_attrs, 'x_fhi_vibes_attributes_%s' % key, val)
+                sec_attrs.m_set(
+                    sec_attrs.m_get_quantity_definition(
+                        f'x_fhi_vibes_attributes_{key}'
+                    ),
+                    val,
+                )
 
         # we need this information for force constants
         n_atoms_supercell = sec_attrs.x_fhi_vibes_attributes_number_of_atoms_supercell
