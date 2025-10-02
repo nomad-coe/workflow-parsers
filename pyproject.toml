@@ -19,6 +19,8 @@ dependencies = [
     "phonopy>=2.35,<=2.38",
     "h5py>=3.11.0",
     "pydantic>=1.10.8",
+    "netcdf4",
+    "h5netcdf"
 ]
 
 [project.urls]
