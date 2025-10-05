@@ -863,8 +863,20 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
     parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
 
     workflow_archive = parser._child_archives.get('workflow')
-    assert len(workflow_archive.workflow2.tasks) == 2
 
+    # check workflow archive type
     assert isinstance(workflow_archive.workflow2, LOBSTERWorkflow)
 
-    # TODO add more assertions
+    # check for workflow input and output names
+    assert workflow_archive.workflow2.outputs[0].name == 'LOBSTER Outputs'
+    assert workflow_archive.workflow2.inputs[0].name == 'Structure'
+
+    # check for number of tasks and input output names
+    assert len(workflow_archive.workflow2.tasks) == 2
+    assert workflow_archive.workflow2.tasks[0].name == 'DFT run'
+    assert workflow_archive.workflow2.tasks[0].inputs[0].name == 'Input Structure'
+    assert workflow_archive.workflow2.tasks[0].outputs[0].name == 'Output DFT calculation'
+
+    assert workflow_archive.workflow2.tasks[1].name == 'LOBSTER run'
+    assert workflow_archive.workflow2.tasks[1].inputs[0].name == 'Structure and PlaneWavefunctions'
+    assert workflow_archive.workflow2.tasks[1].outputs[0].name == 'Output LOBSTER calculation'
