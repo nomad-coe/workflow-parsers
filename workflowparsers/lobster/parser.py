@@ -889,11 +889,11 @@ class LobsterParser:
         Returns:
             dict: The dictionary with per element projection basis functions.
         """
-        specie_basis_function = {}
+        species_basis_function = {}
         for specie_basis in lobster_basis_species:
-            specie_basis_function[specie_basis[0]] = specie_basis[2:]
+            species_basis_function[specie_basis[0]] = specie_basis[2:]
 
-        return specie_basis_function
+        return species_basis_function
 
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
