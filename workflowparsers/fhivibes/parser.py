@@ -391,7 +391,21 @@ class FHIVibesParser:
                 if xc_type is None:
                     self.logger.error('Cannot resolve XC functional.')
                     return
-                name = f'{xc_functional_info.group(2)}_{xc_type}_{xc_functional_info.group(1)}'
+                functional_names = [
+                    f'{xc_functional_info.group(2)}_{xc_type}_{xc_functional_info.group(1)}'
+                ]
+            else:
+                xc_functionals = {
+                    'PBE': [
+                        {'name': 'GGA_C_PBE'},
+                        {'name': 'GGA_X_PBE'},
+                    ]
+                }
+                functional_names = [
+                    func.get('name') for func in xc_functionals.get(xc_functional, [])
+                ]
+
+            for name in functional_names:
                 sec_xc_functional = XCFunctional()
                 sec_dft.xc_functional = sec_xc_functional
                 functional = Functional(name=name)
