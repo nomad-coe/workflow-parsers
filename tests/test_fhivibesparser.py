@@ -33,7 +33,7 @@ def parser():
 
 
 # TODO find out why tests fail on github
-def _test_singlepoint(parser):
+def test_singlepoint(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/singlepoint.nc', archive, None)
 
@@ -77,7 +77,7 @@ def _test_singlepoint(parser):
     )
 
 
-def _test_relaxation(parser):
+def test_relaxation(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/relaxation.nc', archive, None)
 
@@ -106,7 +106,7 @@ def _test_relaxation(parser):
     )
 
 
-def _test_molecular_dynamics(parser):
+def test_molecular_dynamics(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/molecular_dynamics.nc', archive, None)
 
@@ -137,7 +137,7 @@ def _test_molecular_dynamics(parser):
     assert sec_sccs[6].x_fhi_vibes_momenta[7][2].magnitude == approx(-1.18929315e-24)
 
 
-def _test_phonon(parser):
+def test_phonon(parser):
     archive = EntryArchive()
     parser.parse('tests/data/fhivibes/phonopy.nc', archive, None)
 
@@ -160,3 +160,32 @@ def _test_phonon(parser):
     sec_system = archive.run[0].system[0]
     assert sec_system.atoms.positions[3][2].magnitude == approx(5.41850544e-10)
     assert sec_system.atoms.lattice_vectors[1][1].magnitude == approx(5.41850544e-10)
+
+
+def test_relaxation_son(parser):
+    archive = EntryArchive()
+    parser.parse('tests/data/fhivibes/trajectory.son', archive, None)
+
+    assert archive.workflow2.m_def.name == 'GeometryOptimization'
+
+    sec_scc = archive.run[0].calculation
+    assert len(sec_scc) == 4
+    assert sec_scc[2].energy.total.value.to('eV').magnitude == approx(
+        -4.51693238840729e04
+    )
+    assert sec_scc[1].forces.total.value[3][1].to('eV/angstrom').magnitude == approx(
+        -2.07454961354603e-09
+    )
+    assert sec_scc[3].stress.total.value[2][2].to('eV/angstrom**3').magnitude == approx(
+        1.52380630785683e-06
+    )
+
+    sec_system = archive.run[0].system
+    assert len(sec_system) == 4
+    assert sec_system[3].atoms.labels[5] == 'Li'
+    assert sec_system[1].atoms.positions[11][1].to('angstrom').magnitude == approx(
+        2.84355095535950e00
+    )
+    assert sec_system[2].atoms.lattice_vectors[2][2].to('angstrom').magnitude == approx(
+        5.72360305688600e00
+    )

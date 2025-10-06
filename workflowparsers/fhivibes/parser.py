@@ -113,9 +113,65 @@ class XarrayParser(FileParser):
         self._results[key] = val
 
 
+class SonParser(FileParser):
+    def __init__(self):
+        super().__init__()
+        self._json_block_re = re.compile(r'([\s\S]+?)[\-\=]{3}')
+        self.re_index = re.compile(r'(.+?)\[(\d+)\]')
+
+    @property
+    def son_data(self):
+        if self._file_handler is None:
+            data = []
+            with open(self.mainfile) as f:
+                for block in self._json_block_re.finditer(f.read()):
+                    data.append(json.loads(block.group(1)))
+            self._file_handler = data
+        return self._file_handler
+
+    def parse(self, key):
+        def get_data(key, source):
+            data = source.get(key)
+            if data is None:
+                for section in ['atoms', 'calculator']:
+                    data = source.get(section, {}).get(key)
+                    if data is not None:
+                        break
+            return data
+
+        if not self._results:
+            self._results = {}
+        key = key.strip('/')
+        val = self.son_data[1:]
+        for section in key.split('/'):
+            indexed = re.match(self.re_index, section)
+            if indexed:
+                section = indexed.group(1)
+                index = indexed.group(2)
+            if section in ['attrs', 'raw_metadata']:
+                val = {section: self.son_data[0]}
+
+            if isinstance(val, list):
+                val = [get_data(section, v) for v in val]
+                if not [v for v in val if v is not None]:
+                    val = None
+            else:
+                val = get_data(section, val)
+            try:
+                val = val[int(index)] if indexed else val
+            except Exception:
+                val = None
+            if val is None:
+                break
+
+        self._results[key] = val
+
+
 class FHIVibesParser:
     def __init__(self):
-        self.parser = XarrayParser()
+        self._nc_parser = XarrayParser()
+        self._son_parser = SonParser()
+        self.parser = None
 
         self._units = {
             'volume': ureg.angstrom**3,
@@ -178,7 +234,11 @@ class FHIVibesParser:
             sec_run.system.append(sec_system)
             sec_atoms = Atoms()
             sec_system.atoms = sec_atoms
-            sec_atoms.labels = self.parser.get('attrs').get('symbols')
+            symbols = self.parser.get('attrs/symbols')
+            if symbols is not None and isinstance(symbols[0], list):
+                symbols = [[s] * n for n, s in symbols]
+                symbols = [s for ss in symbols for s in ss]
+            sec_atoms.labels = symbols
             sec_atoms.positions = self.parser.get(
                 'positions', unit=self._units.get('length')
             )[n_frame]
@@ -211,23 +271,27 @@ class FHIVibesParser:
             sec_stress = Stress()
             sec_scc.stress = sec_stress
             for key in ['kinetic', 'potential']:
-                val = self.parser.get('energy_%s' % key, unit=self._units.get('energy'))
-                if val is not None:
+                val = self.parser.get(f'energy_{key}')
+                if val is not None and val[n_frame] is not None:
                     sec_energy.contributions.append(
-                        EnergyEntry(value=val[n_frame], kind=key)
+                        EnergyEntry(
+                            value=val[n_frame] * self._units.get('energy'), kind=key
+                        )
                     )
 
-                val = self.parser.get('stress_%s' % key, unit=self._units.get('stress'))
-                if val is not None:
+                val = self.parser.get(f'stress_{key}')
+                if val is not None and val[n_frame] is not None:
                     sec_stress.contributions.append(
-                        StressEntry(value=val[n_frame], kind=key)
+                        StressEntry(
+                            value=val[n_frame] * self._units.get('stress'), kind=key
+                        )
                     )
 
-                    val = self.parser.get(
-                        'stresses_%s' % key, unit=self._units.get('stress')
-                    )
+                    val = self.parser.get(f'stresses_{key}')
                     if val is not None:
-                        sec_stress.contributions[-1].values_per_atom = val[n_frame]
+                        sec_stress.contributions[-1].values_per_atom = val[
+                            n_frame
+                        ] * self._units.get('stress')
 
             calculation_quantities = [
                 'volume',
@@ -236,6 +300,7 @@ class FHIVibesParser:
                 'forces_harmonic',
                 'forces',
                 'stress',
+                'energy',
                 'energy_potential_harmonic',
                 'sigma_per_sample',
                 'pressure',
@@ -248,24 +313,29 @@ class FHIVibesParser:
                 'heat_flux_0_harmonic',
             ]
             for key in calculation_quantities:
-                val = self.parser.get(key, unit=self._units.get(key, None))
+                val = self.parser.get(key)
                 if val is None:
                     continue
 
+                unit = self._units.get(key)
+                if unit is not None:
+                    val = val * unit
                 # TODO figure out what shape of output fc
                 if key.startswith('force_constants'):
                     continue
                 if key.startswith('forces'):
-                    key = 'atom_%s' % key
+                    key = f'atom_{key}'
 
-                if key == 'atom_forces':
+                if key == 'energy':
+                    sec_energy.total = EnergyEntry(value=val[n_frame])
+                elif key == 'atom_forces':
                     sec_forces.total = ForcesEntry(value=val[n_frame])
                 elif key == 'stress':
                     sec_stress.total = StressEntry(value=val[n_frame])
                 if key in ['temperature', 'pressure', 'volume']:
                     setattr(sec_thermo, key, val[n_frame])
                 else:
-                    setattr(sec_scc, 'x_fhi_vibes_%s' % key, val[n_frame])
+                    setattr(sec_scc, f'x_fhi_vibes_{key}', val[n_frame])
 
             return sec_scc
 
@@ -300,7 +370,7 @@ class FHIVibesParser:
         for key in ['force_constants', 'force_constants_remapped']:
             val = self.parser.get(key, unit=self._units.get('force_constants'))
             if val is not None and sec_scc:
-                setattr(sec_scc, 'x_fhi_vibes_%s' % key, val)
+                setattr(sec_scc, f'x_fhi_vibes_{key}', val)
 
     def parse_method(self, n_run):
         def parse_xc_functional():
@@ -321,11 +391,21 @@ class FHIVibesParser:
                 if xc_type is None:
                     self.logger.error('Cannot resolve XC functional.')
                     return
-                name = '%s_%s_%s' % (
-                    xc_functional_info.group(2),
-                    xc_type,
-                    xc_functional_info.group(1),
-                )
+                functional_names = [
+                    f'{xc_functional_info.group(2)}_{xc_type}_{xc_functional_info.group(1)}'
+                ]
+            else:
+                xc_functionals = {
+                    'PBE': [
+                        {'name': 'GGA_C_PBE'},
+                        {'name': 'GGA_X_PBE'},
+                    ]
+                }
+                functional_names = [
+                    func.get('name') for func in xc_functionals.get(xc_functional, [])
+                ]
+
+            for name in functional_names:
                 sec_xc_functional = XCFunctional()
                 sec_dft.xc_functional = sec_xc_functional
                 functional = Functional(name=name)
@@ -353,10 +433,12 @@ class FHIVibesParser:
                     val = val * self._units.get('length')
                 elif key == 'velocities':
                     val = val * self._units.get('length') / self._units.get('time')
-                setattr(section, 'x_fhi_vibes_atoms_%s' % key, val)
+                setattr(section, f'x_fhi_vibes_atoms_{key}', val)
 
         def parse_metadata():
             metadata = self.parser.get('attrs/raw_metadata')
+            if metadata is None:
+                return
             sec_metadata = x_fhi_vibes_section_metadata()
             sec_attrs.x_fhi_vibes_section_attributes_metadata.append(sec_metadata)
             for key, val in metadata.items():
@@ -366,12 +448,14 @@ class FHIVibesParser:
                     for md_key in val.keys():
                         setattr(
                             sec_md,
-                            'x_fhi_vibes_MD_%s' % md_key.replace('-', '_'),
+                            f'x_fhi_vibes_MD_{md_key.replace("-", "_")}',
                             val[md_key],
                         )
                 elif key == 'relaxation':
                     sec_relaxation = x_fhi_vibes_section_relaxation()
-                    sec_metadata.x_fhi_vibes_section_relaxation.append(sec_relaxation)
+                    sec_metadata.x_fhi_vibes_section_metadata_relaxation.append(
+                        sec_relaxation
+                    )
                     for relaxation_key in val.keys():
                         if relaxation_key == 'kwargs':
                             sec_kwargs = x_fhi_vibes_section_relaxation_kwargs()
@@ -381,19 +465,20 @@ class FHIVibesParser:
                             for kwargs_key in val['kwargs']:
                                 setattr(
                                     sec_kwargs,
-                                    'x_fhi_vibes_relaxation_kwargs_%s' % kwargs_key,
+                                    f'x_fhi_vibes_relaxation_kwargs_{kwargs_key}',
                                     val['kwargs'][kwargs_key],
                                 )
                         else:
                             setattr(
                                 sec_relaxation,
-                                'x_fhi_vibes_relaxation_%s'
-                                % relaxation_key.replace('-', '_'),
+                                f'x_fhi_vibes_relaxation_{relaxation_key.replace("-", "_")}',
                                 val[relaxation_key],
                             )
                 elif key == 'Phonopy':
                     sec_phonopy = x_fhi_vibes_section_phonopy()
-                    sec_metadata.x_fhi_vibes_section_phonopy.append(sec_phonopy)
+                    sec_metadata.x_fhi_vibes_section_metadata_phonopy.append(
+                        sec_phonopy
+                    )
                     for phonopy_key in val.keys():
                         if phonopy_key == 'primitive':
                             sec_primitive = x_fhi_vibes_section_atoms()
@@ -404,7 +489,7 @@ class FHIVibesParser:
                         else:
                             setattr(
                                 sec_phonopy,
-                                'x_fhi_vibes_phonopy_%s' % phonopy_key,
+                                f'x_fhi_vibes_phonopy_{phonopy_key}',
                                 val[phonopy_key],
                             )
                 elif key == 'calculator':
@@ -421,15 +506,15 @@ class FHIVibesParser:
                     sec_calculator.x_fhi_vibes_section_calculator_parameters.append(
                         sec_calculator_parameters
                     )
-                    for calc_key in val['calculator_parameters'].keys():
+                    for calc_val, calc_key in val['calculator_parameters'].items():
                         if calc_key == 'use_pimd_wrapper':
-                            val['calculator_parameters'][calc_key] = str(
-                                val['calculator_parameters'][calc_key]
-                            )
+                            calc_val = str(calc_val)
+                        elif calc_val in ['.true.', 'false']:
+                            calc_val = calc_val == '.true.'
                         setattr(
                             sec_calculator_parameters,
-                            'x_fhi_vibes_calculator_parameters_%s' % calc_key,
-                            val['calculator_parameters'][calc_key],
+                            f'x_fhi_vibes_calculator_parameters_{calc_key}',
+                            calc_val,
                         )
                 elif key in ['atoms', 'primitive', 'supercell']:
                     sec_atoms = x_fhi_vibes_section_atoms()
@@ -440,7 +525,7 @@ class FHIVibesParser:
                     sec_vibes = x_fhi_vibes_section_vibes()
                     sec_metadata.x_fhi_vibes_section_metadata_vibes.append(sec_vibes)
                     for vibes_key in val.keys():
-                        setattr(sec_vibes, 'x_fhi_vibes_%s' % vibes_key, val[vibes_key])
+                        setattr(sec_vibes, f'x_fhi_vibes_{vibes_key}', val[vibes_key])
                 elif key == 'settings':
                     sec_settings = x_fhi_vibes_section_settings()
                     sec_metadata.x_fhi_vibes_section_metadata_settings.append(
@@ -449,7 +534,7 @@ class FHIVibesParser:
                     for settings_key in val.keys():
                         setattr(
                             sec_settings,
-                            'x_fhi_vibes_settings_%s' % settings_key,
+                            f'x_fhi_vibes_settings_{settings_key}',
                             val[settings_key],
                         )
                 else:
@@ -465,12 +550,11 @@ class FHIVibesParser:
         sec_attrs = x_fhi_vibes_section_attributes()
         sec_method.x_fhi_vibes_section_attributes.append(sec_attrs)
 
+        parse_metadata()
         time_units = {'ns': ureg.ns, 'fs': ureg.fs, 'ps': ureg.ps}
         attrs = self.parser.get('attrs')
         for key, val in attrs.items():
-            if key == 'raw_metadata':
-                parse_metadata()
-            elif key.startswith('atoms_'):
+            if key.startswith('atoms_'):
                 sec_atoms = x_fhi_vibes_section_atoms()
                 sec_attrs.x_fhi_vibes_section_attributes_atoms.append(sec_atoms)
                 sec_atoms.x_fhi_vibes_atoms_kind = key
@@ -479,7 +563,7 @@ class FHIVibesParser:
                 parse_atoms(sec_atoms, atoms)
                 setattr(
                     sec_attrs,
-                    'x_fhi_vibes_attributes_number_of_%s' % key,
+                    f'x_fhi_vibes_attributes_number_of_{key}',
                     len(atoms['positions']),
                 )
             else:
@@ -489,7 +573,7 @@ class FHIVibesParser:
                     val = val * time_units.get(
                         attrs.get('time_unit').lower(), self._units.get('time')
                     )
-                setattr(sec_attrs, 'x_fhi_vibes_attributes_%s' % key, val)
+                setattr(sec_attrs, f'x_fhi_vibes_attributes_{key}', val)
 
         # we need this information for force constants
         n_atoms_supercell = sec_attrs.x_fhi_vibes_attributes_number_of_atoms_supercell
@@ -499,6 +583,10 @@ class FHIVibesParser:
             )
 
     def init_parser(self):
+        if self.filepath.endswith('.nc'):
+            self.parser = self._nc_parser
+        else:
+            self.parser = self._son_parser
         self.parser.mainfile = self.filepath
         self.parser.logger = self.logger
 

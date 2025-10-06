@@ -329,7 +329,7 @@ class x_fhi_vibes_section_relaxation_kwargs(MSection):
     m_def = Section(validate=False)
 
     x_fhi_vibes_relaxation_kwargs_maxstep = Quantity(
-        type=np.int32,
+        type=float,
         shape=[],
         description="""
         -
@@ -622,7 +622,7 @@ class x_fhi_vibes_section_attributes(MSection):
 
     x_fhi_vibes_attributes_natoms = Quantity(
         type=np.int32,
-        shape=[3],
+        shape=[],
         description="""
         -
         """,
@@ -647,7 +647,7 @@ class x_fhi_vibes_section_attributes(MSection):
 
     x_fhi_vibes_attributes_nsteps = Quantity(
         type=np.int32,
-        shape=[3],
+        shape=[],
         description="""
         -
         """,
@@ -765,7 +765,7 @@ class Calculation(runschema.calculation.Calculation):
 
     x_fhi_vibes_displacements = Quantity(
         type=np.float64,
-        shape=['number_of_atoms', 3, 3],
+        shape=['number_of_atoms', 3],
         unit='meter',
         description="""
         -
@@ -774,7 +774,7 @@ class Calculation(runschema.calculation.Calculation):
 
     x_fhi_vibes_momenta = Quantity(
         type=np.float64,
-        shape=['number_of_atoms', 3, 3],
+        shape=['number_of_atoms', 3],
         unit='kilogram * meter / second',
         description="""
         -
