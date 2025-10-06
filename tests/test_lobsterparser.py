@@ -20,10 +20,11 @@ import pytest
 import logging
 import numpy as np
 
+from simulationworkflowschema import SerialSimulation
 from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.units import ureg as units
 
-from workflowparsers.lobster import LobsterParser, LOBSTERWorkflow
+from workflowparsers.lobster import LobsterParser
 
 e = (1 * units.e).to_base_units().magnitude
 eV = (1 * units.e).to_base_units().magnitude
@@ -865,7 +866,7 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
     workflow_archive = parser._child_archives.get('workflow')
 
     # check workflow archive type
-    assert isinstance(workflow_archive.workflow2, LOBSTERWorkflow)
+    assert isinstance(workflow_archive.workflow2, SerialSimulation)
 
     # check for workflow input and output names
     assert workflow_archive.workflow2.outputs[0].name == 'LOBSTER Outputs'
