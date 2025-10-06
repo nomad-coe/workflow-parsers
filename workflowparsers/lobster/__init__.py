@@ -17,4 +17,3 @@
 # limitations under the License.
 #
 from .parser import LobsterParser
-from .workflow import LOBSTERWorkflow

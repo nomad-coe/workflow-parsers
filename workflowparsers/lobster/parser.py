@@ -33,7 +33,7 @@ from runschema.method import (
     BasisSet,
     BasisSetContainer,
 )
-from simulationworkflowschema import SinglePoint, SimulationWorkflow
+from simulationworkflowschema import SinglePoint, SimulationWorkflow, SerialSimulation
 from nomad.datamodel.metainfo.workflow import TaskReference, Link
 from runschema.calculation import Calculation, Dos, DosValues, Charges
 
@@ -45,7 +45,7 @@ from .metainfo.lobster import (
     x_lobster_section_coop,
     x_lobster_section_cobi,
 )
-from .workflow import LOBSTERWorkflow
+#from .workflow import LOBSTERWorkflow
 
 """
 This is a LOBSTER code parser.
@@ -1051,7 +1051,7 @@ class LobsterParser:
         if self._child_archives:
             # link vasp entries to lobster in a generic workflow
             workflow_archive = self._child_archives.get('workflow')
-            workflow_archive.workflow2 = LOBSTERWorkflow()
+            workflow_archive.workflow2 = SerialSimulation(name="LOBSTER Workflow")
 
             try:
                 logger.info(f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.')
