@@ -848,8 +848,8 @@ def test_failed_case(parser):
     run = archive.run[0]
     assert run.clean_end is False
 
-
-def test_workflow(parser, upload_data, upload_id, context, main_author):
+# TODO enable once tests with infra is permitted
+def _test_workflow(parser, upload_data, upload_id, context, main_author):
     archive = EntryArchive(
         metadata=EntryMetadata(upload_id=upload_id, main_author=main_author),
         m_context=context,
