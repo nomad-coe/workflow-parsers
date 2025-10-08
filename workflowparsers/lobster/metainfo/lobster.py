@@ -27,6 +27,7 @@ from nomad.metainfo import (
     SectionProxy,
     Package,
 )
+from nomad.metainfo.data_type import JSON
 
 import runschema.calculation
 import runschema.method
@@ -81,6 +82,10 @@ class Method(runschema.method.Method):
         description="""
         Used PAW program
         """,
+    )
+    x_lobster_basis_functions = Quantity(
+        type=JSON,
+        description='Dictionary of species and their projecition basis functions'
     )
 
 class x_lobster_section_cobi(MSection):

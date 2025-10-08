@@ -20,6 +20,7 @@ import pytest
 import logging
 import numpy as np
 
+from simulationworkflowschema import SerialSimulation
 from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.units import ureg as units
 
@@ -503,6 +504,19 @@ def test_QE_Ni(parser):
     assert len(method) == 1
     assert method[0].x_lobster_code == 'Quantum Espresso'
     assert method[0].electrons_representation[0].basis_set[0].type == 'Bunge'
+    assert method[0].x_lobster_basis_functions == {
+            "Ni": [
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     assert len(run.calculation) == 1
     scc = run.calculation[0]
@@ -512,6 +526,19 @@ def test_QE_Ni(parser):
     assert len(scc.x_lobster_abs_charge_spilling) == 2
     assert scc.x_lobster_abs_charge_spilling[0] == approx(4.02)
     assert scc.x_lobster_abs_charge_spilling[1] == approx(3.37)
+    assert method[0].x_lobster_basis_functions == {
+            "Ni": [
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     assert run.clean_end is True
 
@@ -547,6 +574,14 @@ def test_Si(parser):
     # method
     method = run.method
     assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+    assert method[0].x_lobster_basis_functions == {
+            "Si": [
+              "3s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+            ]
+          }
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -636,6 +671,33 @@ def test_BaTiO3(parser):
     # method
     method = run.method
     assert method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+    assert method[0].x_lobster_basis_functions == {
+            "O": [
+              "2s",
+              "2p_y",
+              "2p_z",
+              "2p_x"
+            ],
+            "Ba": [
+              "5s",
+              "6s",
+              "5p_y",
+              "5p_z",
+              "5p_x"
+            ],
+            "Ti": [
+              "3s",
+              "4s",
+              "3p_y",
+              "3p_z",
+              "3p_x",
+              "3d_xy",
+              "3d_yz",
+              "3d_z^2",
+              "3d_xz",
+              "3d_x^2-y^2"
+            ]
+          }
 
     # ICOHPLIST.lobster
     cohp = scc.x_lobster_section_cohp
@@ -702,6 +764,23 @@ def test_AlN_v51(parser):
                 cobi.x_lobster_integrated_cobi_values[ix, spin, 4].magnitude,
                 atol=1e-4,
             )
+
+    # Method basis functions
+    method = run.method
+    assert method[0].x_lobster_basis_functions == {
+            "N": [
+              "2s",
+              "2p_y",
+              "2p_z",
+              "2p_x"
+            ],
+            "Al": [
+              "3s",
+              "3p_y",
+              "3p_z",
+              "3p_x"
+            ]
+          }
 
 
 def test_BaTiO3_v5(parser):
@@ -785,6 +864,20 @@ def _test_workflow(parser, upload_data, upload_id, context, main_author):
     parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
 
     workflow_archive = parser._child_archives.get('workflow')
-    assert len(workflow_archive.workflow2.tasks) == 2
 
-    # TODO add more assertions
+    # check workflow archive type
+    assert isinstance(workflow_archive.workflow2, SerialSimulation)
+
+    # check for workflow input and output names
+    assert workflow_archive.workflow2.outputs[0].name == 'LOBSTER Outputs'
+    assert workflow_archive.workflow2.inputs[0].name == 'Structure'
+
+    # check for number of tasks and input output names
+    assert len(workflow_archive.workflow2.tasks) == 2
+    assert workflow_archive.workflow2.tasks[0].name == 'DFT run'
+    assert workflow_archive.workflow2.tasks[0].inputs[0].name == 'Input Structure'
+    assert workflow_archive.workflow2.tasks[0].outputs[0].name == 'Output DFT calculation'
+
+    assert workflow_archive.workflow2.tasks[1].name == 'LOBSTER run'
+    assert workflow_archive.workflow2.tasks[1].inputs[0].name == 'Structure and PlaneWavefunctions'
+    assert workflow_archive.workflow2.tasks[1].outputs[0].name == 'Output LOBSTER calculation'
