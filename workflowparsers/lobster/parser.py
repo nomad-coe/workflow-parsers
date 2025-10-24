@@ -474,23 +474,24 @@ def parse_COXPCAR(fname, scc, method, logger):
 
         return orb_coxp, orb_icoxp
 
-    # coxpcar_parser = COXPCARParser()
+    coxpcar_parser = COXPCARParser()
 
-    coxpcar_parser = TextParser(
-        quantities=[
-            Quantity(
-                'coxp_pairs',
-                r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
-                repeats=True,
-            ),
-            Quantity(
-                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
-            ),
-        ]
-    )
+    # coxpcar_parser = TextParser(
+    #     quantities=[
+    #         Quantity(
+    #             'coxp_pairs',
+    #             r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
+    #             repeats=True,
+    #         ),
+    #         Quantity(
+    #             'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
+    #         ),
+    #     ]
+    # )
 
     if not os.path.isfile(fname):
         return
+    coxpcar_parser.findall = False
     coxpcar_parser.mainfile = fname
     coxpcar_parser.parse()
 
