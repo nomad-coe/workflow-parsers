@@ -45,7 +45,7 @@ from .metainfo.lobster import (
     x_lobster_section_coop,
     x_lobster_section_cobi,
 )
-#from .workflow import LOBSTERWorkflow
+# from .workflow import LOBSTERWorkflow
 
 """
 This is a LOBSTER code parser.
@@ -53,6 +53,7 @@ This is a LOBSTER code parser.
 
 e = (1 * units.e).to_base_units().magnitude
 eV = (1 * units.eV).to_base_units().magnitude
+re_float = r'[-+]?\d+\.\d*(?:[Ee][-+]\d+)?'
 
 
 def get_lobster_file(filename):
@@ -339,6 +340,21 @@ def parse_ICOXPLIST(fname, scc, method, version):
             'x_lobster_co{}_orbital_pairs'.format(method),
             orb_pair_list[0],
         )
+    icoxplist_parser.close()
+
+
+class COXPCARParser(TextParser):
+    def init_quantities(self):
+        self._quantities = [
+            Quantity(
+                'coxp_pairs',
+                r'No\.(\d+)\:(\w+.*?)\->(\w+.*?)\(([\d\.]+)\)',
+                repeats=True,
+            ),
+            Quantity(
+                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
+            ),
+        ]
 
 
 def parse_COXPCAR(fname, scc, method, logger):
@@ -458,21 +474,24 @@ def parse_COXPCAR(fname, scc, method, logger):
 
         return orb_coxp, orb_icoxp
 
-    coxpcar_parser = TextParser(
-        quantities=[
-            Quantity(
-                'coxp_pairs',
-                r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
-                repeats=True,
-            ),
-            Quantity(
-                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
-            ),
-        ]
-    )
+    coxpcar_parser = COXPCARParser()
+
+    # coxpcar_parser = TextParser(
+    #     quantities=[
+    #         Quantity(
+    #             'coxp_pairs',
+    #             r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
+    #             repeats=True,
+    #         ),
+    #         Quantity(
+    #             'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
+    #         ),
+    #     ]
+    # )
 
     if not os.path.isfile(fname):
         return
+    coxpcar_parser.findall = False
     coxpcar_parser.mainfile = fname
     coxpcar_parser.parse()
 
@@ -598,6 +617,7 @@ def parse_COXPCAR(fname, scc, method, logger):
             'x_lobster_integrated_co{}_orbital_values'.format(method),
             icoxp_orb,
         )
+    coxpcar_parser.close()
 
 
 def parse_CHARGE(fname, scc):
@@ -628,6 +648,7 @@ def parse_CHARGE(fname, scc):
         sec_charges.analysis_method = 'loewdin'
         sec_charges.kind = 'integrated'
         sec_charges.value = np.array(list(zip(*charges))[1]) * units.elementary_charge
+    charge_parser.close()
 
 
 def parse_DOSCAR(fname, run, logger):
@@ -879,7 +900,7 @@ class LobsterParser:
         return ''.join(char_list)
 
     @staticmethod
-    def get_basis_function_dict(lobster_basis_species:list):
+    def get_basis_function_dict(lobster_basis_species: list):
         """
         Returns a dict with specie symbol as key and projection basis functions as values.
 
@@ -894,7 +915,6 @@ class LobsterParser:
             species_basis_function[specie_basis[0]] = specie_basis[2:]
 
         return species_basis_function
-
 
     def parse(self, mainfile: str, archive: EntryArchive, logger=None):
         mainfile_parser.mainfile = mainfile
@@ -978,7 +998,6 @@ class LobsterParser:
 
         if (basis := mainfile_parser.get('x_lobster_basis')) is not None:
             if (species := basis.get('x_lobster_basis_species')) is not None:
-
                 # store projection basis used for calc (useful for filtering)
                 method.x_lobster_basis_functions = self.get_basis_function_dict(
                     lobster_basis_species=species
@@ -1011,36 +1030,52 @@ class LobsterParser:
                 ]
 
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , 'ICOHPLIST.lobster')), scc, 'hp',
-            version=run.program.version
+            get_lobster_file(os.path.join(mainfile_path, 'ICOHPLIST.lobster')),
+            scc,
+            'hp',
+            version=run.program.version,
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path ,'ICOOPLIST.lobster')), scc, 'op',
-            version=run.program.version
+            get_lobster_file(os.path.join(mainfile_path, 'ICOOPLIST.lobster')),
+            scc,
+            'op',
+            version=run.program.version,
         )
         parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path , 'ICOBILIST.lobster')), scc, 'bi',
-            version=run.program.version
+            get_lobster_file(os.path.join(mainfile_path, 'ICOBILIST.lobster')),
+            scc,
+            'bi',
+            version=run.program.version,
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path , 'COHPCAR.lobster')), scc, 'hp', logger
+            get_lobster_file(os.path.join(mainfile_path, 'COHPCAR.lobster')),
+            scc,
+            'hp',
+            logger,
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path ,'COOPCAR.lobster')), scc, 'op', logger
+            get_lobster_file(os.path.join(mainfile_path, 'COOPCAR.lobster')),
+            scc,
+            'op',
+            logger,
         )
         parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path ,'COBICAR.lobster')), scc, 'bi', logger
+            get_lobster_file(os.path.join(mainfile_path, 'COBICAR.lobster')),
+            scc,
+            'bi',
+            logger,
         )
         parse_CHARGE(
-            get_lobster_file(os.path.join(mainfile_path ,'CHARGE.lobster')), scc
+            get_lobster_file(os.path.join(mainfile_path, 'CHARGE.lobster')), scc
         )
         parse_DOSCAR(
-            get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.lobster')), run, logger
+            get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.lobster')), run, logger
         )
         parse_DOSCAR(
-            get_lobster_file(os.path.join(mainfile_path ,'DOSCAR.LSO.lobster')), run, logger
+            get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.LSO.lobster')),
+            run,
+            logger,
         )
-
 
         workflow = SinglePoint()
         archive.workflow2 = workflow
@@ -1051,10 +1086,12 @@ class LobsterParser:
         if self._child_archives:
             # link vasp entries to lobster in a generic workflow
             workflow_archive = self._child_archives.get('workflow')
-            workflow_archive.workflow2 = SerialSimulation(name="LOBSTER Workflow")
+            workflow_archive.workflow2 = SerialSimulation(name='LOBSTER Workflow')
 
             try:
-                logger.info(f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.')
+                logger.info(
+                    f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
+                )
                 from nomad.search import search  # noqa
                 from nomad.app.v1.models import MetadataRequired  # noqa
 
@@ -1087,17 +1124,25 @@ class LobsterParser:
                         dft_task = TaskReference(task=entry_archive.workflow2)
 
                         # Extract DFT Inputs and Outputs
-                        input_structure = extract_section(entry_archive, ['run', 'system'])
-                        dft_calculation = extract_section(entry_archive, ['run', 'calculation'])
+                        input_structure = extract_section(
+                            entry_archive, ['run', 'system']
+                        )
+                        dft_calculation = extract_section(
+                            entry_archive, ['run', 'calculation']
+                        )
 
-                        dft_task.name = "DFT run"
-                        dft_task.inputs = [Link(section=input_structure, name='Input Structure')]
+                        dft_task.name = 'DFT run'
+                        dft_task.inputs = [
+                            Link(section=input_structure, name='Input Structure')
+                        ]
                         dft_task.outputs = [
                             Link(section=dft_calculation, name='Output DFT calculation')
                         ]
 
                         # Set the DFT task as an input for the workflow
-                        workflow_archive.workflow2.inputs = [Link(section=input_structure, name='Structure')]
+                        workflow_archive.workflow2.inputs = [
+                            Link(section=input_structure, name='Structure')
+                        ]
 
                         # add DFT task to the workflow tasks
                         workflow_archive.workflow2.tasks.append(dft_task)
@@ -1111,9 +1156,10 @@ class LobsterParser:
             try:
                 lobster_task.inputs = [
                     Link(
-                    section=dft_task.outputs[0].section,
-                    name='Structure and PlaneWavefunctions')
-                    ]
+                        section=dft_task.outputs[0].section,
+                        name='Structure and PlaneWavefunctions',
+                    )
+                ]
             except UnboundLocalError:
                 logger.warning(f'Error connecting VASP with LOBSTER entry.')
 
@@ -1125,8 +1171,7 @@ class LobsterParser:
 
             # Set workflow outputs
             workflow_archive.workflow2.outputs = [
-                    Link(
-                        section=lobster_task.outputs[0].section,
-                        name='LOBSTER Outputs'
-                    )
+                Link(section=lobster_task.outputs[0].section, name='LOBSTER Outputs')
             ]
+
+        mainfile_parser.close()
