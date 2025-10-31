@@ -19,6 +19,8 @@
 import pytest
 import logging
 import numpy as np
+import ase
+from packaging.version import Version
 
 from simulationworkflowschema import SerialSimulation
 from nomad.datamodel import EntryArchive, EntryMetadata
@@ -481,6 +483,7 @@ def test_HfV(parser):
     )
 
 
+@pytest.mark.skipif(Version(ase.__version__) > Version('3.22') ,reason='Incompatible with ase v26')
 def test_QE_Ni(parser):
     """
     Check that basic info is parsed properly when LOBSTER is run on top
