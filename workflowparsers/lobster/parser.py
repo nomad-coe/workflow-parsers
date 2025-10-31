@@ -954,10 +954,14 @@ class LobsterParser:
                     # lobster requires the QE input to have *.scf.in suffix
                     if file.endswith('.scf.in'):
                         qe_input_file = os.path.join(mainfile_path, file)
-                        structure = ase.io.read(qe_input_file, format='espresso-in')
+                        try:
+                            structure = ase.io.read(qe_input_file, format='espresso-in')
+                        except Exception:
+                            pass
                 if structure is None:
                     logger.warning(
-                        'Unable to parse structure info, no Quantum Espresso input detected'
+                        'Unable to parse structure info, no Quantum Espresso input'
+                        'detected.'
                     )
             else:
                 logger.warning('Parsing of {} structure is not supported'.format(code))
