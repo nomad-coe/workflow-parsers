@@ -937,6 +937,7 @@ class LobsterParser:
         code = mainfile_parser.get('x_lobster_code')
 
         # parse structure
+        structure = None
         if code is not None:
             if code == 'VASP':
                 try:
@@ -954,14 +955,14 @@ class LobsterParser:
                     if file.endswith('.scf.in'):
                         qe_input_file = os.path.join(mainfile_path, file)
                         structure = ase.io.read(qe_input_file, format='espresso-in')
-                if 'structure' not in locals():
+                if structure is None:
                     logger.warning(
                         'Unable to parse structure info, no Quantum Espresso input detected'
                     )
             else:
                 logger.warning('Parsing of {} structure is not supported'.format(code))
 
-        if 'structure' in locals():
+        if isinstance(structure, ase.Atoms):
             system = System()
             run.system.append(system)
             system.atoms = Atoms(
