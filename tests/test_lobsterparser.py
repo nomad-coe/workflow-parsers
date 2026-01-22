@@ -625,7 +625,7 @@ def test_Si(parser):
     assert coop.x_lobster_coop_orbital_pairs[-1][0] == ['Si2_3s', 'Si2_3s']
     assert coop.x_lobster_coop_orbital_pairs[10][1] == ['Si1_3p_y', 'Si1_3s']
     assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 64
-    assert cohp.x_lobster_integrated_cohp_orbital_values[24][1][0][5] == approx(
+    assert cohp.x_lobster_integrated_cohp_orbital_values[24][1][0][5].magnitude == approx(
         eV_to_J(-0.2004)
     )
     assert cobi.x_lobster_integrated_cobi_orbital_values[20][1][0][5] == approx(0.00052)
@@ -715,8 +715,8 @@ def test_BaTiO3(parser):
     assert len(cohp.x_lobster_cohp_orbital_pairs) == 176
     assert len(cohp.x_lobster_cohp_orbital_pairs[0]) == 25
     assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 176
-    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30]) == 20
-    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30][0]) == 11
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30]) == 100
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30][0][0]) == 11
 
     # test if data is parsed correctly by matching data from icoxplist with coxpcar
     for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[0]):
@@ -829,8 +829,8 @@ def test_BaTiO3_v5(parser):
     assert len(cohp.x_lobster_cohp_orbital_pairs) == 58
     assert len(cohp.x_lobster_cohp_orbital_pairs[0]) == 25
     assert len(cohp.x_lobster_integrated_cohp_orbital_values) == 58
-    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30]) == 40
-    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30][0]) == 6
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30]) == 100
+    assert len(cohp.x_lobster_integrated_cohp_orbital_values[30][0][0]) == 6
 
     # test if data is parsed correctly by matching data from icoxplist with coxpcar
     for ix, icohp in enumerate(cohp.x_lobster_integrated_cohp_at_fermi_level[0]):
