@@ -20,6 +20,7 @@ import datetime
 import numpy as np
 import ase.io
 import os
+import re
 
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
@@ -37,7 +38,7 @@ from simulationworkflowschema import SinglePoint, SimulationWorkflow, SerialSimu
 from nomad.datamodel.metainfo.workflow import TaskReference, Link
 from runschema.calculation import Calculation, Dos, DosValues, Charges
 
-from nomad.parsing.file_parser import TextParser, Quantity
+from nomad.parsing.file_parser import TextParser, Quantity, DataTextParser
 from glob import glob
 
 from .metainfo.lobster import (
@@ -343,16 +344,13 @@ def parse_ICOXPLIST(fname, scc, method, version):
     icoxplist_parser.close()
 
 
-class COXPCARParser(TextParser):
+class COXPCARParser(DataTextParser):
     def init_quantities(self):
         self._quantities = [
             Quantity(
                 'coxp_pairs',
                 r'No\.(\d+)\:(\w+.*?)\->(\w+.*?)\(([\d\.]+)\)',
                 repeats=True,
-            ),
-            Quantity(
-                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
             ),
         ]
 
@@ -474,7 +472,7 @@ def parse_COXPCAR(fname, scc, method, logger):
 
         return orb_coxp, orb_icoxp
 
-    coxpcar_parser = COXPCARParser()
+    coxpcar_parser = COXPCARParser(skiprows=3, comments=['No.'])
 
     # coxpcar_parser = TextParser(
     #     quantities=[
@@ -493,7 +491,7 @@ def parse_COXPCAR(fname, scc, method, logger):
         return
     coxpcar_parser.findall = False
     coxpcar_parser.mainfile = fname
-    coxpcar_parser.parse()
+    # coxpcar_parser.parse('data')
 
     if method == 'op':
         if not scc.x_lobster_section_coop:
@@ -514,18 +512,36 @@ def parse_COXPCAR(fname, scc, method, logger):
         else:
             section = scc.x_lobster_section_cobi
 
-    pairs = coxpcar_parser.get('coxp_pairs')
+    try:
+        coxp_lines = np.loadtxt(fname, skiprows=3, comments=['No.'])
+    except Exception:
+        coxp_lines = None
+        raise
+    pairs = []
+    pairs_pattern = re.compile(r'No\.(\d+)\:(\w+.*?)\->(\w+.*?)\(([\d\.]+)\)')
+    with coxpcar_parser.open(fname) as f:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            match = pairs_pattern.match(
+                line.decode() if isinstance(line, bytes) else line
+            )
+            if match:
+                pairs.append(
+                    [
+                        float(m) if m.replace('.', '', 1).isdigit() else m
+                        for m in match.groups()
+                    ]
+                )
 
-    if pairs is None:
+    if not pairs:
         logger.warning(
             'No CO{}P values detected in CO{}CAR.lobster.'.format(
                 method.upper(), method.upper()
             )
         )
         return
-
-    coxp_lines = coxpcar_parser.get('coxp_lines')
-    coxp_lines = list(zip(*coxp_lines))
 
     if coxp_lines is None:
         logger.warning(
@@ -534,6 +550,7 @@ def parse_COXPCAR(fname, scc, method, logger):
         )
         return
 
+    coxp_lines = list(zip(*coxp_lines))
     spin_polarized = len(coxp_lines) == 4 * len(pairs) + 5
 
     _lab, a1, a2, distances, _lab_orb, _a1_orb, _a2_orb, _distances_orb = (
