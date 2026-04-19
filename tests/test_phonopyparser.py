@@ -84,3 +84,51 @@ def test_hexagonal_noncanonical(parser):
     # TODO: also update other geometry artifacts
 
     # TODO: add test for failed lattice classification
+
+
+def test_standard_phonopy_naming(parser):
+    """Test parsing with standard phonopy directory naming (disp-01/)"""
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/Ge_standard_phonopy/disp-01/control.in',
+        archive,
+        None,
+    )
+
+    # Verify same results as original test
+    sec_thermo = archive.run[0].calculation[0].thermodynamics
+    assert len(sec_thermo) == 11
+    assert sec_thermo[0].temperature is not None
+    assert archive.run[0].method[0].x_phonopy_displacement.magnitude == 1e-12
+
+
+def test_minimal_naming(parser):
+    """Test parsing with minimal directory naming (displacement-01/)"""
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/Ge_minimal/displacement-01/control.in',
+        archive,
+        None,
+    )
+
+    # Verify same results as original test
+    sec_thermo = archive.run[0].calculation[0].thermodynamics
+    assert len(sec_thermo) == 11
+    assert sec_thermo[0].temperature is not None
+    assert archive.run[0].method[0].x_phonopy_displacement.magnitude == 1e-12
+
+
+def test_no_phonopy_prefix(parser):
+    """Test parsing with FHI-aims naming without phonopy prefix"""
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/Ge_no_phonopy_prefix/FHI-aims-displacement-01/control.in',
+        archive,
+        None,
+    )
+
+    # Verify same results as original test
+    sec_thermo = archive.run[0].calculation[0].thermodynamics
+    assert len(sec_thermo) == 11
+    assert sec_thermo[0].temperature is not None
+    assert archive.run[0].method[0].x_phonopy_displacement.magnitude == 1e-12
