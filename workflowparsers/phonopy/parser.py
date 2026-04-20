@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import os
+import re
 import numpy as np
 import logging
 import json
@@ -505,7 +506,6 @@ class PhonopyParser:
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
 
             # Detect displacement directory naming pattern from the main file path
-            import re
             mainfile_dir = os.path.basename(os.path.dirname(self.mainfile))
             displacement_match = re.search(r'(.*disp(?:lacement)?[-_])(\d+)$', mainfile_dir)
             if displacement_match:
