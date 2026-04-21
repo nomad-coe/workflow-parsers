@@ -139,13 +139,14 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, dir_prefix='phonopy-FHI-aims-displacement-', tolerance=1e-6, logger=None):
+def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logger=None):
     """
-    Collect the pre calculated forces for each of the supercells
+    Collect the pre calculated forces for each of the supercells by scanning
+    for displacement directories in the parent directory.
 
     Args:
         reference_supercells: List of reference supercells
-        dir_prefix: Directory naming prefix (e.g., 'disp-', 'displacement-', 'phonopy-FHI-aims-displacement-')
+        parent_dir: Parent directory containing displacement subdirectories
         tolerance: Tolerance for cell comparison
         logger: Logger instance
     """
@@ -194,20 +195,65 @@ def read_forces_aims(reference_supercells, dir_prefix='phonopy-FHI-aims-displace
             return False
         return True
 
+    def find_displacement_directories(parent_dir):
+        """
+        Scan parent directory for displacement directories matching pattern: prefix-NNN or prefix_NNN
+        Returns list of (directory_path, numeric_suffix) tuples sorted by numeric suffix.
+        """
+        displacement_dirs = []
+        try:
+            for entry in os.listdir(parent_dir):
+                entry_path = os.path.join(parent_dir, entry)
+                if not os.path.isdir(entry_path):
+                    continue
+
+                # Match directories ending with separator + digits (e.g., disp-001, displacement_01)
+                match = re.search(r'[-_](\d+)$', entry)
+                if match:
+                    numeric_suffix = int(match.group(1))
+                    displacement_dirs.append((entry_path, numeric_suffix))
+        except OSError as e:
+            if logger:
+                logger.error(f'Error scanning directory {parent_dir}: {e}')
+            return []
+
+        # Sort by numeric suffix
+        displacement_dirs.sort(key=lambda x: x[1])
+        return displacement_dirs
+
     reference_paths, forces_sets = [], []
 
-    n_pad = int(np.ceil(np.log10(len(reference_supercells) + 1))) + 1
+    # Find all displacement directories
+    displacement_dirs = find_displacement_directories(parent_dir)
+
+    if len(displacement_dirs) == 0:
+        if logger:
+            logger.error(f'No displacement directories found in {parent_dir}')
+        return forces_sets, reference_paths
+
+    if len(displacement_dirs) != len(reference_supercells):
+        if logger:
+            logger.warning(
+                f'Number of displacement directories ({len(displacement_dirs)}) '
+                f'does not match expected supercells ({len(reference_supercells)})'
+            )
+
+    # Match displacement directories to reference supercells
     for n, reference_supercell in enumerate(reference_supercells):
-        directory = '%s%s' % (dir_prefix, str(n + 1).zfill(n_pad))
-        filename = os.path.join(directory, '%s.out' % directory)
-        calculated_supercell = None
-        if os.path.isfile(filename):
-            calculated_supercell = read_aims_output(filename)
+        if n >= len(displacement_dirs):
+            if logger:
+                logger.error(f'Missing displacement directory for supercell {n + 1}')
+            continue
+
+        directory, _ = displacement_dirs[n]
+
+        # Try to find output file
+        calculated_supercell, out_filename = get_aims_output_file(directory)
+
+        if out_filename is not None:
+            filename = os.path.join(directory, out_filename)
         else:
-            # try reading out files
-            calculated_supercell, out_filename = get_aims_output_file(directory)
-            if out_filename is not None:
-                filename = os.path.join(directory, out_filename)
+            filename = None
 
         # Skip this displacement if no valid output was found
         if calculated_supercell is None:
@@ -525,24 +571,15 @@ class PhonopyParser:
             displacement = self.control_parser.get('displacement', 0.001)
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
 
-            # Detect displacement directory naming pattern from the main file path
-            # Extract pattern like "prefix-01" or "prefix_001"
-            mainfile_dir = os.path.basename(os.path.dirname(self.mainfile))
-            displacement_match = re.search(r'(.+[-_])(\d+)$', mainfile_dir)
-            if displacement_match:
-                dir_prefix = displacement_match.group(1)
-            else:
-                # Default to NOMAD naming convention
-                dir_prefix = 'phonopy-FHI-aims-displacement-'
-
             try:
                 phonopy_obj = phonopy.Phonopy(
                     cell_obj, supercell_matrix, symprec=sym, calculator='fhi-aims'
                 )
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
+                # Current directory is already the parent directory (changed at line 566)
                 set_of_forces, relative_paths = read_forces_aims(
-                    supercells, dir_prefix=dir_prefix, logger=self.logger
+                    supercells, parent_dir='.', logger=self.logger
                 )
             except Exception as e:
                 self.logger.error('Error generating phonopy object.', exc_info=True)
