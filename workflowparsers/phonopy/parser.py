@@ -506,8 +506,9 @@ class PhonopyParser:
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
 
             # Detect displacement directory naming pattern from the main file path
+            # Extract pattern like "prefix-01" or "prefix_001"
             mainfile_dir = os.path.basename(os.path.dirname(self.mainfile))
-            displacement_match = re.search(r'(.*disp(?:lacement)?[-_])(\d+)$', mainfile_dir)
+            displacement_match = re.search(r'(.+[-_])(\d+)$', mainfile_dir)
             if displacement_match:
                 dir_prefix = displacement_match.group(1)
             else:
