@@ -151,15 +151,27 @@ def read_forces_aims(reference_supercells, dir_prefix='phonopy-FHI-aims-displace
     """
 
     def get_aims_output_file(directory):
-        files = [f for f in os.listdir(directory) if f.endswith('.out')]
+        try:
+            files = [f for f in os.listdir(directory) if f.endswith('.out')]
+        except FileNotFoundError:
+            if logger:
+                logger.warning(f'Directory not found: {directory}')
+            return None, None
+
         output = None
+        filename = None
         for f in files:
             try:
                 output = read_aims_output(os.path.join(directory, f))
+                filename = f
                 break
             except Exception:
                 pass
-        return output, f
+
+        if filename is None and logger:
+            logger.warning(f'No valid .out files found in {directory}')
+
+        return output, filename
 
     def is_equal(reference, calculated):
         if len(reference) != len(calculated):
@@ -188,12 +200,20 @@ def read_forces_aims(reference_supercells, dir_prefix='phonopy-FHI-aims-displace
     for n, reference_supercell in enumerate(reference_supercells):
         directory = '%s%s' % (dir_prefix, str(n + 1).zfill(n_pad))
         filename = os.path.join(directory, '%s.out' % directory)
+        calculated_supercell = None
         if os.path.isfile(filename):
             calculated_supercell = read_aims_output(filename)
         else:
             # try reading out files
-            calculated_supercell, filename = get_aims_output_file(directory)
-            filename = os.path.join(directory, filename)
+            calculated_supercell, out_filename = get_aims_output_file(directory)
+            if out_filename is not None:
+                filename = os.path.join(directory, out_filename)
+
+        # Skip this displacement if no valid output was found
+        if calculated_supercell is None:
+            if logger:
+                logger.error(f'No valid FHI-aims output found for displacement {n + 1} in {directory}')
+            continue
 
         # compare if calculated cell really corresponds to supercell
         if not is_equal(reference_supercell, calculated_supercell):
