@@ -543,7 +543,7 @@ class PhonopyParser:
         if self._phonopy_obj is None:
             if 'control.in' in self.mainfile:
                 self._build_phonopy_object_fhi_aims()
-            elif self.mainfile.endswith('.yaml'):
+            elif self.mainfile.endswith('.yaml') or self.mainfile.endswith('.yml'):
                 self._build_phonopy_object_yaml()
         return self._phonopy_obj
 
