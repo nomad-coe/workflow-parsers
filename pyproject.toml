@@ -32,7 +32,7 @@ homepage = "https://github.com/nomad-coe/workflow-parsers"
 [project.optional-dependencies]
 tests = [
     "astroid==2.11.7",
-    'mypy>=1.15',
+    'mypy>=1.15,<1.20',
     'pytest>= 5.3.0, <8',
     'pytest-timeout>=1.4.2',
     'pytest-cov>=2.7.1',
