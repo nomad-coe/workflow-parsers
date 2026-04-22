@@ -21,6 +21,7 @@ import re
 import numpy as np
 import logging
 import json
+from typing import Optional
 import phonopy
 from phonopy.units import THzToEv
 from phonopy.structure.atoms import PhonopyAtoms
@@ -94,7 +95,7 @@ class Atoms_with_forces(PhonopyAtoms):
         return self.forces
 
 
-def read_aims_output(filename):
+def read_aims_output(filename: str) -> PhonopyAtoms:
     """Read FHI-aims output
     returns geometry with forces from last self-consistency iteration"""
     cell = []
@@ -139,7 +140,12 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logger=None):
+def read_forces_aims(
+    reference_supercells: list[PhonopyAtoms],
+    parent_dir: str = '.',
+    tolerance: float = 1e-6,
+    logger: Optional[logging.Logger] = None
+) -> tuple[list, list[Optional[str]]]:
     """
     Collect the pre calculated forces for each of the supercells by scanning
     for displacement directories in the parent directory.
@@ -149,9 +155,13 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
         parent_dir: Parent directory containing displacement subdirectories
         tolerance: Tolerance for cell comparison
         logger: Logger instance
+
+    Returns:
+        Tuple of (forces_sets, reference_paths) where reference_paths may contain None
+        for displacements that could not be parsed
     """
 
-    def get_aims_output_file(directory):
+    def get_aims_output_file(directory: str) -> tuple[Optional[PhonopyAtoms], Optional[str]]:
         try:
             files = [f for f in os.listdir(directory) if f.endswith('.out')]
         except FileNotFoundError:
@@ -179,7 +189,7 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
 
         return output, filename
 
-    def is_equal(reference, calculated):
+    def is_equal(reference: PhonopyAtoms, calculated: PhonopyAtoms) -> bool:
         if len(reference) != len(calculated):
             logger.warning('Inconsistent number of atoms.')
             return False
@@ -200,7 +210,7 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
             return False
         return True
 
-    def find_displacement_directories(parent_dir):
+    def find_displacement_directories(parent_dir: str) -> list[tuple[str, int]]:
         """
         Scan parent directory for displacement directories matching pattern: prefix-NNN or prefix_NNN
         Returns list of (directory_path, numeric_suffix) tuples sorted by numeric suffix.
