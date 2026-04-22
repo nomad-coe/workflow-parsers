@@ -159,6 +159,11 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
                 logger.warning(f'Directory not found: {directory}')
             return None, None
 
+        if not files:
+            if logger:
+                logger.warning(f'No .out files found in {directory}')
+            return None, None
+
         output = None
         filename = None
         for f in files:
@@ -170,7 +175,7 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
                 pass
 
         if filename is None and logger:
-            logger.warning(f'No valid .out files found in {directory}')
+            logger.warning(f'Found {len(files)} .out file(s) in {directory}, but all failed to parse')
 
         return output, filename
 
@@ -250,15 +255,19 @@ def read_forces_aims(reference_supercells, parent_dir='.', tolerance=1e-6, logge
         # Try to find output file
         calculated_supercell, out_filename = get_aims_output_file(directory)
 
-        if out_filename is not None:
-            filename = os.path.join(directory, out_filename)
-        else:
-            filename = None
-
         # Skip this displacement if no valid output was found
         if calculated_supercell is None:
             if logger:
                 logger.error(f'No valid FHI-aims output found for displacement {n + 1} in {directory}')
+            continue
+
+        # Simplified conditional: if output exists, filename must also exist
+        filename = os.path.join(directory, out_filename) if out_filename else None
+
+        # Sanity check: if we have output, we must have a filename
+        if filename is None:
+            if logger:
+                logger.error(f'Internal error: got output but no filename for displacement {n + 1}')
             continue
 
         # compare if calculated cell really corresponds to supercell
