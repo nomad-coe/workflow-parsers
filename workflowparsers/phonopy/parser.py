@@ -98,10 +98,10 @@ class Atoms_with_forces(PhonopyAtoms):
 def read_aims_output(filename: str) -> PhonopyAtoms:
     """Read FHI-aims output
     returns geometry with forces from last self-consistency iteration"""
-    cell = []
-    symbols = []
-    positions = []
-    forces = []
+    cell: list = []
+    symbols: list[str] = []
+    positions: list[list[float]] = []
+    forces: list[list[float]] = []
     N = 0
 
     with open(filename) as f:
@@ -121,21 +121,21 @@ def read_aims_output(filename: str) -> PhonopyAtoms:
                 while len(positions) != N:
                     line = f.readline()
                     if 'Species' in line or 'atom ' in line:
-                        line = line.split()
+                        parts = line.split()
                         positions.append(
                             [
                                 float(x)
-                                for x in line[position_index : position_index + 3]
+                                for x in parts[position_index : position_index + 3]
                             ]
                         )
-                        symbols.append(line[symbol_index])
+                        symbols.append(parts[symbol_index])
             elif 'Total atomic forces' in line:
                 forces = [
                     [float(x) for x in f.readline().split()[2:5]] for _ in range(N)
                 ]
 
     atoms = Atoms_with_forces(cell=cell, symbols=symbols, positions=positions)
-    atoms.forces = forces
+    atoms.forces = forces  # type: ignore[attr-defined]
 
     return atoms
 
@@ -236,7 +236,8 @@ def read_forces_aims(
         displacement_dirs.sort(key=lambda x: x[1])
         return displacement_dirs
 
-    reference_paths, forces_sets = [], []
+    reference_paths: list[Optional[str]] = []
+    forces_sets: list = []
 
     # Find all displacement directories
     displacement_dirs = find_displacement_directories(parent_dir)
@@ -284,7 +285,7 @@ def read_forces_aims(
         if not is_equal(reference_supercell, calculated_supercell):
             logger.error('Supercells do not match')
 
-        forces = np.array(calculated_supercell.get_forces())
+        forces = np.array(calculated_supercell.get_forces())  # type: ignore[attr-defined]
         drift_force = forces.sum(axis=0)
         for force in forces:
             force -= drift_force / forces.shape[0]
