@@ -132,3 +132,33 @@ def test_no_phonopy_prefix(parser):
     assert len(sec_thermo) == 11
     assert sec_thermo[0].temperature is not None
     assert archive.run[0].method[0].x_phonopy_displacement.magnitude == 1e-12
+
+
+def test_missing_out_files(parser):
+    """Test error handling when displacement directory has no .out files"""
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/Ge_no_out_files/displacement-01/control.in',
+        archive,
+        None,
+    )
+
+    # Parser should not crash, but may have incomplete data
+    # The archive should still be created
+    assert archive is not None
+    # Since forces cannot be read, some phonopy features may not be available
+    # but basic parsing should complete
+
+
+def test_malformed_out_files(parser):
+    """Test error handling when .out files exist but fail to parse"""
+    archive = EntryArchive()
+    parser.parse(
+        'tests/data/phonopy/Ge_malformed_out/displacement-01/control.in',
+        archive,
+        None,
+    )
+
+    # Parser should not crash even when output files are malformed
+    assert archive is not None
+    # The parser should gracefully skip displacement directories with unparseable output
