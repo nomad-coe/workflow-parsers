@@ -139,7 +139,7 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_prefix='phonopy-FHI-aims-displacement'):
+def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_prefix='phonopy-FHI-aims-displacement', separator='-', padding=None):
     """
     Collect the pre calculated forces for each of the supercells
 
@@ -148,11 +148,14 @@ def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_pref
         tolerance: Tolerance for structure comparison
         logger: Logger instance
         dir_prefix: Prefix for displacement directories (e.g., 'disp', 'displacement', 'phonopy-FHI-aims-displacement')
+        separator: Separator character between prefix and number ('-' or '_')
+        padding: Number of digits for zero-padding (None = auto-calculate)
     """
 
     def get_aims_output_file(directory):
         files = [f for f in os.listdir(directory) if f.endswith('.out')]
         output = None
+        f = None
         for f in files:
             try:
                 output = read_aims_output(os.path.join(directory, f))
@@ -184,9 +187,12 @@ def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_pref
 
     reference_paths, forces_sets = [], []
 
-    n_pad = int(np.ceil(np.log10(len(reference_supercells) + 1))) + 1
+    if padding is None:
+        n_pad = int(np.ceil(np.log10(len(reference_supercells) + 1))) + 1
+    else:
+        n_pad = padding
     for n, reference_supercell in enumerate(reference_supercells):
-        directory = '%s-%s' % (dir_prefix, str(n + 1).zfill(n_pad))
+        directory = '%s%s%s' % (dir_prefix, separator, str(n + 1).zfill(n_pad))
         filename = os.path.join(directory, '%s.out' % directory)
         if os.path.isfile(filename):
             calculated_supercell = read_aims_output(filename)
@@ -501,8 +507,15 @@ class PhonopyParser:
 
         # Extract directory pattern from mainfile path
         displacement_dir = os.path.basename(os.path.dirname(self.mainfile))
-        match = re.match(r'(.+?)[-_]0*1$', displacement_dir)
-        dir_prefix = match.group(1) if match else 'phonopy-FHI-aims-displacement'
+        match = re.match(r'(.+?)([-_])(0*)1$', displacement_dir)
+        if match:
+            dir_prefix = match.group(1)
+            separator = match.group(2)
+            padding = len(match.group(3)) + 1  # +1 for the '1' digit
+        else:
+            dir_prefix = 'phonopy-FHI-aims-displacement'
+            separator = '-'
+            padding = None
 
         try:
             cell_obj = read_aims('geometry.in')
@@ -517,7 +530,8 @@ class PhonopyParser:
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
                 set_of_forces, relative_paths = read_forces_aims(
-                    supercells, logger=self.logger, dir_prefix=dir_prefix
+                    supercells, logger=self.logger, dir_prefix=dir_prefix,
+                    separator=separator, padding=padding
                 )
             except Exception:
                 self.logger.error('Error generating phonopy object.')
