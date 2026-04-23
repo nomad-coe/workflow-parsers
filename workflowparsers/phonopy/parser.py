@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import os
+import re
 import numpy as np
 import logging
 import json
@@ -138,9 +139,15 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None):
+def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_prefix='phonopy-FHI-aims-displacement'):
     """
     Collect the pre calculated forces for each of the supercells
+
+    Args:
+        reference_supercells: List of reference supercell structures
+        tolerance: Tolerance for structure comparison
+        logger: Logger instance
+        dir_prefix: Prefix for displacement directories (e.g., 'disp', 'displacement', 'phonopy-FHI-aims-displacement')
     """
 
     def get_aims_output_file(directory):
@@ -179,7 +186,7 @@ def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None):
 
     n_pad = int(np.ceil(np.log10(len(reference_supercells) + 1))) + 1
     for n, reference_supercell in enumerate(reference_supercells):
-        directory = 'phonopy-FHI-aims-displacement-%s' % (str(n + 1).zfill(n_pad))
+        directory = '%s-%s' % (dir_prefix, str(n + 1).zfill(n_pad))
         filename = os.path.join(directory, '%s.out' % directory)
         if os.path.isfile(filename):
             calculated_supercell = read_aims_output(filename)
@@ -491,6 +498,12 @@ class PhonopyParser:
     def _build_phonopy_object_fhi_aims(self):
         cwd = os.getcwd()
         os.chdir(os.path.dirname(os.path.dirname(self.mainfile)))
+
+        # Extract directory pattern from mainfile path
+        displacement_dir = os.path.basename(os.path.dirname(self.mainfile))
+        match = re.match(r'(.+?)[-_]0*1$', displacement_dir)
+        dir_prefix = match.group(1) if match else 'phonopy-FHI-aims-displacement'
+
         try:
             cell_obj = read_aims('geometry.in')
             self.control_parser.mainfile = 'control.in'
@@ -504,7 +517,7 @@ class PhonopyParser:
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
                 set_of_forces, relative_paths = read_forces_aims(
-                    supercells, logger=self.logger
+                    supercells, logger=self.logger, dir_prefix=dir_prefix
                 )
             except Exception:
                 self.logger.error('Error generating phonopy object.')
@@ -512,11 +525,12 @@ class PhonopyParser:
                 phonopy_obj = None
                 relative_paths = []
 
-            prep_path = self.mainfile.split('phonopy-FHI-aims-displacement-')
+            # Extract parent path for resolving relative references
+            parent_path = os.path.dirname(os.path.dirname(self.mainfile))
             # Try to resolve references as paths relative to the upload root.
             try:
                 for path in relative_paths:
-                    abs_path = '%s%s' % (prep_path[0], path)
+                    abs_path = os.path.join(parent_path, path)
                     rel_path = abs_path.split(config.fs.staging + '/')[1].split('/', 3)[
                         3
                     ]
