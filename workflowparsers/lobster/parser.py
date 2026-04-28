@@ -330,11 +330,14 @@ def parse_ICOXPLIST(fname, scc, method, version):
         )
 
     if len(icoxps_orb_list) > 0:
-        setattr(
-            section,
-            'x_lobster_integrated_orbital_co{}_at_fermi_level'.format(method),
-            icoxps_orb_list,
-        )
+        try:
+            setattr(
+                section,
+                'x_lobster_integrated_orbital_co{}_at_fermi_level'.format(method),
+                icoxps_orb_list,
+            )
+        except Exception as e:
+            pass
         setattr(
             section,
             'x_lobster_co{}_orbital_pairs'.format(method),
@@ -348,55 +351,62 @@ class COXPCARParser(TextParser):
         self._quantities = [
             Quantity(
                 'coxp_pairs',
-                r'No\.(\d+)\:(\w+.*?)\->(\w+.*?)\(([\d\.]+)\)',
+                [r'No\.(\d+)\:(\w+.*?)\->(\w+.*?)\(([\d\.]+)\)\s*'],
                 repeats=True,
             ),
             Quantity(
-                'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
+                'coxp_lines',
+                [r'\s*(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)\s*'],
+                repeats=True,
+                dtype=np.float64,
             ),
         ]
 
 
 def parse_COXPCAR(fname, scc, method, logger):
-    def _separate_orbital_data(pairs_list, coxp_lines_list):
+    def _separate_orbital_data(pairs_list, coxp_lines):
         """
         Separate the data for atom pairs cohps and atom orbitals cohps
 
         Args:
             pairs_list: list of pairs
-            coxp_lines_list: list of COXP lines
+            coxp_lines: COXP lines
         """
+        n_lines = len(coxp_lines)
         # Filter average coxp/icoxp for spin up and spin down
-        filtered_coxp_lines = (
-            coxp_lines_list[3 : (len(pairs_list) * 2) + 3]
-            + coxp_lines_list[(len(pairs_list) * 2) + 5 :]
-        )
-
-        atom_pair_cohp = {pair[0]: [] for pair in pairs_list}
-        atom_orb_cohp = {pair[0]: [] for pair in pairs_list}
-
-        if len(pairs_list) * 4 + 5 == len(coxp_lines_list):  # spin polarized data
-            pairs_list = [pair for pair in pairs_list for _ in range(2)] * 2
-            for ix, (p, c) in enumerate(zip(pairs_list, filtered_coxp_lines)):
-                if '[' not in p[1]:
-                    atom_pair_cohp[p[0]].append(filtered_coxp_lines[ix])
-                else:
-                    atom_orb_cohp[p[0]].append(filtered_coxp_lines[ix])
-
-        elif len(pairs_list) * 2 + 3 == len(coxp_lines_list):  # non spin polarized data
-            pairs_list = [pair for pair in pairs_list for _ in range(2)]
-            for ix, (p, c) in enumerate(zip(pairs_list, coxp_lines_list[3:])):
-                if '[' not in p[1]:
-                    atom_pair_cohp[p[0]].append(coxp_lines_list[3:][ix])
-                else:
-                    atom_orb_cohp[p[0]].append(coxp_lines_list[3:][ix])
-        else:
-            logger.warning(
-                'Unexpected number of columns {} in CO{}CAR.lobster.'.format(
-                    len(coxp_lines), method.upper()
-                )
+        coxp_lines = np.concatenate(
+            (
+                coxp_lines[3 : (len(pairs_list) * 2) + 3],
+                coxp_lines[(len(pairs_list) * 2) + 5 :],
             )
-            return
+        )
+        array_length = max([len(line) for line in coxp_lines])
+        atom_pair_cohp = {pair[0]: np.empty((0, array_length)) for pair in pairs_list}
+        atom_orb_cohp = {pair[0]: np.empty((0, array_length)) for pair in pairs_list}
+
+        def append_array(a0, a1):
+            return np.append(a0, [np.resize(a1, (array_length,))], axis=0)
+
+        n_spin = (
+            2
+            if len(pairs_list) * 4 + 5 == n_lines
+            else (1 if len(pairs_list) * 2 + 3 == n_lines else 0)
+        )
+        if n_spin == 0:
+            logger.warning(
+                f'Unexpected number of columns {n_lines} in CO{method.upper()}CAR.lobster.'
+            )
+            return atom_pair_cohp, atom_orb_cohp
+
+        pairs_list = [pair for pair in pairs_list for _ in range(2)] * n_spin
+        for ix, p in enumerate(pairs_list):
+            if '[' not in p[1]:
+                atom_pair_cohp[p[0]] = append_array(
+                    atom_pair_cohp[p[0]], coxp_lines[ix]
+                )
+            else:
+                atom_orb_cohp[p[0]] = append_array(atom_orb_cohp[p[0]], coxp_lines[ix])
+            coxp_lines[ix] = None  # free memory
 
         return atom_pair_cohp, atom_orb_cohp
 
@@ -447,51 +457,37 @@ def parse_COXPCAR(fname, scc, method, logger):
             orb_cohp_data: dictionary of atom orbital COHP data
             spin_polarized: bool, whether the data is spin polarized or not
         """
-        orb_coxp = []
-        orb_icoxp = []
-        for values in orb_cohp_data.values():
-            if spin_polarized:
-                num_pairs = len(values) // 2
-                spin_up = values[:num_pairs]
-                spin_dn = values[num_pairs:]
 
-                # Separate COXP and iCOXP for spin-up and spin-down
-                coxps_up = spin_up[0::2]
-                coxps_dn = spin_dn[0::2]
-                icoxps_up = spin_up[1::2]
-                icoxps_dn = spin_dn[1::2]
-                # Group spin-polarized data as [spin_up, spin_dn] for each pair
-                coxps = [[up, dn] for up, dn in zip(coxps_up, coxps_dn)]
-                icoxps = [[up, dn] for up, dn in zip(icoxps_up, icoxps_dn)]
-                orb_coxp.append(coxps)
-                orb_icoxp.append(icoxps)
-            else:
-                # Separate COXP and iCOXP for non-spin-polarized data
-                coxps = values[0::2]
-                icoxps = values[1::2]
-                orb_coxp.append(coxps)
-                orb_icoxp.append(icoxps)
+        array_dim = ()
+        n_spin = 2 if spin_polarized else 1
+        # get maximum size of array
+        array_dim = max([np.shape(v) for v in orb_cohp_data.values()])
+        array_shape = (array_dim[0] // (n_spin * 2), n_spin, array_dim[1])
+        # initialize arrays
+        orb_coxp = np.empty((0, *array_shape))
+        orb_icoxp = np.empty((0, *array_shape))
 
+        def append_array(a0, a1):
+            return np.append(a0, [np.resize(a1, array_shape)], axis=0)
+
+        for key, values in orb_cohp_data.items():
+            if not len(values):
+                continue
+            values = np.reshape(
+                values,
+                (n_spin, np.size(values) // n_spin // array_dim[1], array_dim[1]),
+            )
+            values = np.transpose(values, (1, 0, 2))
+            orb_coxp = append_array(orb_coxp, values[0::2])
+            orb_icoxp = append_array(orb_icoxp, values[1::2])
+            orb_cohp_data[key] = None
         return orb_coxp, orb_icoxp
 
     coxpcar_parser = COXPCARParser()
 
-    # coxpcar_parser = TextParser(
-    #     quantities=[
-    #         Quantity(
-    #             'coxp_pairs',
-    #             r'No\.(\d+):(\w{1,2}\d+)->(\w{1,2}\d+)\(([\d\.]+)\) *?|No\.(\d+):(\w{1,2}\d+\[[^\]]*\])->(\w{1,2}\d+\[[^\]]*\])\(([\d\.]+)\) *?',
-    #             repeats=True,
-    #         ),
-    #         Quantity(
-    #             'coxp_lines', r'\n *(-*\d+\.\d+(?:[ \t]+-*\d+\.\d+)+)', repeats=True
-    #         ),
-    #     ]
-    # )
-
     if not os.path.isfile(fname):
         return
-    coxpcar_parser.findall = False
+    coxpcar_parser.line_parsing = True
     coxpcar_parser.mainfile = fname
     coxpcar_parser.parse()
 
@@ -514,7 +510,7 @@ def parse_COXPCAR(fname, scc, method, logger):
         else:
             section = scc.x_lobster_section_cobi
 
-    pairs = coxpcar_parser.get('coxp_pairs')
+    pairs = coxpcar_parser.pop('coxp_pairs')
 
     if pairs is None:
         logger.warning(
@@ -524,14 +520,19 @@ def parse_COXPCAR(fname, scc, method, logger):
         )
         return
 
-    coxp_lines = coxpcar_parser.get('coxp_lines')
-    coxp_lines = list(zip(*coxp_lines))
+    coxp_lines = coxpcar_parser.pop('coxp_lines')
 
     if coxp_lines is None:
         logger.warning(
             'No CO{} values detected in CO{}CAR.lobster.'
             'The file is likely incomplete'.format(method.upper(), method.upper())
         )
+        return
+
+    coxp_lines = np.array(coxp_lines).T
+    max_lines = 1000000
+    if np.size(coxp_lines) > max_lines:
+        logger.warning('Too large COXP data parsed. Unable to write to archive.')
         return
 
     spin_polarized = len(coxp_lines) == 4 * len(pairs) + 5
@@ -543,38 +544,27 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     number_of_pairs = len(list(a1))  # excluding orbital pairs (atom pairs only)
     tot_interactions = len(pairs)  # including orbital pairs
+    coxp_spin_index = (tot_interactions * 2) + 3
 
-    if not spin_polarized:
-        acoxp = [coxp_lines[1]]
-        aicoxp = [coxp_lines[2]]
-        coxp = [[coxp_icoxp[0]] for coxp_icoxp in list(atom_pair_cohp.values())]
-        icoxp = [[coxp_icoxp[1]] for coxp_icoxp in list(atom_pair_cohp.values())]
-        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(
-            atom_orb_cohp, spin_polarized=spin_polarized
+    acoxp = coxp_lines[1 : coxp_spin_index + 1 : coxp_spin_index - 1]
+    aicoxp = coxp_lines[2 : coxp_spin_index + 2 : coxp_spin_index - 1]
+    values = None
+    for key, val in atom_pair_cohp.items():
+        values = np.append(
+            np.empty((0, *np.shape(val))) if values is None else values, [val], axis=0
         )
+        atom_pair_cohp[key] = None  # free memory
+    # values = np.array([v for v in atom_pair_cohp.values()])
+    coxp = values[:, 0::2]
+    icoxp = values[:, 1::2]
 
-    elif spin_polarized:
-        spin_dn_coxp_icoxp = coxp_lines[
-            (tot_interactions * 2) + 3 : (tot_interactions * 2) + 5
-        ]
-        acoxp = [coxp_lines[1], spin_dn_coxp_icoxp[0]]
-        aicoxp = [coxp_lines[2], spin_dn_coxp_icoxp[1]]
-
-        coxp = [
-            [coxp_icoxp[0], coxp_icoxp[2]]
-            for coxp_icoxp in list(atom_pair_cohp.values())
-        ]
-        icoxp = [
-            [coxp_icoxp[1], coxp_icoxp[3]]
-            for coxp_icoxp in list(atom_pair_cohp.values())
-        ]
-        coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(
-            atom_orb_cohp, spin_polarized=spin_polarized
+    coxp_orb, icoxp_orb = _group_orb_coxp_spin_data(
+        atom_orb_cohp, spin_polarized=spin_polarized
+    )
+    if len(icoxp_orb) and len(icoxp_orb[0]) > 0:
+        icoxp_orb = orb_coxp_icoxp_to_joule(
+            icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method
         )
-        if len(icoxp_orb[0]) > 0:
-            icoxp_orb = orb_coxp_icoxp_to_joule(
-                icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method
-            )
 
     setattr(section, 'x_lobster_number_of_co{}_pairs'.format(method), number_of_pairs)
     setattr(section, 'x_lobster_co{}_atom1_labels'.format(method), list(a1))
@@ -600,6 +590,8 @@ def parse_COXPCAR(fname, scc, method, logger):
         'x_lobster_average_integrated_co{}_values'.format(method),
         np.array(aicoxp) * units.eV if method == 'hp' else np.array(aicoxp),
     )
+    del acoxp, aicoxp
+
     setattr(section, 'x_lobster_co{}_values'.format(method), np.array(coxp))
     setattr(
         section,
@@ -607,16 +599,24 @@ def parse_COXPCAR(fname, scc, method, logger):
         np.array(icoxp) * units.eV if method == 'hp' else np.array(icoxp),
     )
     if len(coxp_orb) > 0:
-        setattr(
-            section,
-            'x_lobster_co{}_orbital_values'.format(method),
-            coxp_orb,
-        )
-        setattr(
-            section,
-            'x_lobster_integrated_co{}_orbital_values'.format(method),
-            icoxp_orb,
-        )
+        try:
+            setattr(
+                section,
+                'x_lobster_co{}_orbital_values'.format(method),
+                coxp_orb,
+            )
+        except Exception:
+            pass
+        del coxp_orb
+        try:
+            setattr(
+                section,
+                'x_lobster_integrated_co{}_orbital_values'.format(method),
+                icoxp_orb,
+            )
+        except Exception:
+            pass
+        del icoxp_orb
     coxpcar_parser.close()
 
 
