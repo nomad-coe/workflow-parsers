@@ -84,16 +84,25 @@ def _normalize_fermi_orbital_values(values):
 
     Returns:
         numpy array with appropriate shape
+
+    Raises:
+        ValueError: If values cannot be converted to numeric array
     """
-    # Convert to numpy array if not already
-    values_array = np.asarray(values)
+    try:
+        # Convert to numpy array if not already
+        values_array = np.asarray(values)
 
-    # Check if we have a 2D array with shape (n, 1) - equivalent to [[x], [y], [z]]
-    # Flatten to 1D in this case
-    if values_array.ndim == 2 and values_array.shape[1] == 1:
-        return values_array.flatten()
+        # Check if we have a 2D array with shape (n, 1) - equivalent to [[x], [y], [z]]
+        # Flatten to 1D in this case
+        if values_array.ndim == 2 and values_array.shape[1] == 1:
+            return values_array.flatten()
 
-    return values_array
+        return values_array
+    except (ValueError, TypeError) as exc:
+        raise ValueError(
+            f'Failed to normalize Fermi orbital values. '
+            f'Expected numeric array, got: {type(values).__name__}'
+        ) from exc
 
 _LABEL_SECTION_ATTR = {
     'hp': 'x_lobster_cohp_orbital_per_label',
@@ -360,14 +369,12 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 orbital_pair_class = _ORBITAL_PAIR_CLASS.get(method)
                 # Get existing label sections from the parent section
                 existing_label_sections = getattr(section, label_attr) or []
+                # Create lookup dictionary for O(1) access
+                label_section_map = {sec.x_lobster_pair_label: sec for sec in existing_label_sections}
 
                 for label, values in zip(orb_labels, orb_icoxps):
                     # Find existing label section or create new one
-                    label_section = None
-                    for existing_sec in existing_label_sections:
-                        if existing_sec.x_lobster_pair_label == label:
-                            label_section = existing_sec
-                            break
+                    label_section = label_section_map.get(label)
 
                     if label_section is None:
                         label_section = label_class()
@@ -400,11 +407,7 @@ def parse_ICOXPLIST(fname, scc, method, version):
                             if isinstance(fermi_val, (list, tuple, np.ndarray)):
                                 # Already have values for multiple spins [spin0, spin1, ...]
                                 # This happens with LOBSTER 5.1+ format
-                                if per_spin is None:
-                                    per_spin = np.array(fermi_val)
-                                else:
-                                    # Merge with existing
-                                    per_spin = np.array(fermi_val)
+                                per_spin = np.array(fermi_val)
                             else:
                                 # Single value for current spin channel
                                 if per_spin is None:
@@ -801,6 +804,8 @@ def parse_COXPCAR(fname, scc, method, logger):
         if label_attr and label_class and orbital_pair_class:
             # Get existing label sections
             existing_sections = getattr(section, label_attr) or []
+            # Create lookup dictionary for O(1) access
+            label_section_map = {sec.x_lobster_pair_label: sec for sec in existing_sections}
 
             orb_labels = list(atom_orb_cohp.keys())
             label_to_index = {lab: idx for idx, lab in enumerate(orb_labels)}
@@ -813,11 +818,7 @@ def parse_COXPCAR(fname, scc, method, logger):
                     continue
 
                 # Find existing label section or create new one
-                label_section = None
-                for existing_sec in existing_sections:
-                    if existing_sec.x_lobster_pair_label == label:
-                        label_section = existing_sec
-                        break
+                label_section = label_section_map.get(label)
 
                 if label_section is None:
                     label_section = label_class()
