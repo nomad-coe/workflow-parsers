@@ -653,7 +653,7 @@ class x_lobster_section_coop_orbital_pair(MSection):
     x_lobster_atom2_orbital = Quantity(
         type=str,
         description="""
-        Orbital name for atom2 (e.g., 'Cl2', '3p').
+        Orbital name for atom2 (e.g., 'Cl2_3p').
         """,
     )
 

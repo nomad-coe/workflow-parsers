@@ -668,7 +668,7 @@ def parse_COXPCAR(fname, scc, method, logger):
     if method == 'op':
         if not scc.x_lobster_section_coop:
             section = x_lobster_section_coop()
-            section.x_lobster_section_coop = section
+            scc.x_lobster_section_coop = section
         else:
             section = scc.x_lobster_section_coop
     elif method == 'hp':
@@ -758,6 +758,10 @@ def parse_COXPCAR(fname, scc, method, logger):
         if len(icoxp_orb[0]) > 0:
             icoxp_orb = orb_coxp_icoxp_to_joule(
                 icoxp_pairs=icoxp_orb, conversion_factor=eV, data_type=method
+            )
+        if len(coxp_orb[0]) > 0 and method == 'hp':
+            coxp_orb = orb_coxp_icoxp_to_joule(
+                icoxp_pairs=coxp_orb, conversion_factor=eV, data_type=method
             )
 
     setattr(section, 'x_lobster_number_of_co{}_pairs'.format(method), number_of_pairs)
