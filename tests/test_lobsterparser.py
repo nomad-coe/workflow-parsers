@@ -1021,3 +1021,60 @@ def _test_workflow(parser, upload_data, upload_id, context, main_author):
         workflow_archive.workflow2.tasks[1].outputs[0].name
         == 'Output LOBSTER calculation'
     )
+
+
+def test_basis_regex(parser):
+    """Test for the lobsterout v5.1.1 failing basis regex"""
+
+    archive = EntryArchive()
+    parser.parse('tests/data/lobster/basis_regex/lobsterout.gz', archive, logging)
+
+    run = archive.run[0]
+
+    ref_basis = {
+        'Am': [
+            '6s',
+            '7s',
+            '6p_y',
+            '6p_z',
+            '6p_x',
+            '6d_xy',
+            '6d_yz',
+            '6d_z^2',
+            '6d_xz',
+            '6d_x^2-y^2',
+            '5f_y(3x^2-y^2)',
+            '5f_xyz',
+            '5f_yz^2',
+            '5f_z^3',
+            '5f_xz^2',
+            '5f_z(x^2-y^2)',
+            '5f_x(x^2-3y^2)',
+        ],
+        'Br': ['4s', '4p_y', '4p_z', '4p_x'],
+        'Cs': ['5s', '5p_y', '5p_z', '5p_x'],
+        'Np': [
+            '6s',
+            '7s',
+            '6p_y',
+            '6p_z',
+            '6p_x',
+            '6d_xy',
+            '6d_yz',
+            '6d_z^2',
+            '6d_xz',
+            '6d_x^2-y^2',
+            '5f_y(3x^2-y^2)',
+            '5f_xyz',
+            '5f_yz^2',
+            '5f_z^3',
+            '5f_xz^2',
+            '5f_z(x^2-y^2)',
+            '5f_x(x^2-3y^2)',
+        ],
+    }
+
+    assert run.method[0].x_lobster_basis_functions == ref_basis
+    assert (
+        run.method[0].electrons_representation[0].basis_set[0].type == 'pbeVaspFit2015'
+    )
