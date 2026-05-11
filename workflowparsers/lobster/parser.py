@@ -1071,7 +1071,7 @@ mainfile_parser = TextParser(
                 quantities=[
                     Quantity(
                         'x_lobster_basis_species',
-                        r'([a-zA-Z]+){1,2}\s+\((.+)\)((?:\s+\d\S+)+)\s+',
+                        r'([a-zA-Z]+){1,2}\s+\(([^)]+)\)((?:\s+\d\S+)+)\s+',
                         repeats=True,
                     )
                 ]
