@@ -624,12 +624,38 @@ def test_Si(parser):
     assert len(coop.x_lobster_coop_orbital_per_label) == 64
     assert len(cohp.x_lobster_cohp_orbital_per_label) == 64
     assert len(cobi.x_lobster_cobi_orbital_per_label) == 64
-    assert coop.x_lobster_coop_orbital_per_label[-1].x_lobster_orbital_pairs[0].x_lobster_atom1_orbital == 'Si2_3s'
-    assert coop.x_lobster_coop_orbital_per_label[-1].x_lobster_orbital_pairs[0].x_lobster_atom2_orbital == 'Si2_3s'
-    assert coop.x_lobster_coop_orbital_per_label[10].x_lobster_orbital_pairs[1].x_lobster_atom1_orbital == 'Si1_3p_y'
-    assert coop.x_lobster_coop_orbital_per_label[10].x_lobster_orbital_pairs[1].x_lobster_atom2_orbital == 'Si1_3s'
-    assert cohp.x_lobster_cohp_orbital_per_label[24].x_lobster_orbital_pairs[1].x_lobster_integrated_cohp_orbital_values[0][5].magnitude == approx(eV_to_J(-0.2004))
-    assert cobi.x_lobster_cobi_orbital_per_label[20].x_lobster_orbital_pairs[1].x_lobster_integrated_cobi_orbital_values[0][5] == approx(0.00052)
+    assert (
+        coop.x_lobster_coop_orbital_per_label[-1]
+        .x_lobster_orbital_pairs[0]
+        .x_lobster_atom1_orbital
+        == 'Si2_3s'
+    )
+    assert (
+        coop.x_lobster_coop_orbital_per_label[-1]
+        .x_lobster_orbital_pairs[0]
+        .x_lobster_atom2_orbital
+        == 'Si2_3s'
+    )
+    assert (
+        coop.x_lobster_coop_orbital_per_label[10]
+        .x_lobster_orbital_pairs[1]
+        .x_lobster_atom1_orbital
+        == 'Si1_3p_y'
+    )
+    assert (
+        coop.x_lobster_coop_orbital_per_label[10]
+        .x_lobster_orbital_pairs[1]
+        .x_lobster_atom2_orbital
+        == 'Si1_3s'
+    )
+    assert cohp.x_lobster_cohp_orbital_per_label[24].x_lobster_orbital_pairs[
+        1
+    ].x_lobster_integrated_cohp_orbital_values[0][5].magnitude == approx(
+        eV_to_J(-0.2004)
+    )
+    assert cobi.x_lobster_cobi_orbital_per_label[20].x_lobster_orbital_pairs[
+        1
+    ].x_lobster_integrated_cobi_orbital_values[0][5] == approx(0.00052)
     assert (
         coop.x_lobster_integrated_coop_values[24, 1, 5].magnitude
         == coop.x_lobster_integrated_coop_at_fermi_level[0][24].magnitude
@@ -704,14 +730,12 @@ def test_BaTiO3(parser):
     # test for orbital wise data shape
     assert len(cohp.x_lobster_cohp_orbital_per_label) == 176
     assert len(cohp.x_lobster_cohp_orbital_per_label[0].x_lobster_orbital_pairs) == 25
-    assert len(
-        cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs
-    ) == 20
+    assert len(cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs) == 20
     assert (
         len(
-            cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs[
-                0
-            ].x_lobster_integrated_cohp_orbital_values[0]
+            cohp.x_lobster_cohp_orbital_per_label[30]
+            .x_lobster_orbital_pairs[0]
+            .x_lobster_integrated_cohp_orbital_values[0]
         )
         == 11
     )
@@ -816,14 +840,12 @@ def test_BaTiO3_v5(parser):
     # test for orbital wise data shape
     assert len(cohp.x_lobster_cohp_orbital_per_label) == 58
     assert len(cohp.x_lobster_cohp_orbital_per_label[0].x_lobster_orbital_pairs) == 25
-    assert len(
-        cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs
-    ) == 40
+    assert len(cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs) == 40
     assert (
         len(
-            cohp.x_lobster_cohp_orbital_per_label[30].x_lobster_orbital_pairs[
-                0
-            ].x_lobster_integrated_cohp_orbital_values[0]
+            cohp.x_lobster_cohp_orbital_per_label[30]
+            .x_lobster_orbital_pairs[0]
+            .x_lobster_integrated_cohp_orbital_values[0]
         )
         == 6
     )
@@ -865,13 +887,17 @@ def test_orbitalwise_UO3(parser):
     )
     assert (
         len(
-            scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[0].x_lobster_orbital_pairs
+            scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[
+                0
+            ].x_lobster_orbital_pairs
         )
         == 289
     )
 
     # Check orbital pairs via subsection fields
-    orbital_pairs_25 = scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[25].x_lobster_orbital_pairs
+    orbital_pairs_25 = scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[
+        25
+    ].x_lobster_orbital_pairs
     expected_pairs = [
         ['O2_2s', 'U1_6s'],
         ['O2_2p_y', 'U1_6s'],
@@ -947,11 +973,11 @@ def test_orbitalwise_UO3(parser):
         assert orbital_pairs_25[i].x_lobster_atom1_orbital == atom1
         assert orbital_pairs_25[i].x_lobster_atom2_orbital == atom2
 
-    assert (
-        scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[0]
-        .x_lobster_orbital_pairs[37].x_lobster_integrated_orbital_cohp_at_fermi_level[0].magnitude
-        == approx(eV_to_J(-0.00001))
-    )
+    assert scc.x_lobster_section_cohp.x_lobster_cohp_orbital_per_label[
+        0
+    ].x_lobster_orbital_pairs[37].x_lobster_integrated_orbital_cohp_at_fermi_level[
+        0
+    ].magnitude == approx(eV_to_J(-0.00001))
 
 
 # TODO enable once tests with infra is permitted

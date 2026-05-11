@@ -35,11 +35,10 @@ class EntryPoint(ParserEntryPoint):
     metadata: Optional[dict] = Field(
         None,
         description="""
-        Metadata passed to the UI. Deprecated. """
+        Metadata passed to the UI. Deprecated. """,
     )
 
     def load(self):
-
         from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
 
         return MatchingParserInterface(**self.dict())

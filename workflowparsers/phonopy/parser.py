@@ -139,7 +139,14 @@ def read_aims_output(filename):
     return atoms
 
 
-def read_forces_aims(reference_supercells, tolerance=1e-6, logger=None, dir_prefix='phonopy-FHI-aims-displacement', separator='-', padding=None):
+def read_forces_aims(
+    reference_supercells,
+    tolerance=1e-6,
+    logger=None,
+    dir_prefix='phonopy-FHI-aims-displacement',
+    separator='-',
+    padding=None,
+):
     """
     Collect the pre calculated forces for each of the supercells
 
@@ -530,8 +537,11 @@ class PhonopyParser:
                 phonopy_obj.generate_displacements(distance=displacement)
                 supercells = phonopy_obj.get_supercells_with_displacements()
                 set_of_forces, relative_paths = read_forces_aims(
-                    supercells, logger=self.logger, dir_prefix=dir_prefix,
-                    separator=separator, padding=padding
+                    supercells,
+                    logger=self.logger,
+                    dir_prefix=dir_prefix,
+                    separator=separator,
+                    padding=padding,
                 )
             except Exception:
                 self.logger.error('Error generating phonopy object.')
