@@ -657,9 +657,9 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     if not os.path.isfile(fname):
         return
-    if _coxp_exceeds_uncompressed_limit(fname, logger, 2 * 1024**3):
+    if _coxp_exceeds_uncompressed_limit(fname, logger, 0.25 * 1024**3):
         logger.warning(
-            'Skipping CO{}CAR parsing because uncompressed size exceeds 2 GB.'.format(
+            'Skipping CO{}CAR parsing because uncompressed size exceeds 250 MB.'.format(
                 method.upper()
             )
         )
