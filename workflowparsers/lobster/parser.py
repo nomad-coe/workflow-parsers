@@ -1363,6 +1363,7 @@ class LobsterParser:
             workflow_archive = self._child_archives.get('workflow')
             workflow_archive.workflow2 = SerialSimulation(name='LOBSTER Workflow')
 
+            dft_task = None
             try:
                 logger.info(
                     f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
@@ -1422,6 +1423,7 @@ class LobsterParser:
 
                         # add DFT task to the workflow tasks
                         workflow_archive.workflow2.tasks.append(dft_task)
+                        break
             except Exception:
                 logger.warning(f'Error setting workflow inputs, i.e., VASP entries.')
 
@@ -1429,14 +1431,14 @@ class LobsterParser:
             lobster_calculation = extract_section(archive, ['run', 'calculation'])
             lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
 
-            try:
+            if dft_task is not None:
                 lobster_task.inputs = [
                     Link(
                         section=dft_task.outputs[0].section,
                         name='Structure and PlaneWavefunctions',
                     )
                 ]
-            except UnboundLocalError:
+            else:
                 logger.warning(f'Error connecting VASP with LOBSTER entry.')
 
             lobster_task.outputs = [
