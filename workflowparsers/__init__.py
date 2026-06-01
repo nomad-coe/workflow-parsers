@@ -37,6 +37,15 @@ class EntryPoint(ParserEntryPoint):
         description="""
         Metadata passed to the UI. Deprecated. """
     )
+    max_coxpcar_file_size: int = Field(
+        250 * 1024 * 1024,
+        description="""
+        Maximum uncompressed file size in bytes for COXPCAR files
+        (COHPCAR.lobster, COOPCAR.lobster, COBICAR.lobster).
+        Files exceeding this limit will be skipped during parsing.
+        Default: 250 MB (262144000 bytes).
+        """,
+    )
 
     def load(self):
 

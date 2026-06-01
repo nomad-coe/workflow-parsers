@@ -22,6 +22,7 @@ import ase.io
 import os
 import re
 
+from nomad.config import config
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
 from nomad.utils import extract_section
@@ -657,10 +658,21 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     if not os.path.isfile(fname):
         return
-    if _coxp_exceeds_uncompressed_limit(fname, logger, 2 * 1024**3):
+
+    # Get the file size limit from config
+    entry_point_config = config.plugins.entry_points.options.get(
+        'workflowparsers:lobster_parser_entry_point'
+    )
+    max_file_size = (
+        entry_point_config.max_coxpcar_file_size
+        if entry_point_config
+        else 250 * 1024 * 1024
+    )
+
+    if _coxp_exceeds_uncompressed_limit(fname, logger, max_file_size):
         logger.warning(
-            'Skipping CO{}CAR parsing because uncompressed size exceeds 2 GB.'.format(
-                method.upper()
+            'Skipping CO{}CAR parsing because uncompressed size exceeds {} MB.'.format(
+                method.upper(), max_file_size / (1024 * 1024)
             )
         )
         return
