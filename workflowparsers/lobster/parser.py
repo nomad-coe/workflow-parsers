@@ -1344,7 +1344,7 @@ class LobsterParser:
         doscar = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.lobster'))
         if os.path.isfile(doscar_lso):
             if os.path.isfile(doscar):
-                logger.warning(
+                logger.info(
                     'Both DOSCAR.LSO.lobster and DOSCAR.lobster found; '
                     'parsing only DOSCAR.LSO.lobster to avoid duplicate DOS.'
                 )
