@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 import re
-from pydantic import Field, field_validator, model_validator
-from typing import Optional, Union
+from pydantic import Field, model_validator
+from typing import Optional
 
 from nomad.config.models.plugins import ParserEntryPoint
 
@@ -38,8 +38,8 @@ class EntryPoint(ParserEntryPoint):
         description="""
         Metadata passed to the UI. Deprecated. """,
     )
-    max_coxpcar_file_size: Union[int, str] = Field(
-        '250MB',
+    max_coxpcar_file_size: int = Field(
+        262_144_000,  # 250 MB
         description="""
         Maximum uncompressed file size for COXPCAR files
         (COHPCAR.lobster, COOPCAR.lobster, COBICAR.lobster).
@@ -47,7 +47,7 @@ class EntryPoint(ParserEntryPoint):
         Accepts:
         - Human-readable formats: "500KB", "300MB", "2GB", "1TB" (spaces optional)
         - Raw bytes as integer: 314572800 (interpreted as bytes)
-        Default: "250MB".
+        Default: 250 MB (262144000 bytes).
         """,
     )
     max_coxpcar_file_size_display: str = Field(
@@ -63,7 +63,7 @@ class EntryPoint(ParserEntryPoint):
         if not isinstance(data, dict):
             return data
 
-        v = data.get('max_coxpcar_file_size', '250MB')
+        v = data.get('max_coxpcar_file_size', 262_144_000)
 
         if isinstance(v, int):
             # Convert bytes to human-readable format for display
