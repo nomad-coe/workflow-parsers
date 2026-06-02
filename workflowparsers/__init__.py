@@ -111,7 +111,7 @@ class EntryPoint(ParserEntryPoint):
 
         from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
 
-        return MatchingParserInterface(**self.dict())
+        return MatchingParserInterface(**self.model_dump())
 
 
 aflow_parser_entry_point = EntryPoint(
