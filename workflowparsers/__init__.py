@@ -35,7 +35,7 @@ class EntryPoint(ParserEntryPoint):
     metadata: Optional[dict] = Field(
         None,
         description="""
-        Metadata passed to the UI. Deprecated. """
+        Metadata passed to the UI. Deprecated. """,
     )
     max_coxpcar_file_size: int = Field(
         250 * 1024 * 1024,
