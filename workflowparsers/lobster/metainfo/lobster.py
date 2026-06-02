@@ -85,7 +85,7 @@ class Method(runschema.method.Method):
     )
     x_lobster_basis_functions = Quantity(
         type=JSON,
-        description='Dictionary of species and their projecition basis functions',
+        description='Dictionary of species and their projection basis functions',
     )
 
 

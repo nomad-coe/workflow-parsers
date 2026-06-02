@@ -16,8 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from pydantic import Field
-from typing import Optional
+import re
+from pydantic import Field, field_validator
+from typing import Optional, Union
 
 from nomad.config.models.plugins import ParserEntryPoint
 
@@ -37,15 +38,52 @@ class EntryPoint(ParserEntryPoint):
         description="""
         Metadata passed to the UI. Deprecated. """,
     )
-    max_coxpcar_file_size: int = Field(
-        250 * 1024 * 1024,
+    max_coxpcar_file_size: Union[int, str] = Field(
+        '250MB',
         description="""
-        Maximum uncompressed file size in bytes for COXPCAR files
+        Maximum uncompressed file size for COXPCAR files
         (COHPCAR.lobster, COOPCAR.lobster, COBICAR.lobster).
         Files exceeding this limit will be skipped during parsing.
-        Default: 250 MB (262144000 bytes).
+        Accepts:
+        - Human-readable formats: "300MB", "2GB", "500KB", "1TB"
+        - Raw bytes as integer: 314572800 (interpreted as bytes)
+        Default: "250MB".
         """,
     )
+
+    @field_validator('max_coxpcar_file_size', mode='before')
+    @classmethod
+    def parse_file_size(cls, v):
+        """Parse human-readable file size to bytes."""
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str):
+            # Match pattern like "300MB", "2GB", "500KB"
+            match = re.match(
+                r'^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$', v.strip(), re.IGNORECASE
+            )
+            if not match:
+                raise ValueError(
+                    f'Invalid file size format: {v}. Use formats like "300MB", "2GB", or raw bytes as int.'
+                )
+
+            size, unit = match.groups()
+            size = float(size)
+            unit = unit.upper()
+
+            multipliers = {
+                'B': 1024**0,
+                'KB': 1024**1,
+                'MB': 1024**2,
+                'GB': 1024**3,
+                'TB': 1024**4,
+            }
+
+            return int(size * multipliers[unit])
+
+        raise ValueError(
+            f'File size must be int (bytes) or str (e.g., "300MB"), got {type(v)}'
+        )
 
     def load(self):
 
