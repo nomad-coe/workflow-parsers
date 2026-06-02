@@ -687,17 +687,12 @@ def parse_COXPCAR(fname, scc, method, logger):
     entry_point_config = config.plugins.entry_points.options.get(
         'workflowparsers:lobster_parser_entry_point'
     )
-    max_file_size = (
-        entry_point_config.max_coxpcar_file_size
-        if entry_point_config
-        else 250 * 1024 * 1024
-    )
+    max_file_size = entry_point_config.max_coxpcar_file_size
+    max_file_size_display = entry_point_config.max_coxpcar_file_size_display
 
     if _coxp_exceeds_uncompressed_limit(fname, logger, max_file_size):
         logger.warning(
-            'Skipping CO{}CAR parsing because uncompressed size exceeds {} MB.'.format(
-                method.upper(), max_file_size / (1024 * 1024)
-            )
+            f'Skipping CO{method.upper()}CAR parsing because uncompressed size exceeds {max_file_size_display}.'
         )
         return
     coxpcar_parser.line_parsing = True  # Enable streaming mode for memory efficiency

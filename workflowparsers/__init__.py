@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from typing import Optional, Union
 
 from nomad.config.models.plugins import ParserEntryPoint
@@ -45,26 +45,47 @@ class EntryPoint(ParserEntryPoint):
         (COHPCAR.lobster, COOPCAR.lobster, COBICAR.lobster).
         Files exceeding this limit will be skipped during parsing.
         Accepts:
-        - Human-readable formats: "300MB", "2GB", "500KB", "1TB"
+        - Human-readable formats: "500KB", "300MB", "2GB", "1TB" (spaces optional)
         - Raw bytes as integer: 314572800 (interpreted as bytes)
         Default: "250MB".
         """,
     )
+    max_coxpcar_file_size_display: str = Field(
+        default='',
+        exclude=True,
+        description='Human-readable display format of max_coxpcar_file_size',
+    )
 
-    @field_validator('max_coxpcar_file_size', mode='before')
+    @model_validator(mode='before')
     @classmethod
-    def parse_file_size(cls, v):
-        """Parse human-readable file size to bytes."""
+    def parse_file_size(cls, data):
+        """Parse human-readable file size to bytes and store display format."""
+        if not isinstance(data, dict):
+            return data
+
+        v = data.get('max_coxpcar_file_size', '250MB')
+
         if isinstance(v, int):
-            return v
+            # Convert bytes to human-readable format for display
+            for unit in ['TB', 'GB', 'MB', 'KB', 'B']:
+                divisor = 1024 ** {'B': 0, 'KB': 1, 'MB': 2, 'GB': 3, 'TB': 4}[unit]
+                if v >= divisor:
+                    data['max_coxpcar_file_size_display'] = f'{v / divisor:.0f}{unit}'
+                    break
+            data['max_coxpcar_file_size'] = v
+            return data
+
         if isinstance(v, str):
-            # Match pattern like "300MB", "2GB", "500KB"
+            # Store original string for display
+            data['max_coxpcar_file_size_display'] = v.strip()
+
+            # Match pattern like "300MB", "2GB", "500KB" (spaces optional)
             match = re.match(
                 r'^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$', v.strip(), re.IGNORECASE
             )
             if not match:
                 raise ValueError(
-                    f'Invalid file size format: {v}. Use formats like "300MB", "2GB", or raw bytes as int.'
+                    f'Invalid file size format: {v}. Use formats like "500KB", "300MB", "2GB" (spaces optional) or raw bytes as int.'
                 )
 
             size, unit = match.groups()
@@ -79,7 +100,8 @@ class EntryPoint(ParserEntryPoint):
                 'TB': 1024**4,
             }
 
-            return int(size * multipliers[unit])
+            data['max_coxpcar_file_size'] = int(size * multipliers[unit])
+            return data
 
         raise ValueError(
             f'File size must be int (bytes) or str (e.g., "300MB"), got {type(v)}'
