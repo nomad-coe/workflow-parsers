@@ -259,9 +259,12 @@ class AFLOWParser:
                 positions = [atom.get('position') for atom in struc.get('atoms', [])]
                 if struc.get('coordinates_type', 'direct').lower().startswith('d'):
                     if sec_system.atoms.lattice_vectors is not None:
-                        positions = np.dot(
-                            positions, sec_system.atoms.lattice_vectors.magnitude
-                        ) * sec_system.atoms.lattice_vectors.units
+                        positions = (
+                            np.dot(
+                                positions, sec_system.atoms.lattice_vectors.magnitude
+                            )
+                            * sec_system.atoms.lattice_vectors.units
+                        )
                 sec_system.atoms.positions = positions
 
     def parse_agl(self):

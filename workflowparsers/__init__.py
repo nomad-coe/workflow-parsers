@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from pydantic import Field
+import re
+from pydantic import Field, model_validator
 from typing import Optional
 
 from nomad.config.models.plugins import ParserEntryPoint
@@ -35,14 +36,86 @@ class EntryPoint(ParserEntryPoint):
     metadata: Optional[dict] = Field(
         None,
         description="""
-        Metadata passed to the UI. Deprecated. """
+        Metadata passed to the UI. Deprecated. """,
     )
 
     def load(self):
-
         from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
 
-        return MatchingParserInterface(**self.dict())
+        return MatchingParserInterface(**self.model_dump())
+
+
+class LobsterEntryPoint(EntryPoint):
+    """Entry point for the LOBSTER parser with LOBSTER-specific configuration."""
+
+    max_coxpcar_file_size: int = Field(
+        262_144_000,  # 250 MB
+        description="""
+        Maximum uncompressed file size for COXPCAR files
+        (COHPCAR.lobster, COOPCAR.lobster, COBICAR.lobster).
+        Files exceeding this limit will be skipped during parsing.
+        Accepts:
+        - Human-readable formats: "500KB", "300MB", "2GB", "1TB" (spaces optional)
+        - Raw bytes as integer: 314572800 (interpreted as bytes)
+        Default: 250 MB (262144000 bytes).
+        """,
+    )
+    max_coxpcar_file_size_display: str = Field(
+        default='',
+        exclude=True,
+        description='Human-readable display format of max_coxpcar_file_size',
+    )
+
+    @model_validator(mode='before')
+    @classmethod
+    def parse_file_size(cls, data):
+        """Parse human-readable file size to bytes and store display format."""
+        if not isinstance(data, dict):
+            return data
+
+        v = data.get('max_coxpcar_file_size', 262_144_000)
+
+        if isinstance(v, int):
+            # Convert bytes to human-readable format for display
+            for unit in ['TB', 'GB', 'MB', 'KB', 'B']:
+                divisor = 1024 ** {'B': 0, 'KB': 1, 'MB': 2, 'GB': 3, 'TB': 4}[unit]
+                if v >= divisor:
+                    data['max_coxpcar_file_size_display'] = f'{v / divisor:.0f}{unit}'
+                    break
+            data['max_coxpcar_file_size'] = v
+            return data
+
+        if isinstance(v, str):
+            # Store original string for display
+            data['max_coxpcar_file_size_display'] = v.strip()
+
+            # Match pattern like "300MB", "2GB", "500KB" (spaces optional)
+            match = re.match(
+                r'^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$', v.strip(), re.IGNORECASE
+            )
+            if not match:
+                raise ValueError(
+                    f'Invalid file size format: {v}. Use formats like "500KB", "300MB", "2GB" (spaces optional) or raw bytes as int.'
+                )
+
+            size, unit = match.groups()
+            size = float(size)
+            unit = unit.upper()
+
+            multipliers = {
+                'B': 1024**0,
+                'KB': 1024**1,
+                'MB': 1024**2,
+                'GB': 1024**3,
+                'TB': 1024**4,
+            }
+
+            data['max_coxpcar_file_size'] = int(size * multipliers[unit])
+            return data
+
+        raise ValueError(
+            f'File size must be int (bytes) or str (e.g., "300MB"), got {type(v)}'
+        )
 
 
 aflow_parser_entry_point = EntryPoint(
@@ -188,7 +261,7 @@ fhivibes_parser_entry_point = EntryPoint(
     },
 )
 
-lobster_parser_entry_point = EntryPoint(
+lobster_parser_entry_point = LobsterEntryPoint(
     name='parsers/lobster',
     aliases=['parsers/lobster'],
     description='NOMAD parser for LOBSTER.',

@@ -22,6 +22,7 @@ import ase.io
 import os
 import re
 
+from nomad.config import config
 from nomad.datamodel import EntryArchive
 from nomad.units import ureg as units
 from nomad.utils import extract_section
@@ -103,6 +104,7 @@ def _normalize_fermi_orbital_values(values):
             f'Failed to normalize Fermi orbital values. '
             f'Expected numeric array, got: {type(values).__name__}'
         ) from exc
+
 
 _LABEL_SECTION_ATTR = {
     'hp': 'x_lobster_cohp_orbital_per_label',
@@ -344,16 +346,17 @@ def parse_ICOXPLIST(fname, scc, method, version):
         atom_orb_pairs = {_normalize_label(line[0]): [] for line in lines}
         atom_orb_icoxps = {_normalize_label(line[0]): [] for line in lines}
 
-
         for line in raw_lines:
             if line[1].count('_') > 0:
                 key = _normalize_label(line[0])
                 orb_data[key].append(line[1:])
                 atom_orb_pairs[key].append(
-                    [_normalize_orbital_label(line[1]), _normalize_orbital_label(line[2])]
+                    [
+                        _normalize_orbital_label(line[1]),
+                        _normalize_orbital_label(line[2]),
+                    ]
                 )
                 atom_orb_icoxps[key].append(line[-1])
-
 
         if atom_orb_icoxps:
             orb_labels = list(atom_orb_icoxps.keys())
@@ -370,7 +373,9 @@ def parse_ICOXPLIST(fname, scc, method, version):
                 # Get existing label sections from the parent section
                 existing_label_sections = getattr(section, label_attr) or []
                 # Create lookup dictionary for O(1) access
-                label_section_map = {sec.x_lobster_pair_label: sec for sec in existing_label_sections}
+                label_section_map = {
+                    sec.x_lobster_pair_label: sec for sec in existing_label_sections
+                }
 
                 for label, values in zip(orb_labels, orb_icoxps):
                     # Find existing label section or create new one
@@ -387,14 +392,26 @@ def parse_ICOXPLIST(fname, scc, method, version):
                     existing_orbital_pairs = label_section.x_lobster_orbital_pairs or []
 
                     # Ensure we have enough orbital pair subsections
-                    for pair_idx in range(len(existing_orbital_pairs), len(orbital_pairs_list)):
+                    for pair_idx in range(
+                        len(existing_orbital_pairs), len(orbital_pairs_list)
+                    ):
                         pair_section = orbital_pair_class()
-                        pair_section.x_lobster_atom1_orbital = orbital_pairs_list[pair_idx][0]
-                        pair_section.x_lobster_atom2_orbital = orbital_pairs_list[pair_idx][1]
-                        label_section.m_add_sub_section('x_lobster_orbital_pairs', pair_section)
+                        pair_section.x_lobster_atom1_orbital = orbital_pairs_list[
+                            pair_idx
+                        ][0]
+                        pair_section.x_lobster_atom2_orbital = orbital_pairs_list[
+                            pair_idx
+                        ][1]
+                        label_section.m_add_sub_section(
+                            'x_lobster_orbital_pairs', pair_section
+                        )
 
                     # Set fermi level values for each orbital pair
-                    fermi_attr = 'x_lobster_integrated_orbital_co{}_at_fermi_level'.format(method)
+                    fermi_attr = (
+                        'x_lobster_integrated_orbital_co{}_at_fermi_level'.format(
+                            method
+                        )
+                    )
                     normalized_values = _normalize_fermi_orbital_values(values)
 
                     orbital_pairs = label_section.x_lobster_orbital_pairs or []
@@ -414,7 +431,7 @@ def parse_ICOXPLIST(fname, scc, method, version):
                                     per_spin = np.zeros(spin + 1)
                                 elif len(per_spin) <= spin:
                                     new_per_spin = np.zeros(spin + 1)
-                                    new_per_spin[:len(per_spin)] = per_spin
+                                    new_per_spin[: len(per_spin)] = per_spin
                                     per_spin = new_per_spin
                                 per_spin[spin] = fermi_val
 
@@ -467,9 +484,13 @@ def parse_ICOXPLIST(fname, scc, method, version):
 
     icoxplist_parser.close()
 
+
 def _split_coxp_pair_line(line):
     """Parse a raw pair line into [label, atom1, atom2, distance]."""
-    match = re.match(r'\s*No\.(\d+)\:(.+?)\->(.+?)\(([-+]?\d+\.\d+(?:[Ee][-+]?\d+)?)\)\s*$', str(line))
+    match = re.match(
+        r'\s*No\.(\d+)\:(.+?)\->(.+?)\(([-+]?\d+\.\d+(?:[Ee][-+]?\d+)?)\)\s*$',
+        str(line),
+    )
     if match is None:
         return None
 
@@ -497,7 +518,9 @@ class COXPCARParser(TextParser):
 def _coxp_exceeds_uncompressed_limit(fname, logger, limit_bytes):
     try:
         with open(fname, 'rb') as handle:
-            compression, open_compressed = _compressions.get(handle.read(3), (None, open))
+            compression, open_compressed = _compressions.get(
+                handle.read(3), (None, open)
+            )
     except OSError as exc:
         logger.warning(f'Unable to read COXPCAR file size: {exc}. Skipping parsing.')
         return True
@@ -520,7 +543,9 @@ def _coxp_exceeds_uncompressed_limit(fname, logger, limit_bytes):
                 if total > limit_bytes:
                     return True
     except OSError as exc:
-        logger.warning(f'Unable to read compressed COXPCAR file: {exc}. Skipping parsing.')
+        logger.warning(
+            f'Unable to read compressed COXPCAR file: {exc}. Skipping parsing.'
+        )
         return True
 
     return False
@@ -657,11 +682,17 @@ def parse_COXPCAR(fname, scc, method, logger):
 
     if not os.path.isfile(fname):
         return
-    if _coxp_exceeds_uncompressed_limit(fname, logger, 2 * 1024**3):
+
+    # Get the file size limit from config
+    entry_point_config = config.get_plugin_entry_point(
+        'workflowparsers:lobster_parser_entry_point'
+    )
+    max_file_size = entry_point_config.max_coxpcar_file_size
+    max_file_size_display = entry_point_config.max_coxpcar_file_size_display
+
+    if _coxp_exceeds_uncompressed_limit(fname, logger, max_file_size):
         logger.warning(
-            'Skipping CO{}CAR parsing because uncompressed size exceeds 2 GB.'.format(
-                method.upper()
-            )
+            f'Skipping CO{method.upper()}CAR parsing because uncompressed size exceeds {max_file_size_display}.'
         )
         return
     coxpcar_parser.line_parsing = True  # Enable streaming mode for memory efficiency
@@ -805,12 +836,16 @@ def parse_COXPCAR(fname, scc, method, logger):
             # Get existing label sections
             existing_sections = getattr(section, label_attr) or []
             # Create lookup dictionary for O(1) access
-            label_section_map = {sec.x_lobster_pair_label: sec for sec in existing_sections}
+            label_section_map = {
+                sec.x_lobster_pair_label: sec for sec in existing_sections
+            }
 
             orb_labels = list(atom_orb_cohp.keys())
             label_to_index = {lab: idx for idx, lab in enumerate(orb_labels)}
             label_order = [
-                _normalize_label(lab) for lab in _lab if _normalize_label(lab) in label_to_index
+                _normalize_label(lab)
+                for lab in _lab
+                if _normalize_label(lab) in label_to_index
             ]
 
             for label in label_order:
@@ -845,7 +880,9 @@ def parse_COXPCAR(fname, scc, method, logger):
                         pair_section = orbital_pair_class()
                         pair_section.x_lobster_atom1_orbital = atom1_orb
                         pair_section.x_lobster_atom2_orbital = atom2_orb
-                        label_section.m_add_sub_section('x_lobster_orbital_pairs', pair_section)
+                        label_section.m_add_sub_section(
+                            'x_lobster_orbital_pairs', pair_section
+                        )
 
                     # Set the values - reshape for proper dimensions
                     # coxp_values_list[pair_idx] is either:
@@ -856,7 +893,11 @@ def parse_COXPCAR(fname, scc, method, logger):
 
                     # Convert to proper shape: [n_spin, n_energy]
                     # Check if spin-polarized by checking if it's a list/tuple with array-like elements
-                    if isinstance(coxp_val, (list, tuple)) and len(coxp_val) == 2 and hasattr(coxp_val[0], '__len__'):
+                    if (
+                        isinstance(coxp_val, (list, tuple))
+                        and len(coxp_val) == 2
+                        and hasattr(coxp_val[0], '__len__')
+                    ):
                         # Spin-polarized: [up_array, dn_array] -> already correct structure
                         coxp_array = np.array(coxp_val)
                         icoxp_array = np.array(icoxp_val)
@@ -866,7 +907,9 @@ def parse_COXPCAR(fname, scc, method, logger):
                         icoxp_array = np.array([icoxp_val])
 
                     value_attr = 'x_lobster_co{}_orbital_values'.format(method)
-                    ivalue_attr = 'x_lobster_integrated_co{}_orbital_values'.format(method)
+                    ivalue_attr = 'x_lobster_integrated_co{}_orbital_values'.format(
+                        method
+                    )
                     setattr(pair_section, value_attr, coxp_array)
                     setattr(pair_section, ivalue_attr, icoxp_array)
     coxpcar_parser.close()
@@ -1326,13 +1369,11 @@ class LobsterParser:
         parse_CHARGE(
             get_lobster_file(os.path.join(mainfile_path, 'CHARGE.lobster')), scc
         )
-        doscar_lso = get_lobster_file(
-            os.path.join(mainfile_path, 'DOSCAR.LSO.lobster')
-        )
+        doscar_lso = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.LSO.lobster'))
         doscar = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.lobster'))
         if os.path.isfile(doscar_lso):
             if os.path.isfile(doscar):
-                logger.warning(
+                logger.info(
                     'Both DOSCAR.LSO.lobster and DOSCAR.lobster found; '
                     'parsing only DOSCAR.LSO.lobster to avoid duplicate DOS.'
                 )
@@ -1351,6 +1392,7 @@ class LobsterParser:
             workflow_archive = self._child_archives.get('workflow')
             workflow_archive.workflow2 = SerialSimulation(name='LOBSTER Workflow')
 
+            dft_task = None
             try:
                 logger.info(
                     f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
@@ -1410,6 +1452,7 @@ class LobsterParser:
 
                         # add DFT task to the workflow tasks
                         workflow_archive.workflow2.tasks.append(dft_task)
+                        break
             except Exception:
                 logger.warning(f'Error setting workflow inputs, i.e., VASP entries.')
 
@@ -1417,14 +1460,14 @@ class LobsterParser:
             lobster_calculation = extract_section(archive, ['run', 'calculation'])
             lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
 
-            try:
+            if dft_task is not None:
                 lobster_task.inputs = [
                     Link(
                         section=dft_task.outputs[0].section,
                         name='Structure and PlaneWavefunctions',
                     )
                 ]
-            except UnboundLocalError:
+            else:
                 logger.warning(f'Error connecting VASP with LOBSTER entry.')
 
             lobster_task.outputs = [
