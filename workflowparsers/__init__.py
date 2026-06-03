@@ -38,6 +38,16 @@ class EntryPoint(ParserEntryPoint):
         description="""
         Metadata passed to the UI. Deprecated. """,
     )
+
+    def load(self):
+        from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
+
+        return MatchingParserInterface(**self.model_dump())
+
+
+class LobsterEntryPoint(EntryPoint):
+    """Entry point for the LOBSTER parser with LOBSTER-specific configuration."""
+
     max_coxpcar_file_size: int = Field(
         262_144_000,  # 250 MB
         description="""
@@ -106,12 +116,6 @@ class EntryPoint(ParserEntryPoint):
         raise ValueError(
             f'File size must be int (bytes) or str (e.g., "300MB"), got {type(v)}'
         )
-
-    def load(self):
-
-        from nomad.parsing import MatchingParserInterface  # noqa: PLC0415
-
-        return MatchingParserInterface(**self.model_dump())
 
 
 aflow_parser_entry_point = EntryPoint(
@@ -257,7 +261,7 @@ fhivibes_parser_entry_point = EntryPoint(
     },
 )
 
-lobster_parser_entry_point = EntryPoint(
+lobster_parser_entry_point = LobsterEntryPoint(
     name='parsers/lobster',
     aliases=['parsers/lobster'],
     description='NOMAD parser for LOBSTER.',

@@ -684,7 +684,7 @@ def parse_COXPCAR(fname, scc, method, logger):
         return
 
     # Get the file size limit from config
-    entry_point_config = config.plugins.entry_points.options.get(
+    entry_point_config = config.get_plugin_entry_point(
         'workflowparsers:lobster_parser_entry_point'
     )
     max_file_size = entry_point_config.max_coxpcar_file_size

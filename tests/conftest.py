@@ -85,7 +85,6 @@ def upload_archives(upload_files, main_author, upload_id):
 
 @pytest.fixture(scope='session')
 def upload_data(upload_id, main_author, upload_archives):
-
     infrastructure.setup_mongo()
     infrastructure.setup_elastic()
 
