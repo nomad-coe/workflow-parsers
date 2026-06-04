@@ -1405,7 +1405,7 @@ class LobsterParser:
                 if os.path.isfile(vasp_path):
                     # Convert absolute path to relative path for resolve_archive
                     if 'raw/' in mainfile:
-                        relative_path = mainfile.split('raw/')[-1]
+                        relative_path = mainfile.rsplit('raw/', maxsplit=1)[-1]
                         parent_dir = os.path.dirname(relative_path)
                         vasp_relative = os.path.join(parent_dir, filename)
                         vasp_mainfiles.append(vasp_relative)
