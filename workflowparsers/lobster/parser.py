@@ -21,7 +21,6 @@ import numpy as np
 import ase.io
 import os
 import re
-import time
 
 from nomad.config import config
 from nomad.datamodel import EntryArchive
@@ -1395,7 +1394,6 @@ class LobsterParser:
 
             dft_task = None
 
-            # Strategy 1: Use resolve_archive to find VASP entries via filesystem
             logger.info(
                 'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
             )
@@ -1419,90 +1417,14 @@ class LobsterParser:
                     entry_archive = archive.m_context.resolve_archive(
                         f'../upload/archive/mainfile/{vasp_mainfile}'
                     )
-                    logger.info(
-                        f'Successfully resolved VASP entry via filesystem',
-                        vasp_mainfile=vasp_mainfile,
-                    )
                     break
                 except Exception as e:
-                    logger.debug(
-                        'Could not resolve VASP entry via filesystem',
+                    entry_archive = None
+                    logger.error(
+                        'Could not resolve VASP entry',
                         exc_info=e,
                         vasp_mainfile=vasp_mainfile,
                     )
-                    continue
-
-            # Strategy 2: Fallback to ElasticSearch search with retry logic
-            if entry_archive is None:
-                from nomad.search import search  # noqa
-                from nomad.app.v1.models import MetadataRequired  # noqa
-
-                logger.info(
-                    'Filesystem resolution failed, falling back to ElasticSearch'
-                )
-
-                parent_file = (
-                    mainfile.split('raw/')[-1] if 'raw/' in mainfile else mainfile
-                )
-                parent_dir = os.path.dirname(parent_file)
-                upload_id = archive.metadata.upload_id
-
-                # Retry with exponential backoff
-                max_retries = 3
-                for attempt in range(max_retries):
-                    try:
-                        if attempt > 0:
-                            wait_time = 2**attempt  # 2, 4, 8 seconds
-                            logger.info(
-                                f'Retrying ElasticSearch query (attempt {attempt + 1}/{max_retries})',
-                                wait_time=wait_time,
-                            )
-                            time.sleep(wait_time)
-
-                        metadata = search(
-                            owner='visible',
-                            user_id=archive.metadata.main_author.user_id,
-                            query={'upload_id': upload_id},
-                            required=MetadataRequired(
-                                include=['entry_id', 'mainfile', 'parser_name']
-                            ),
-                        ).data
-
-                        for result in metadata:
-                            # skip non-vasp files
-                            if 'vasp' not in result.get('parser_name', '').lower():
-                                continue
-                            entry_id = result.get('entry_id')
-                            if not entry_id:
-                                continue
-                            entry_mainfile = result.get('mainfile')
-                            # link only entries in the same directory or sub-directories
-                            if entry_mainfile.startswith(parent_dir):
-                                entry_archive = archive.m_context.load_archive(
-                                    entry_id, upload_id, None
-                                )
-                                logger.info(
-                                    f'Successfully resolved VASP entry via ElasticSearch',
-                                    entry_id=entry_id,
-                                    entry_mainfile=entry_mainfile,
-                                )
-                                break
-
-                        if entry_archive is not None:
-                            break
-
-                    except Exception as e:
-                        logger.warning(
-                            f'ElasticSearch search failed (attempt {attempt + 1}/{max_retries})',
-                            exc_info=e,
-                            upload_id=upload_id,
-                        )
-                        if attempt == max_retries - 1:
-                            logger.error(
-                                'All attempts to link VASP entry failed',
-                                exc_info=e,
-                                upload_id=upload_id,
-                            )
 
             # Create workflow task if VASP entry was found
             if entry_archive is not None:
