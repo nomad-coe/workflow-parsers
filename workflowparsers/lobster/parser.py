@@ -21,6 +21,7 @@ import numpy as np
 import ase.io
 import os
 import re
+import time
 
 from nomad.config import config
 from nomad.datamodel import EntryArchive
@@ -1393,68 +1394,149 @@ class LobsterParser:
             workflow_archive.workflow2 = SerialSimulation(name='LOBSTER Workflow')
 
             dft_task = None
-            try:
-                logger.info(
-                    f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
-                )
+
+            # Strategy 1: Use resolve_archive to find VASP entries via filesystem
+            logger.info(
+                'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
+            )
+
+            # Find VASP mainfiles in the same directory
+            vasp_mainfiles = []
+            for filename in ['OUTCAR', 'vasprun.xml']:
+                vasp_path = os.path.join(mainfile_path, filename)
+                if os.path.isfile(vasp_path):
+                    # Convert absolute path to relative path for resolve_archive
+                    if 'raw/' in mainfile:
+                        relative_path = mainfile.split('raw/')[-1]
+                        parent_dir = os.path.dirname(relative_path)
+                        vasp_relative = os.path.join(parent_dir, filename)
+                        vasp_mainfiles.append(vasp_relative)
+
+            # Try to resolve VASP archive using filesystem-based approach
+            entry_archive = None
+            for vasp_mainfile in vasp_mainfiles:
+                try:
+                    entry_archive = archive.m_context.resolve_archive(
+                        f'../upload/archive/mainfile/{vasp_mainfile}'
+                    )
+                    logger.info(
+                        f'Successfully resolved VASP entry via filesystem',
+                        vasp_mainfile=vasp_mainfile,
+                    )
+                    break
+                except Exception as e:
+                    logger.debug(
+                        'Could not resolve VASP entry via filesystem',
+                        exc_info=e,
+                        vasp_mainfile=vasp_mainfile,
+                    )
+                    continue
+
+            # Strategy 2: Fallback to ElasticSearch search with retry logic
+            if entry_archive is None:
                 from nomad.search import search  # noqa
                 from nomad.app.v1.models import MetadataRequired  # noqa
 
-                parent_file = mainfile.split('raw/')[-1]  # noqa
+                logger.info(
+                    'Filesystem resolution failed, falling back to ElasticSearch'
+                )
 
+                parent_file = (
+                    mainfile.split('raw/')[-1] if 'raw/' in mainfile else mainfile
+                )
                 parent_dir = os.path.dirname(parent_file)
-
                 upload_id = archive.metadata.upload_id
-                metadata = search(
-                    owner='visible',
-                    user_id=archive.metadata.main_author.user_id,
-                    query={'upload_id': upload_id},
-                    required=MetadataRequired(
-                        include=['entry_id', 'mainfile', 'parser_name']
-                    ),
-                ).data
-                for result in metadata:
-                    # skip non-vasp files
-                    if 'vasp' not in result.get('parser_name', '').lower():
-                        continue
-                    entry_id = result.get('entry_id')
-                    if not entry_id:
-                        continue
-                    entry_mainfile = result.get('mainfile')
-                    # link only entries in the same directory or sub-directories
-                    if entry_mainfile.startswith(parent_dir):
-                        entry_archive = archive.m_context.load_archive(
-                            entry_id, upload_id, None
+
+                # Retry with exponential backoff
+                max_retries = 3
+                for attempt in range(max_retries):
+                    try:
+                        if attempt > 0:
+                            wait_time = 2**attempt  # 2, 4, 8 seconds
+                            logger.info(
+                                f'Retrying ElasticSearch query (attempt {attempt + 1}/{max_retries})',
+                                wait_time=wait_time,
+                            )
+                            time.sleep(wait_time)
+
+                        metadata = search(
+                            owner='visible',
+                            user_id=archive.metadata.main_author.user_id,
+                            query={'upload_id': upload_id},
+                            required=MetadataRequired(
+                                include=['entry_id', 'mainfile', 'parser_name']
+                            ),
+                        ).data
+
+                        for result in metadata:
+                            # skip non-vasp files
+                            if 'vasp' not in result.get('parser_name', '').lower():
+                                continue
+                            entry_id = result.get('entry_id')
+                            if not entry_id:
+                                continue
+                            entry_mainfile = result.get('mainfile')
+                            # link only entries in the same directory or sub-directories
+                            if entry_mainfile.startswith(parent_dir):
+                                entry_archive = archive.m_context.load_archive(
+                                    entry_id, upload_id, None
+                                )
+                                logger.info(
+                                    f'Successfully resolved VASP entry via ElasticSearch',
+                                    entry_id=entry_id,
+                                    entry_mainfile=entry_mainfile,
+                                )
+                                break
+
+                        if entry_archive is not None:
+                            break
+
+                    except Exception as e:
+                        logger.warning(
+                            f'ElasticSearch search failed (attempt {attempt + 1}/{max_retries})',
+                            exc_info=e,
+                            upload_id=upload_id,
                         )
-                        # add DFT run to workflow tasks
-                        dft_task = TaskReference(task=entry_archive.workflow2)
+                        if attempt == max_retries - 1:
+                            logger.error(
+                                'All attempts to link VASP entry failed',
+                                exc_info=e,
+                                upload_id=upload_id,
+                            )
 
-                        # Extract DFT Inputs and Outputs
-                        input_structure = extract_section(
-                            entry_archive, ['run', 'system']
-                        )
-                        dft_calculation = extract_section(
-                            entry_archive, ['run', 'calculation']
-                        )
+            # Create workflow task if VASP entry was found
+            if entry_archive is not None:
+                try:
+                    # add DFT run to workflow tasks
+                    dft_task = TaskReference(task=entry_archive.workflow2)
 
-                        dft_task.name = 'DFT run'
-                        dft_task.inputs = [
-                            Link(section=input_structure, name='Input Structure')
-                        ]
-                        dft_task.outputs = [
-                            Link(section=dft_calculation, name='Output DFT calculation')
-                        ]
+                    # Extract DFT Inputs and Outputs
+                    input_structure = extract_section(entry_archive, ['run', 'system'])
+                    dft_calculation = extract_section(
+                        entry_archive, ['run', 'calculation']
+                    )
 
-                        # Set the DFT task as an input for the workflow
-                        workflow_archive.workflow2.inputs = [
-                            Link(section=input_structure, name='Structure')
-                        ]
+                    dft_task.name = 'DFT run'
+                    dft_task.inputs = [
+                        Link(section=input_structure, name='Input Structure')
+                    ]
+                    dft_task.outputs = [
+                        Link(section=dft_calculation, name='Output DFT calculation')
+                    ]
 
-                        # add DFT task to the workflow tasks
-                        workflow_archive.workflow2.tasks.append(dft_task)
-                        break
-            except Exception:
-                logger.warning(f'Error setting workflow inputs, i.e., VASP entries.')
+                    # Set the DFT task as an input for the workflow
+                    workflow_archive.workflow2.inputs = [
+                        Link(section=input_structure, name='Structure')
+                    ]
+
+                    # add DFT task to the workflow tasks
+                    workflow_archive.workflow2.tasks.append(dft_task)
+
+                except Exception as e:
+                    logger.error(
+                        'Error creating workflow task from VASP entry', exc_info=e
+                    )
+                    dft_task = None
 
             # add lobster archive to the workflow tasks
             lobster_calculation = extract_section(archive, ['run', 'calculation'])
