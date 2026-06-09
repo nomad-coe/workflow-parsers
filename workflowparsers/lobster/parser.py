@@ -1400,27 +1400,38 @@ class LobsterParser:
 
             # Find VASP mainfiles in the same directory (with compression support)
             vasp_mainfiles = []
+            logger.info(f'Searching for VASP files in: {mainfile_path}')
+            logger.info(f'LOBSTER mainfile: {mainfile}')
             for filename in ['OUTCAR', 'vasprun.xml']:
                 # Use get_lobster_file to find compressed/uncompressed variants
-                vasp_path = get_lobster_file(os.path.join(mainfile_path, filename))
+                search_path = os.path.join(mainfile_path, filename)
+                logger.info(f'Searching for {filename} at: {search_path}')
+                vasp_path = get_lobster_file(search_path)
+                logger.info(f'get_lobster_file returned: {vasp_path}')
+                logger.info(f'File exists: {os.path.isfile(vasp_path)}')
                 if os.path.isfile(vasp_path):
                     # Extract actual filename with compression extension
                     found_filename = os.path.basename(vasp_path)
+                    logger.info(f'Found VASP file: {found_filename}')
                     # Convert to relative path for resolve_archive
                     mainfile_dir = os.path.dirname(mainfile)
                     if mainfile_dir:
                         vasp_relative = os.path.join(mainfile_dir, found_filename)
                     else:
                         vasp_relative = found_filename
+                    logger.info(f'Relative path for resolve_archive: {vasp_relative}')
                     vasp_mainfiles.append(vasp_relative)
+
+            logger.info(f'VASP mainfiles list: {vasp_mainfiles}')
 
             # Try to resolve VASP archive using filesystem-based approach
             entry_archive = None
             for vasp_mainfile in vasp_mainfiles:
                 try:
-                    entry_archive = archive.m_context.resolve_archive(
-                        f'../upload/archive/mainfile/{vasp_mainfile}'
-                    )
+                    resolve_path = f'../upload/archive/mainfile/{vasp_mainfile}'
+                    logger.info(f'Attempting resolve_archive with: {resolve_path}')
+                    entry_archive = archive.m_context.resolve_archive(resolve_path)
+                    logger.info(f'Successfully resolved VASP entry: {entry_archive is not None}')
                     break
                 except Exception as e:
                     entry_archive = None
@@ -1431,7 +1442,9 @@ class LobsterParser:
                     )
 
             # Create workflow task if VASP entry was found
+            logger.info(f'entry_archive after resolution: {entry_archive is not None}')
             if entry_archive is not None:
+                logger.info('Creating DFT task for workflow')
                 try:
                     # add DFT run to workflow tasks
                     dft_task = TaskReference(task=entry_archive.workflow2)
