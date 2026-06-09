@@ -1485,4 +1485,11 @@ class LobsterParser:
                 Link(section=lobster_task.outputs[0].section, name='LOBSTER Outputs')
             ]
 
+            # Set backward references so child entries can navigate to parent workflow
+            if entry_archive is not None:
+                entry_archive.workflow2.workflow = Link(
+                    section=workflow_archive.workflow2
+                )
+            archive.workflow2.workflow = Link(section=workflow_archive.workflow2)
+
         mainfile_parser.close()
