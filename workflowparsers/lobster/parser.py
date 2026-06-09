@@ -1398,19 +1398,20 @@ class LobsterParser:
                 'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
             )
 
-            # Find VASP mainfiles in the same directory
+            # Find VASP mainfiles in the same directory (with compression support)
             vasp_mainfiles = []
             for filename in ['OUTCAR', 'vasprun.xml']:
-                vasp_path = os.path.join(mainfile_path, filename)
+                # Use get_lobster_file to find compressed/uncompressed variants
+                vasp_path = get_lobster_file(os.path.join(mainfile_path, filename))
                 if os.path.isfile(vasp_path):
-                    # Convert absolute path to relative path for resolve_archive
-                    # The mainfile path might be absolute or relative
-                    # We need to construct the VASP file path in the same format
+                    # Extract actual filename with compression extension
+                    found_filename = os.path.basename(vasp_path)
+                    # Convert to relative path for resolve_archive
                     mainfile_dir = os.path.dirname(mainfile)
                     if mainfile_dir:
-                        vasp_relative = os.path.join(mainfile_dir, filename)
+                        vasp_relative = os.path.join(mainfile_dir, found_filename)
                     else:
-                        vasp_relative = filename
+                        vasp_relative = found_filename
                     vasp_mainfiles.append(vasp_relative)
 
             # Try to resolve VASP archive using filesystem-based approach
