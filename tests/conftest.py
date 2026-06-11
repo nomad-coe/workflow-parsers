@@ -25,7 +25,7 @@ from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.utils.exampledata import ExampleData
 from nomad import infrastructure
 from nomad.datamodel.context import ServerContext
-from nomad.utils import create_uuid
+from nomad.utils import generate_entry_id
 
 
 # Set up pytest to pass control to the debugger on an exception.
@@ -47,9 +47,14 @@ def upload_id():
 
 @pytest.fixture(scope='session')
 def main_author():
-    from nomad.config import config  # noqa
+    # a static user avoids depending on a running Keycloak instance
+    from nomad.datamodel import User  # noqa
 
-    return infrastructure.user_management.get_user(username=config.client.user)
+    return User(
+        user_id='00000000-0000-0000-0000-000000000000',
+        username='tester',
+        email='tester@nomad-lab.eu',
+    )
 
 
 @pytest.fixture(scope='session')
@@ -62,17 +67,26 @@ def auth():
 
 @pytest.fixture(scope='session')
 def upload_files():
-    # add pre-parsed json achive files only to avoid loading parsers
-    return {'tests/data/lobster/Fe/vasprun.archive.json': 'parsers/vasp'}
+    # mainfile -> (pre-parsed json archive file, parser); pre-parsed archives are used
+    # to avoid loading parsers. The mainfile must be the path the referencing parser
+    # discovers, e.g. `vasprun.xml` next to `lobsterout` for the LOBSTER workflow.
+    return {
+        'tests/data/lobster/Fe/vasprun.xml': (
+            'tests/data/lobster/Fe/vasprun.archive.json',
+            'parsers/vasp',
+        )
+    }
 
 
 @pytest.fixture(scope='session')
 def upload_archives(upload_files, main_author, upload_id):
     archives = []
-    for mainfile, parser in upload_files.items():
-        entry_id = create_uuid()
+    for mainfile, (archive_file, parser) in upload_files.items():
+        # entries are resolved by mainfile via this deterministic id, see
+        # `nomad.datamodel.util.parse_path`
+        entry_id = generate_entry_id(upload_id, mainfile)
         archive = EntryArchive(metadata=EntryMetadata())
-        with open(mainfile) as f:
+        with open(archive_file) as f:
             archive.m_update_from_dict(json.load(f))
         archive.metadata.main_author = main_author
         archive.metadata.parser_name = parser

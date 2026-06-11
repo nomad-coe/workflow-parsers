@@ -134,6 +134,38 @@ def get_lobster_file(filename):
     return filename
 
 
+def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> list[str]:
+    """
+    Find VASP mainfiles (`OUTCAR`, `vasprun.xml`, including compressed variants) in the
+    directory of the LOBSTER mainfile and return their paths relative to the upload raw
+    directory. `Context.resolve_archive` expects this form, as entries are identified by
+    `generate_entry_id(upload_id, mainfile)` with the upload-relative mainfile path.
+
+    Args:
+        mainfile_path: Filesystem directory containing the LOBSTER mainfile.
+        metadata_mainfile: The LOBSTER mainfile path relative to the upload raw
+            directory, i.e. `archive.metadata.mainfile`, if available.
+
+    Returns:
+        list[str]: Upload-relative paths of the VASP mainfiles found.
+    """
+    vasp_mainfiles = []
+    for filename in ['OUTCAR', 'vasprun.xml']:
+        vasp_path = get_lobster_file(os.path.join(mainfile_path, filename))
+        if not os.path.isfile(vasp_path):
+            continue
+        if metadata_mainfile:
+            # the VASP files sit next to the LOBSTER mainfile
+            upload_rel_path = os.path.join(
+                os.path.dirname(metadata_mainfile), os.path.basename(vasp_path)
+            )
+        else:
+            # fall back to stripping the upload raw directory prefix
+            upload_rel_path = vasp_path.split('/raw/')[-1]
+        vasp_mainfiles.append(upload_rel_path)
+    return vasp_mainfiles
+
+
 def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type: str):
     """
     Convert the COXP/ICOXP values to joules
@@ -1398,19 +1430,19 @@ class LobsterParser:
                 'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
             )
 
-            # Find VASP mainfiles in the same directory (with compression support)
-            vasp_mainfiles = []
-            for filename in ['OUTCAR', 'vasprun.xml']:
-                # Use get_lobster_file to find compressed/uncompressed variants
-                search_path = os.path.join(mainfile_path, filename)
-                vasp_path = get_lobster_file(search_path)
-                if os.path.isfile(vasp_path):
-                    # Extract actual filename with compression extension
-                    found_filename = os.path.basename(vasp_path)
-                    # Use just the filename for resolve_archive (matches MongoDB mainfile)
-                    vasp_mainfiles.append(found_filename)
+            # Find VASP mainfiles next to the LOBSTER mainfile, as paths relative to
+            # the upload raw directory (with compression support)
+            vasp_mainfiles = get_vasp_mainfiles(
+                mainfile_path,
+                archive.metadata.mainfile if archive.metadata is not None else None,
+            )
+            if not vasp_mainfiles:
+                logger.warning(
+                    'No VASP mainfile found next to the LOBSTER mainfile, '
+                    'the workflow entry will not contain a DFT task.'
+                )
 
-            # Try to resolve VASP archive using filesystem-based approach
+            # Try to resolve the VASP archive within the same upload
             entry_archive = None
             for vasp_mainfile in vasp_mainfiles:
                 try:
@@ -1419,8 +1451,8 @@ class LobsterParser:
                     break
                 except Exception as e:
                     entry_archive = None
-                    logger.error(
-                        'Could not resolve VASP entry',
+                    logger.warning(
+                        'Could not resolve VASP entry within the upload',
                         exc_info=e,
                         vasp_mainfile=vasp_mainfile,
                     )
@@ -1471,7 +1503,10 @@ class LobsterParser:
                     )
                 ]
             else:
-                logger.warning(f'Error connecting VASP with LOBSTER entry.')
+                logger.warning(
+                    'Could not connect the VASP and LOBSTER entries, '
+                    'the workflow entry will not contain a DFT task.'
+                )
 
             lobster_task.outputs = [
                 Link(section=lobster_calculation, name='Output LOBSTER calculation')

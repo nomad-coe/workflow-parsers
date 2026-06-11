@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+import os
 import pytest
 import logging
 import numpy as np
@@ -23,10 +24,12 @@ import ase
 from packaging.version import Version
 
 from simulationworkflowschema import SerialSimulation
+from nomad import utils
 from nomad.datamodel import EntryArchive, EntryMetadata
 from nomad.units import ureg as units
 
 from workflowparsers.lobster import LobsterParser
+from workflowparsers.lobster.parser import get_vasp_mainfiles
 
 e = (1 * units.e).to_base_units().magnitude
 eV = (1 * units.e).to_base_units().magnitude
@@ -980,20 +983,47 @@ def test_orbitalwise_UO3(parser):
     ].magnitude == approx(eV_to_J(-0.00001))
 
 
-# TODO enable once tests with infra is permitted
-def _test_workflow(parser, upload_data, upload_id, context, main_author):
+@pytest.mark.parametrize('subdir', ['', 'Fe'], ids=['flat', 'nested'])
+@pytest.mark.parametrize('suffix', ['', '.gz'], ids=['plain', 'compressed'])
+@pytest.mark.parametrize(
+    'use_metadata', [True, False], ids=['metadata', 'raw-fallback']
+)
+def test_get_vasp_mainfiles(tmp_path, subdir, suffix, use_metadata):
+    """
+    The paths returned for `resolve_archive` must be relative to the upload raw
+    directory, regardless of nesting, compression, or metadata availability.
+    """
+    raw_dir = tmp_path / 'raw' / subdir
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    for name in ['OUTCAR', 'vasprun.xml']:
+        (raw_dir / f'{name}{suffix}').write_text('')
+
+    metadata_mainfile = os.path.join(subdir, 'lobsterout') if use_metadata else None
+    expected = [
+        os.path.join(subdir, f'{name}{suffix}') for name in ['OUTCAR', 'vasprun.xml']
+    ]
+    assert get_vasp_mainfiles(str(raw_dir), metadata_mainfile) == expected
+
+
+def test_get_vasp_mainfiles_empty(tmp_path):
+    assert get_vasp_mainfiles(str(tmp_path), 'lobsterout') == []
+
+
+def test_workflow(parser, upload_data, upload_id, context, main_author):
+    mainfile = 'tests/data/lobster/Fe/lobsterout'
     archive = EntryArchive(
-        metadata=EntryMetadata(upload_id=upload_id, main_author=main_author),
+        metadata=EntryMetadata(
+            upload_id=upload_id, mainfile=mainfile, main_author=main_author
+        ),
         m_context=context,
     )
 
-    mainfile = 'tests/data/lobster/Fe/lobsterout'
     archive_keys = parser.get_mainfile_keys(filename=mainfile)
     assert archive_keys == ['workflow']
 
-    # mimic processing
+    # mimic processing; a structlog logger is needed for keyword-based log calls
     parser._child_archives = {key: EntryArchive() for key in archive_keys}
-    parser.parse('tests/data/lobster/Fe/lobsterout', archive, logging)
+    parser.parse(mainfile, archive, utils.get_logger(__name__))
 
     workflow_archive = parser._child_archives.get('workflow')
 
