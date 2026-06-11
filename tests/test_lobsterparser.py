@@ -1022,7 +1022,18 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
     assert archive_keys == ['workflow']
 
     # mimic processing; a structlog logger is needed for keyword-based log calls
-    parser._child_archives = {key: EntryArchive() for key in archive_keys}
+    parser._child_archives = {
+        key: EntryArchive(
+            metadata=EntryMetadata(
+                upload_id=upload_id,
+                mainfile=mainfile,
+                mainfile_key=key,
+                main_author=main_author,
+            ),
+            m_context=context,
+        )
+        for key in archive_keys
+    }
     parser.parse(mainfile, archive, utils.get_logger(__name__))
 
     workflow_archive = parser._child_archives.get('workflow')
@@ -1051,6 +1062,22 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
         workflow_archive.workflow2.tasks[1].outputs[0].name
         == 'Output LOBSTER calculation'
     )
+
+    # cross-entry references are stored as URL proxies, such that they are picked
+    # up as `metadata.entry_references` (the basis for inter-entry links)
+    dft_task, lobster_task = workflow_archive.workflow2.tasks
+    vasp_mainfile = 'tests/data/lobster/Fe/vasprun.xml'
+    assert dft_task.task.m_proxy_value.endswith(f'{vasp_mainfile}#/workflow2')
+    assert dft_task.outputs[0].section.m_proxy_value.endswith('#/run/0/calculation/0')
+    assert lobster_task.task.m_proxy_value.endswith(f'{mainfile}#/workflow2')
+
+    # mimic the processing step that harvests the references
+    workflow_archive.metadata.apply_archive_metadata(workflow_archive)
+    targets = {
+        ref.target_entry_id for ref in workflow_archive.metadata.entry_references
+    }
+    assert utils.generate_entry_id(upload_id, vasp_mainfile) in targets
+    assert utils.generate_entry_id(upload_id, mainfile) in targets
 
 
 def test_basis_regex(parser):

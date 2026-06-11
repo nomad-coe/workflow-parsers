@@ -1432,10 +1432,10 @@ class LobsterParser:
 
             # Find VASP mainfiles next to the LOBSTER mainfile, as paths relative to
             # the upload raw directory (with compression support)
-            vasp_mainfiles = get_vasp_mainfiles(
-                mainfile_path,
-                archive.metadata.mainfile if archive.metadata is not None else None,
+            metadata_mainfile = (
+                archive.metadata.mainfile if archive.metadata is not None else None
             )
+            vasp_mainfiles = get_vasp_mainfiles(mainfile_path, metadata_mainfile)
             if not vasp_mainfiles:
                 logger.warning(
                     'No VASP mainfile found next to the LOBSTER mainfile, '
@@ -1457,19 +1457,37 @@ class LobsterParser:
                         vasp_mainfile=vasp_mainfile,
                     )
 
-            # Create workflow task if VASP entry was found
+            # Create workflow task if VASP entry was found.
+            # Cross-entry references are assigned as URL strings: the metainfo stores
+            # them as `MProxy` and only those end up in `metadata.entry_references`,
+            # which provides the inter-entry links in the GUI and search index.
+            dft_calculation = None
             if entry_archive is not None:
                 try:
-                    # add DFT run to workflow tasks
-                    dft_task = TaskReference(task=entry_archive.workflow2)
+                    vasp_ref = f'../upload/archive/mainfile/{vasp_mainfile}'
 
-                    # Extract DFT Inputs and Outputs
-                    input_structure = extract_section(entry_archive, ['run', 'system'])
-                    dft_calculation = extract_section(
+                    # Extract DFT Inputs and Outputs as references into the VASP entry
+                    input_structure_section = extract_section(
+                        entry_archive, ['run', 'system']
+                    )
+                    dft_calculation_section = extract_section(
                         entry_archive, ['run', 'calculation']
                     )
+                    input_structure = (
+                        f'{vasp_ref}#{input_structure_section.m_path()}'
+                        if input_structure_section is not None
+                        else None
+                    )
+                    dft_calculation = (
+                        f'{vasp_ref}#{dft_calculation_section.m_path()}'
+                        if dft_calculation_section is not None
+                        else None
+                    )
 
-                    dft_task.name = 'DFT run'
+                    # add DFT run to workflow tasks
+                    dft_task = TaskReference(
+                        task=f'{vasp_ref}#/workflow2', name='DFT run'
+                    )
                     dft_task.inputs = [
                         Link(section=input_structure, name='Input Structure')
                     ]
@@ -1491,14 +1509,28 @@ class LobsterParser:
                     )
                     dft_task = None
 
-            # add lobster archive to the workflow tasks
-            lobster_calculation = extract_section(archive, ['run', 'calculation'])
-            lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
+            # add lobster archive to the workflow tasks, referencing the sibling
+            # LOBSTER entry by mainfile when available, with in-memory fallback
+            lobster_calculation_section = extract_section(
+                archive, ['run', 'calculation']
+            )
+            if metadata_mainfile:
+                lobster_ref = f'../upload/archive/mainfile/{metadata_mainfile}'
+                lobster_workflow = f'{lobster_ref}#/workflow2'
+                lobster_calculation = (
+                    f'{lobster_ref}#{lobster_calculation_section.m_path()}'
+                    if lobster_calculation_section is not None
+                    else None
+                )
+            else:
+                lobster_workflow = archive.workflow2
+                lobster_calculation = lobster_calculation_section
+            lobster_task = TaskReference(task=lobster_workflow, name='LOBSTER run')
 
             if dft_task is not None:
                 lobster_task.inputs = [
                     Link(
-                        section=dft_task.outputs[0].section,
+                        section=dft_calculation,
                         name='Structure and PlaneWavefunctions',
                     )
                 ]
@@ -1516,7 +1548,7 @@ class LobsterParser:
 
             # Set workflow outputs
             workflow_archive.workflow2.outputs = [
-                Link(section=lobster_task.outputs[0].section, name='LOBSTER Outputs')
+                Link(section=lobster_calculation, name='LOBSTER Outputs')
             ]
 
         mainfile_parser.close()
