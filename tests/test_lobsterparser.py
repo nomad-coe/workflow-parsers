@@ -992,11 +992,15 @@ def test_get_vasp_mainfiles(tmp_path, subdir, suffix, use_metadata):
     """
     The paths returned for `resolve_archive` must be relative to the upload raw
     directory, regardless of nesting, compression, or metadata availability.
+    Stray sibling files, e.g. pre-parsed `vasprun.archive.json` artifacts, must
+    not be picked up.
     """
     raw_dir = tmp_path / 'raw' / subdir
     raw_dir.mkdir(parents=True, exist_ok=True)
     for name in ['OUTCAR', 'vasprun.xml']:
         (raw_dir / f'{name}{suffix}').write_text('')
+    for stray in ['vasprun.archive.json', 'OUTCAR.backup', 'CONTCAR']:
+        (raw_dir / stray).write_text('')
 
     metadata_mainfile = os.path.join(subdir, 'lobsterout') if use_metadata else None
     expected = [

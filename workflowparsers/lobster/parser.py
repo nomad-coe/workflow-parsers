@@ -141,6 +141,10 @@ def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> lis
     directory. `Context.resolve_archive` expects this form, as entries are identified by
     `generate_entry_id(upload_id, mainfile)` with the upload-relative mainfile path.
 
+    Only these exact file names (plus the compression suffixes known to NOMAD) are
+    matched. Stray sibling files that may also carry the DFT data, such as pre-parsed
+    `vasprun.archive.json` artifacts, are deliberately ignored.
+
     Args:
         mainfile_path: Filesystem directory containing the LOBSTER mainfile.
         metadata_mainfile: The LOBSTER mainfile path relative to the upload raw
