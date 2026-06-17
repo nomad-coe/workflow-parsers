@@ -990,10 +990,10 @@ def test_orbitalwise_UO3(parser):
 )
 def test_get_vasp_mainfiles(tmp_path, subdir, suffix, use_metadata):
     """
-    The paths returned for `resolve_archive` must be relative to the upload raw
+    The path returned for `resolve_archive` must be relative to the upload raw
     directory, regardless of nesting, compression, or metadata availability.
-    Stray sibling files, e.g. pre-parsed `vasprun.archive.json` artifacts, must
-    not be picked up.
+    vasprun.xml is preferred over OUTCAR. Stray sibling files, e.g. pre-parsed
+    `vasprun.archive.json` artifacts, must not be picked up.
     """
     raw_dir = tmp_path / 'raw' / subdir
     raw_dir.mkdir(parents=True, exist_ok=True)
@@ -1003,14 +1003,26 @@ def test_get_vasp_mainfiles(tmp_path, subdir, suffix, use_metadata):
         (raw_dir / stray).write_text('')
 
     metadata_mainfile = os.path.join(subdir, 'lobsterout') if use_metadata else None
-    expected = [
-        os.path.join(subdir, f'{name}{suffix}') for name in ['OUTCAR', 'vasprun.xml']
-    ]
+    # vasprun.xml is preferred over OUTCAR
+    expected = os.path.join(subdir, f'vasprun.xml{suffix}')
     assert get_vasp_mainfiles(str(raw_dir), metadata_mainfile) == expected
 
 
 def test_get_vasp_mainfiles_empty(tmp_path):
-    assert get_vasp_mainfiles(str(tmp_path), 'lobsterout') == []
+    assert get_vasp_mainfiles(str(tmp_path), 'lobsterout') is None
+
+
+@pytest.mark.parametrize(
+    'suffix', ['', '.gz', '.bz2'], ids=['plain', 'gzip', 'bzip2']
+)
+def test_get_vasp_mainfiles_fallback(tmp_path, suffix):
+    """Test that OUTCAR is used as fallback when vasprun.xml is missing."""
+    raw_dir = tmp_path / 'raw'
+    raw_dir.mkdir(parents=True)
+    # Only OUTCAR present, no vasprun.xml
+    (raw_dir / f'OUTCAR{suffix}').write_text('')
+
+    assert get_vasp_mainfiles(str(raw_dir), 'lobsterout') == f'OUTCAR{suffix}'
 
 
 def test_workflow(parser, upload_data, upload_id, context, main_author):

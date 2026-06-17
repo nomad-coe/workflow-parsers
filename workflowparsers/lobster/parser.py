@@ -134,12 +134,17 @@ def get_lobster_file(filename):
     return filename
 
 
-def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> list[str]:
+def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> str | None:
     """
-    Find VASP mainfiles (`OUTCAR`, `vasprun.xml`, including compressed variants) in the
-    directory of the LOBSTER mainfile and return their paths relative to the upload raw
-    directory. `Context.resolve_archive` expects this form, as entries are identified by
-    `generate_entry_id(upload_id, mainfile)` with the upload-relative mainfile path.
+    Find a VASP mainfile (`vasprun.xml` preferred, `OUTCAR` as fallback, including
+    compressed variants) in the directory of the LOBSTER mainfile and return its path
+    relative to the upload raw directory. `Context.resolve_archive` expects this form,
+    as entries are identified by `generate_entry_id(upload_id, mainfile)` with the
+    upload-relative mainfile path.
+
+    Since one LOBSTER calculation links to exactly one VASP calculation, this function
+    returns the first mainfile found in priority order. `vasprun.xml` is preferred as
+    the primary VASP mainfile, with `OUTCAR` as a fallback if `vasprun.xml` is missing.
 
     Only these exact file names (plus the compression suffixes known to NOMAD) are
     matched. Stray sibling files that may also carry the DFT data, such as pre-parsed
@@ -151,10 +156,11 @@ def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> lis
             directory, i.e. `archive.metadata.mainfile`, if available.
 
     Returns:
-        list[str]: Upload-relative paths of the VASP mainfiles found.
+        str | None: Upload-relative path of the VASP mainfile found, or None if no
+            VASP mainfile exists.
     """
-    vasp_mainfiles = []
-    for filename in ['OUTCAR', 'vasprun.xml']:
+    # Check in priority order: vasprun.xml is the primary mainfile, OUTCAR is fallback
+    for filename in ['vasprun.xml', 'OUTCAR']:
         vasp_path = get_lobster_file(os.path.join(mainfile_path, filename))
         if not os.path.isfile(vasp_path):
             continue
@@ -166,8 +172,8 @@ def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> lis
         else:
             # fall back to stripping the upload raw directory prefix
             upload_rel_path = vasp_path.split('/raw/')[-1]
-        vasp_mainfiles.append(upload_rel_path)
-    return vasp_mainfiles
+        return upload_rel_path  # Return first found mainfile
+    return None  # No VASP mainfile found
 
 
 def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type: str):
@@ -1434,13 +1440,13 @@ class LobsterParser:
                 'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
             )
 
-            # Find VASP mainfiles next to the LOBSTER mainfile, as paths relative to
+            # Find VASP mainfile next to the LOBSTER mainfile, as path relative to
             # the upload raw directory (with compression support)
             metadata_mainfile = (
                 archive.metadata.mainfile if archive.metadata is not None else None
             )
-            vasp_mainfiles = get_vasp_mainfiles(mainfile_path, metadata_mainfile)
-            if not vasp_mainfiles:
+            vasp_mainfile = get_vasp_mainfiles(mainfile_path, metadata_mainfile)
+            if not vasp_mainfile:
                 logger.warning(
                     'No VASP mainfile found next to the LOBSTER mainfile, '
                     'the workflow entry will not contain a DFT task.'
@@ -1448,11 +1454,10 @@ class LobsterParser:
 
             # Try to resolve the VASP archive within the same upload
             entry_archive = None
-            for vasp_mainfile in vasp_mainfiles:
+            if vasp_mainfile:
                 try:
                     resolve_path = f'../upload/archive/mainfile/{vasp_mainfile}'
                     entry_archive = archive.m_context.resolve_archive(resolve_path)
-                    break
                 except Exception as e:
                     entry_archive = None
                     logger.warning(
