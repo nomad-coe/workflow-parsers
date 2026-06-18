@@ -125,13 +125,27 @@ _ORBITAL_PAIR_CLASS = {
 }
 
 
-def get_lobster_file(filename):
+def find_file_with_compression(filepath: str) -> str | None:
+    """
+    Find a file that may exist with compression suffixes.
+
+    Checks for the file at the given path, with possible compression
+    extensions (.gz, .bz2, .xz) as defined by NOMAD's _compressions.
+
+    Args:
+        filepath: Path to the file (without compression suffix).
+
+    Returns:
+        The path to the actual file found (possibly with compression suffix),
+        or None if no variant exists.
+    """
     compressions = [''] + [v[0] for v in _compressions.values()]
     for compression in compressions:
-        name = f'{filename}.{compression}'
-        if os.path.isfile(name):
-            return name
-    return filename
+        suffix = f'.{compression}' if compression else ''
+        candidate = f'{filepath}{suffix}'
+        if os.path.isfile(candidate):
+            return candidate
+    return None
 
 
 def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> str | None:
@@ -161,8 +175,8 @@ def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> str
     """
     # Check in priority order: vasprun.xml is the primary mainfile, OUTCAR is fallback
     for filename in ['vasprun.xml', 'OUTCAR']:
-        vasp_path = get_lobster_file(os.path.join(mainfile_path, filename))
-        if not os.path.isfile(vasp_path):
+        vasp_path = find_file_with_compression(os.path.join(mainfile_path, filename))
+        if vasp_path is None:
             continue
         if metadata_mainfile:
             # the VASP files sit next to the LOBSTER mainfile
@@ -1279,9 +1293,11 @@ class LobsterParser:
         if code is not None:
             if code == 'VASP':
                 try:
-                    contcar_path = get_lobster_file(
+                    contcar_path = find_file_with_compression(
                         os.path.join(mainfile_path, 'CONTCAR')
                     )
+                    if contcar_path is None:
+                        raise FileNotFoundError('CONTCAR not found')
                     structure = ase.io.read(contcar_path, format='vasp')
                 except FileNotFoundError:
                     logger.warning(
@@ -1372,55 +1388,66 @@ class LobsterParser:
                     )
                 ]
 
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOHPLIST.lobster')),
-            scc,
-            'hp',
-            version=run.program.version,
+        # Parse ICOXPLIST files - these functions handle None gracefully
+        icohp_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOHPLIST.lobster')
         )
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOOPLIST.lobster')),
-            scc,
-            'op',
-            version=run.program.version,
+        if icohp_file:
+            parse_ICOXPLIST(icohp_file, scc, 'hp', version=run.program.version)
+
+        icoop_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOOPLIST.lobster')
         )
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOBILIST.lobster')),
-            scc,
-            'bi',
-            version=run.program.version,
+        if icoop_file:
+            parse_ICOXPLIST(icoop_file, scc, 'op', version=run.program.version)
+
+        icobi_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOBILIST.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COHPCAR.lobster')),
-            scc,
-            'hp',
-            logger,
+        if icobi_file:
+            parse_ICOXPLIST(icobi_file, scc, 'bi', version=run.program.version)
+
+        # Parse COXPCAR files
+        cohp_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COHPCAR.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COOPCAR.lobster')),
-            scc,
-            'op',
-            logger,
+        if cohp_file:
+            parse_COXPCAR(cohp_file, scc, 'hp', logger)
+
+        coop_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COOPCAR.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COBICAR.lobster')),
-            scc,
-            'bi',
-            logger,
+        if coop_file:
+            parse_COXPCAR(coop_file, scc, 'op', logger)
+
+        cobi_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COBICAR.lobster')
         )
-        parse_CHARGE(
-            get_lobster_file(os.path.join(mainfile_path, 'CHARGE.lobster')), scc
+        if cobi_file:
+            parse_COXPCAR(cobi_file, scc, 'bi', logger)
+
+        # Parse CHARGE file
+        charge_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'CHARGE.lobster')
         )
-        doscar_lso = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.LSO.lobster'))
-        doscar = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.lobster'))
-        if os.path.isfile(doscar_lso):
-            if os.path.isfile(doscar):
+        if charge_file:
+            parse_CHARGE(charge_file, scc)
+
+        # Handle DOSCAR files with priority for LSO variant
+        doscar_lso = find_file_with_compression(
+            os.path.join(mainfile_path, 'DOSCAR.LSO.lobster')
+        )
+        doscar = find_file_with_compression(
+            os.path.join(mainfile_path, 'DOSCAR.lobster')
+        )
+        if doscar_lso:
+            if doscar:
                 logger.info(
                     'Both DOSCAR.LSO.lobster and DOSCAR.lobster found; '
                     'parsing only DOSCAR.LSO.lobster to avoid duplicate DOS.'
                 )
             parse_DOSCAR(doscar_lso, run, logger)
-        elif os.path.isfile(doscar):
+        elif doscar:
             parse_DOSCAR(doscar, run, logger)
 
         workflow = SinglePoint()
