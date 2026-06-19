@@ -125,13 +125,69 @@ _ORBITAL_PAIR_CLASS = {
 }
 
 
-def get_lobster_file(filename):
+def find_file_with_compression(filepath: str) -> str | None:
+    """
+    Find a file that may exist with compression suffixes.
+
+    Checks for the file at the given path, with possible compression
+    extensions (.gz, .bz2, .xz) as defined by NOMAD's _compressions.
+
+    Args:
+        filepath: Path to the file (without compression suffix).
+
+    Returns:
+        The path to the actual file found (possibly with compression suffix),
+        or None if no variant exists.
+    """
     compressions = [''] + [v[0] for v in _compressions.values()]
     for compression in compressions:
-        name = f'{filename}.{compression}'
-        if os.path.isfile(name):
-            return name
-    return filename
+        suffix = f'.{compression}' if compression else ''
+        candidate = f'{filepath}{suffix}'
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def get_vasp_mainfiles(mainfile_path: str, metadata_mainfile: str | None) -> str | None:
+    """
+    Find a VASP mainfile (`vasprun.xml` preferred, `OUTCAR` as fallback, including
+    compressed variants) in the directory of the LOBSTER mainfile and return its path
+    relative to the upload raw directory. `Context.resolve_archive` expects this form,
+    as entries are identified by `generate_entry_id(upload_id, mainfile)` with the
+    upload-relative mainfile path.
+
+    Since one LOBSTER calculation links to exactly one VASP calculation, this function
+    returns the first mainfile found in priority order. `vasprun.xml` is preferred as
+    the primary VASP mainfile, with `OUTCAR` as a fallback if `vasprun.xml` is missing.
+
+    Only these exact file names (plus the compression suffixes known to NOMAD) are
+    matched. Stray sibling files that may also carry the DFT data, such as pre-parsed
+    `vasprun.archive.json` artifacts, are deliberately ignored.
+
+    Args:
+        mainfile_path: Filesystem directory containing the LOBSTER mainfile.
+        metadata_mainfile: The LOBSTER mainfile path relative to the upload raw
+            directory, i.e. `archive.metadata.mainfile`, if available.
+
+    Returns:
+        str | None: Upload-relative path of the VASP mainfile found, or None if no
+            VASP mainfile exists.
+    """
+    # Check in priority order: vasprun.xml is the primary mainfile, OUTCAR is fallback
+    for filename in ['vasprun.xml', 'OUTCAR']:
+        vasp_path = find_file_with_compression(os.path.join(mainfile_path, filename))
+        if vasp_path is None:
+            continue
+        if metadata_mainfile:
+            # the VASP files sit next to the LOBSTER mainfile
+            upload_rel_path = os.path.join(
+                os.path.dirname(metadata_mainfile), os.path.basename(vasp_path)
+            )
+        else:
+            # fall back to stripping the upload raw directory prefix
+            upload_rel_path = vasp_path.split('/raw/')[-1]
+        return upload_rel_path  # Return first found mainfile
+    return None  # No VASP mainfile found
 
 
 def orb_coxp_icoxp_to_joule(icoxp_pairs, conversion_factor, data_type: str):
@@ -1237,9 +1293,11 @@ class LobsterParser:
         if code is not None:
             if code == 'VASP':
                 try:
-                    contcar_path = get_lobster_file(
+                    contcar_path = find_file_with_compression(
                         os.path.join(mainfile_path, 'CONTCAR')
                     )
+                    if contcar_path is None:
+                        raise FileNotFoundError('CONTCAR not found')
                     structure = ase.io.read(contcar_path, format='vasp')
                 except FileNotFoundError:
                     logger.warning(
@@ -1330,55 +1388,66 @@ class LobsterParser:
                     )
                 ]
 
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOHPLIST.lobster')),
-            scc,
-            'hp',
-            version=run.program.version,
+        # Parse ICOXPLIST files - these functions handle None gracefully
+        icohp_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOHPLIST.lobster')
         )
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOOPLIST.lobster')),
-            scc,
-            'op',
-            version=run.program.version,
+        if icohp_file:
+            parse_ICOXPLIST(icohp_file, scc, 'hp', version=run.program.version)
+
+        icoop_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOOPLIST.lobster')
         )
-        parse_ICOXPLIST(
-            get_lobster_file(os.path.join(mainfile_path, 'ICOBILIST.lobster')),
-            scc,
-            'bi',
-            version=run.program.version,
+        if icoop_file:
+            parse_ICOXPLIST(icoop_file, scc, 'op', version=run.program.version)
+
+        icobi_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'ICOBILIST.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COHPCAR.lobster')),
-            scc,
-            'hp',
-            logger,
+        if icobi_file:
+            parse_ICOXPLIST(icobi_file, scc, 'bi', version=run.program.version)
+
+        # Parse COXPCAR files
+        cohp_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COHPCAR.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COOPCAR.lobster')),
-            scc,
-            'op',
-            logger,
+        if cohp_file:
+            parse_COXPCAR(cohp_file, scc, 'hp', logger)
+
+        coop_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COOPCAR.lobster')
         )
-        parse_COXPCAR(
-            get_lobster_file(os.path.join(mainfile_path, 'COBICAR.lobster')),
-            scc,
-            'bi',
-            logger,
+        if coop_file:
+            parse_COXPCAR(coop_file, scc, 'op', logger)
+
+        cobi_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'COBICAR.lobster')
         )
-        parse_CHARGE(
-            get_lobster_file(os.path.join(mainfile_path, 'CHARGE.lobster')), scc
+        if cobi_file:
+            parse_COXPCAR(cobi_file, scc, 'bi', logger)
+
+        # Parse CHARGE file
+        charge_file = find_file_with_compression(
+            os.path.join(mainfile_path, 'CHARGE.lobster')
         )
-        doscar_lso = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.LSO.lobster'))
-        doscar = get_lobster_file(os.path.join(mainfile_path, 'DOSCAR.lobster'))
-        if os.path.isfile(doscar_lso):
-            if os.path.isfile(doscar):
+        if charge_file:
+            parse_CHARGE(charge_file, scc)
+
+        # Handle DOSCAR files with priority for LSO variant
+        doscar_lso = find_file_with_compression(
+            os.path.join(mainfile_path, 'DOSCAR.LSO.lobster')
+        )
+        doscar = find_file_with_compression(
+            os.path.join(mainfile_path, 'DOSCAR.lobster')
+        )
+        if doscar_lso:
+            if doscar:
                 logger.info(
                     'Both DOSCAR.LSO.lobster and DOSCAR.lobster found; '
                     'parsing only DOSCAR.LSO.lobster to avoid duplicate DOS.'
                 )
             parse_DOSCAR(doscar_lso, run, logger)
-        elif os.path.isfile(doscar):
+        elif doscar:
             parse_DOSCAR(doscar, run, logger)
 
         workflow = SinglePoint()
@@ -1393,82 +1462,128 @@ class LobsterParser:
             workflow_archive.workflow2 = SerialSimulation(name='LOBSTER Workflow')
 
             dft_task = None
-            try:
-                logger.info(
-                    f'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
+
+            logger.info(
+                'Underlying VASP calculation detected. Attempting to link VASP and LOBSTER entries.'
+            )
+
+            # Find VASP mainfile next to the LOBSTER mainfile, as path relative to
+            # the upload raw directory (with compression support)
+            metadata_mainfile = (
+                archive.metadata.mainfile if archive.metadata is not None else None
+            )
+            vasp_mainfile = get_vasp_mainfiles(mainfile_path, metadata_mainfile)
+            if not vasp_mainfile:
+                logger.warning(
+                    'No VASP mainfile found next to the LOBSTER mainfile, '
+                    'the workflow entry will not contain a DFT task.'
                 )
-                from nomad.search import search  # noqa
-                from nomad.app.v1.models import MetadataRequired  # noqa
 
-                parent_file = mainfile.split('raw/')[-1]  # noqa
+            # Try to resolve the VASP archive within the same upload
+            entry_archive = None
+            if vasp_mainfile:
+                try:
+                    resolve_path = f'../upload/archive/mainfile/{vasp_mainfile}'
+                    entry_archive = archive.m_context.resolve_archive(resolve_path)
+                except Exception as e:
+                    entry_archive = None
+                    logger.warning(
+                        'Could not resolve VASP entry within the upload',
+                        exc_info=e,
+                        vasp_mainfile=vasp_mainfile,
+                    )
 
-                parent_dir = os.path.dirname(parent_file)
+            # Create workflow task if VASP entry was found.
+            # Cross-entry references are assigned as URL strings: the metainfo stores
+            # them as `MProxy` and only those end up in `metadata.entry_references`,
+            # which provides the inter-entry links in the GUI and search index.
+            dft_calculation = None
+            if entry_archive is not None:
+                try:
+                    vasp_ref = f'../upload/archive/mainfile/{vasp_mainfile}'
 
-                upload_id = archive.metadata.upload_id
-                metadata = search(
-                    owner='visible',
-                    user_id=archive.metadata.main_author.user_id,
-                    query={'upload_id': upload_id},
-                    required=MetadataRequired(
-                        include=['entry_id', 'mainfile', 'parser_name']
-                    ),
-                ).data
-                for result in metadata:
-                    # skip non-vasp files
-                    if 'vasp' not in result.get('parser_name', '').lower():
-                        continue
-                    entry_id = result.get('entry_id')
-                    if not entry_id:
-                        continue
-                    entry_mainfile = result.get('mainfile')
-                    # link only entries in the same directory or sub-directories
-                    if entry_mainfile.startswith(parent_dir):
-                        entry_archive = archive.m_context.load_archive(
-                            entry_id, upload_id, None
-                        )
-                        # add DFT run to workflow tasks
-                        dft_task = TaskReference(task=entry_archive.workflow2)
+                    # Extract DFT Inputs and Outputs as references into the VASP entry
+                    input_structure_section = extract_section(
+                        entry_archive, ['run', 'system']
+                    )
+                    dft_calculation_section = extract_section(
+                        entry_archive, ['run', 'calculation']
+                    )
+                    input_structure = (
+                        f'{vasp_ref}#{input_structure_section.m_path()}'
+                        if input_structure_section is not None
+                        else None
+                    )
+                    dft_calculation = (
+                        f'{vasp_ref}#{dft_calculation_section.m_path()}'
+                        if dft_calculation_section is not None
+                        else None
+                    )
 
-                        # Extract DFT Inputs and Outputs
-                        input_structure = extract_section(
-                            entry_archive, ['run', 'system']
-                        )
-                        dft_calculation = extract_section(
-                            entry_archive, ['run', 'calculation']
-                        )
+                    # add DFT run to workflow tasks
+                    dft_task = TaskReference(
+                        task=f'{vasp_ref}#/workflow2', name='DFT run'
+                    )
 
-                        dft_task.name = 'DFT run'
-                        dft_task.inputs = [
+                    # Only add inputs/outputs when the sections exist
+                    dft_task.inputs = []
+                    if input_structure:
+                        dft_task.inputs.append(
                             Link(section=input_structure, name='Input Structure')
-                        ]
-                        dft_task.outputs = [
-                            Link(section=dft_calculation, name='Output DFT calculation')
-                        ]
+                        )
 
-                        # Set the DFT task as an input for the workflow
+                    dft_task.outputs = []
+                    if dft_calculation:
+                        dft_task.outputs.append(
+                            Link(section=dft_calculation, name='Output DFT calculation')
+                        )
+
+                    # Only set workflow inputs when we have a valid structure
+                    if input_structure:
                         workflow_archive.workflow2.inputs = [
                             Link(section=input_structure, name='Structure')
                         ]
 
-                        # add DFT task to the workflow tasks
-                        workflow_archive.workflow2.tasks.append(dft_task)
-                        break
-            except Exception:
-                logger.warning(f'Error setting workflow inputs, i.e., VASP entries.')
+                    # add DFT task to the workflow tasks
+                    workflow_archive.workflow2.tasks.append(dft_task)
 
-            # add lobster archive to the workflow tasks
-            lobster_calculation = extract_section(archive, ['run', 'calculation'])
-            lobster_task = TaskReference(task=archive.workflow2, name='LOBSTER run')
+                except Exception as e:
+                    logger.error(
+                        'Error creating workflow task from VASP entry', exc_info=e
+                    )
+                    dft_task = None
 
-            if dft_task is not None:
+            # add lobster archive to the workflow tasks, referencing the sibling
+            # LOBSTER entry by mainfile when available, with in-memory fallback
+            lobster_calculation_section = extract_section(
+                archive, ['run', 'calculation']
+            )
+            if metadata_mainfile:
+                lobster_ref = f'../upload/archive/mainfile/{metadata_mainfile}'
+                lobster_workflow = f'{lobster_ref}#/workflow2'
+                lobster_calculation = (
+                    f'{lobster_ref}#{lobster_calculation_section.m_path()}'
+                    if lobster_calculation_section is not None
+                    else None
+                )
+            else:
+                lobster_workflow = archive.workflow2
+                lobster_calculation = lobster_calculation_section
+            lobster_task = TaskReference(task=lobster_workflow, name='LOBSTER run')
+
+            # Only set inputs when we have both dft_task and a valid dft_calculation
+            if dft_task is not None and dft_calculation is not None:
                 lobster_task.inputs = [
                     Link(
-                        section=dft_task.outputs[0].section,
+                        section=dft_calculation,
                         name='Structure and PlaneWavefunctions',
                     )
                 ]
-            else:
-                logger.warning(f'Error connecting VASP with LOBSTER entry.')
+            elif dft_task is not None:
+                logger.warning(
+                    'Could not connect the VASP and LOBSTER entries, '
+                    'the workflow entry will not contain a DFT task.'
+                )
 
             lobster_task.outputs = [
                 Link(section=lobster_calculation, name='Output LOBSTER calculation')
@@ -1478,7 +1593,7 @@ class LobsterParser:
 
             # Set workflow outputs
             workflow_archive.workflow2.outputs = [
-                Link(section=lobster_task.outputs[0].section, name='LOBSTER Outputs')
+                Link(section=lobster_calculation, name='LOBSTER Outputs')
             ]
 
         mainfile_parser.close()

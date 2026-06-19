@@ -25,9 +25,13 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    # - name: Start containers
-    #   run: |
-    #     docker compose up -d --quiet-pull
+    # MongoDB and Elasticsearch are required by the integration tests
+    # (tests/conftest.py uses `infrastructure.setup_mongo/setup_elastic`).
+    # Keycloak and RabbitMQ from the compose file are not needed: the test
+    # fixtures use a static `User` instead of a Keycloak lookup.
+    - name: Start MongoDB and Elasticsearch
+      run: |
+        docker compose up -d --quiet-pull --wait elastic mongo
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
