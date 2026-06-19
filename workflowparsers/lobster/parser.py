@@ -1524,17 +1524,25 @@ class LobsterParser:
                     dft_task = TaskReference(
                         task=f'{vasp_ref}#/workflow2', name='DFT run'
                     )
-                    dft_task.inputs = [
-                        Link(section=input_structure, name='Input Structure')
-                    ]
-                    dft_task.outputs = [
-                        Link(section=dft_calculation, name='Output DFT calculation')
-                    ]
 
-                    # Set the DFT task as an input for the workflow
-                    workflow_archive.workflow2.inputs = [
-                        Link(section=input_structure, name='Structure')
-                    ]
+                    # Only add inputs/outputs when the sections exist
+                    dft_task.inputs = []
+                    if input_structure:
+                        dft_task.inputs.append(
+                            Link(section=input_structure, name='Input Structure')
+                        )
+
+                    dft_task.outputs = []
+                    if dft_calculation:
+                        dft_task.outputs.append(
+                            Link(section=dft_calculation, name='Output DFT calculation')
+                        )
+
+                    # Only set workflow inputs when we have a valid structure
+                    if input_structure:
+                        workflow_archive.workflow2.inputs = [
+                            Link(section=input_structure, name='Structure')
+                        ]
 
                     # add DFT task to the workflow tasks
                     workflow_archive.workflow2.tasks.append(dft_task)
@@ -1563,14 +1571,15 @@ class LobsterParser:
                 lobster_calculation = lobster_calculation_section
             lobster_task = TaskReference(task=lobster_workflow, name='LOBSTER run')
 
-            if dft_task is not None:
+            # Only set inputs when we have both dft_task and a valid dft_calculation
+            if dft_task is not None and dft_calculation is not None:
                 lobster_task.inputs = [
                     Link(
                         section=dft_calculation,
                         name='Structure and PlaneWavefunctions',
                     )
                 ]
-            else:
+            elif dft_task is not None:
                 logger.warning(
                     'Could not connect the VASP and LOBSTER entries, '
                     'the workflow entry will not contain a DFT task.'
