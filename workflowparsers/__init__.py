@@ -123,15 +123,15 @@ aflow_parser_entry_point = EntryPoint(
     aliases=['parsers/aflow'],
     description='NOMAD parser for AFLOW.',
     python_package='workflowparsers.aflow',
-    mainfile_contents_re=(
-        r'^\s*\[AFLOW\] \*+\s*\[AFLOW\]\s*\[AFLOW\]                     .o.        .o88o.'
-        r"oooo\s*\[AFLOW\]                    .888.       888 `` `888\s*\[AFLOW\]                   .8'888.     o888oo   888   .ooooo.  oooo"
-        r"oooo    ooo\s*\[AFLOW\]                  .8' `888.     888     888  d88' `88b  `88."
-        r"`88.  .8'\s*\[AFLOW\]                 .88ooo8888.    888     888  888   888   `88..]88..8'\s*\[AFLOW\]                .8'     `888.   888     888  888   888    `888'`888'\s*\[AFLOW\]               o88o     o8888o"
-        r"o888o   o888o `Y8bod8P'     `8'  `8'  .in|^\s*\{\"aurl\"\:\"aflowlib\.duke\.edu\:AFLOWDATA"
+    mainfile_contents_re = (
+        r'(?s)^(?:'  # start of line, then either:
+        r'\s*(?:\[AFLOW\]\s*\n?){1,9}.*?\.o\..*?o888o.*?`Y8bod8P\'.*?\.in'  # ASCII-art AFLOW header in aflow.in
+        r'|'  # OR
+        r"\{\s*\"aurl\"\s*:\s*\"aflowlib\.duke\.edu\:AFLOWDATA"  # JSON aurl entry in aflowlib.json
+        r')'
     ),
     mainfile_mime_re='(application/json)|(text/.*)',
-    mainfile_name_re=r'.*aflowlib\.json.*',
+    mainfile_name_re=r'.*(?:aflowlib\.json|aflow\.in).*',
     mainfile_alternative=True,
     supported_compressions=['gz', 'bz2', 'xz'],
     parser_class_name='workflowparsers.aflow.AFLOWParser',
