@@ -27,6 +27,7 @@ from runschema.run import Run, Program, TimeRun
 from runschema.method import Method, Electronic, KMesh, AtomParameters
 from runschema.system import System, Atoms
 from runschema.calculation import Calculation, Energy
+from simulationworkflowschema import SinglePoint
 from .metainfo.quantum_espresso_epw import (
     x_qe_epw_irreducible_q_point,
     x_qe_epw_self_energy_migdal,
@@ -585,3 +586,5 @@ class QuantumEspressoEPWParser:
                 sec_timing.x_qe_epw_cpu_time = timing[1]
                 sec_timing.x_qe_epw_wall_time = timing[2]
                 sec_timing.x_qe_epw_n_calls = timing[3]
+
+        archive.workflow2 = SinglePoint()
