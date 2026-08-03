@@ -32,7 +32,11 @@ from ase.dft.kpoints import (
 )
 
 from phonopy.phonon.band_structure import BandStructure
-from phonopy.units import EvTokJmol, VaspToTHz
+from phonopy.physical_units import get_physical_units
+
+_PHONOPY_UNITS = get_physical_units()
+EvTokJmol = _PHONOPY_UNITS.EvTokJmol
+VaspToTHz = _PHONOPY_UNITS.DefaultToTHz
 
 
 def generate_kpath_parameters(
@@ -164,7 +168,10 @@ class PhononProperties:
 
         k_mesh = kwargs.get('k_mesh', 30)
         mesh_density = (2 * k_mesh**3) / self.n_atoms
-        mesh_number = np.round(mesh_density ** (1.0 / 3.0))
+        # Phonopy 3 validates mesh numbers as integer values.  ``round``
+        # returns a numpy scalar with a floating-point dtype, even when its
+        # value is integral.
+        mesh_number = int(np.round(mesh_density ** (1.0 / 3.0)))
         self.mesh = [mesh_number, mesh_number, mesh_number]
 
         self.n_atoms_supercell = len(phonopy_obj.supercell)
@@ -175,7 +182,7 @@ class PhononProperties:
         frequency_unit_factor = VaspToTHz
         is_eigenvectors = False
 
-        unit_cell = phonopy_obj.unitcell.get_cell()
+        unit_cell = phonopy_obj.unitcell.cell
         sym_tol = phonopy_obj.symmetry.tolerance
         if self.band_conf is not None:
             parameters = read_kpath(self.band_conf)
@@ -221,7 +228,7 @@ class PhononProperties:
             factor=frequency_unit_factor,
         )
 
-        freqs = bs_obj.get_frequencies()
+        freqs = bs_obj.frequencies
 
         return np.array(freqs), np.array(bands), np.array(bands_labels)
 
@@ -229,30 +236,39 @@ class PhononProperties:
         phonopy_obj = self.phonopy_obj
         mesh = self.mesh
 
-        phonopy_obj.set_mesh(mesh, is_gamma_center=True)
-        q_points = phonopy_obj.get_mesh()[0]
-        phonopy_obj.set_qpoints_phonon(q_points, is_eigenvectors=False)
-
-        frequencies = phonopy_obj.get_qpoints_phonon()[0]
+        phonopy_obj.run_mesh(mesh, is_gamma_center=True)
+        frequencies = phonopy_obj.mesh.frequencies
         self.frequencies = np.array(frequencies)
         min_freq = min(np.ravel(frequencies))
         max_freq = max(np.ravel(frequencies)) + max(np.ravel(frequencies)) * 0.05
 
-        phonopy_obj.set_total_DOS(
-            freq_min=min_freq, freq_max=max_freq, tetrahedron_method=True
+        phonopy_obj.run_total_dos(
+            freq_min=min_freq,
+            freq_max=max_freq,
+            use_tetrahedron_method=True,
         )
-        f, dos = phonopy_obj.get_total_DOS()
+        dos_result = phonopy_obj.total_dos
+        f, dos = dos_result.frequency_points, dos_result.dos
 
         return f, dos
 
     def get_thermodynamical_properties(self):
         phonopy_obj = self.phonopy_obj
 
-        phonopy_obj.set_mesh(self.mesh, is_gamma_center=True)
-        phonopy_obj.set_thermal_properties(
+        phonopy_obj.run_mesh(self.mesh, is_gamma_center=True)
+        phonopy_obj.run_thermal_properties(
             t_step=self.t_step, t_max=self.t_max, t_min=self.t_min
         )
-        T, fe, entropy, cv = phonopy_obj.get_thermal_properties()
+        thermal_properties = phonopy_obj.thermal_properties
+        # Phonopy 3 stores the calculated values as a tuple on the result
+        # object.  Newer releases expose the same values as named attributes.
+        if hasattr(thermal_properties, 'free_energy'):
+            T = thermal_properties.temperatures
+            fe = thermal_properties.free_energy
+            entropy = thermal_properties.entropy
+            cv = thermal_properties.heat_capacity
+        else:
+            T, fe, entropy, cv = thermal_properties.thermal_properties
         kJmolToEv = 1.0 / EvTokJmol
         fe = fe * kJmolToEv
         JmolToEv = kJmolToEv / 1000

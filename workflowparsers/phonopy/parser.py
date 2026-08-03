@@ -22,8 +22,10 @@ import numpy as np
 import logging
 import json
 import phonopy
-from phonopy.units import THzToEv
+from phonopy.physical_units import get_physical_units
 from phonopy.structure.atoms import PhonopyAtoms
+
+THzToEv = get_physical_units().THzToEv
 
 from .calculator import PhononProperties
 
@@ -175,15 +177,15 @@ def read_forces_aims(
         if len(reference) != len(calculated):
             logger.warning('Inconsistent number of atoms.')
             return False
-        if (reference.get_atomic_numbers() != calculated.get_atomic_numbers()).any():
+        if (reference.numbers != calculated.numbers).any():
             logger.warning('Inconsistent species.')
             return False
-        if (abs(reference.get_cell() - calculated.get_cell()) > tolerance).any():
+        if (abs(reference.cell - calculated.cell) > tolerance).any():
             logger.warning('Inconsistent cell.')
             return False
         # get normalized positions, wrapped to the bounding cell
-        ref_pos = reference.get_scaled_positions() % 1.0
-        cal_pos = calculated.get_scaled_positions() % 1.0
+        ref_pos = reference.scaled_positions % 1.0
+        cal_pos = calculated.scaled_positions % 1.0
         # resolve coordinates at the boundary
         ref_pos = np.where(ref_pos != 1.0, ref_pos, 0.0)
         cal_pos = np.where(cal_pos != 1.0, cal_pos, 0.0)
@@ -344,13 +346,13 @@ def phonopy_obj_to_archive(
 
     pbc = np.array((1, 1, 1), bool)
 
-    unit_cell = phonopy_obj.unitcell.get_cell()
-    unit_pos = phonopy_obj.unitcell.get_positions()
-    unit_sym = np.array(phonopy_obj.unitcell.get_chemical_symbols())
+    unit_cell = phonopy_obj.unitcell.cell
+    unit_pos = phonopy_obj.unitcell.positions
+    unit_sym = np.array(phonopy_obj.unitcell.symbols)
 
-    super_cell = phonopy_obj.supercell.get_cell()
-    super_pos = phonopy_obj.supercell.get_positions()
-    super_sym = np.array(phonopy_obj.supercell.get_chemical_symbols())
+    super_cell = phonopy_obj.supercell.cell
+    super_pos = phonopy_obj.supercell.positions
+    super_sym = np.array(phonopy_obj.supercell.symbols)
 
     unit_cell = (unit_cell * ureg.angstrom).to('meter').magnitude
     unit_pos = (unit_pos * ureg.angstrom).to('meter').magnitude
@@ -403,9 +405,11 @@ def phonopy_obj_to_archive(
         sec_method.x_phonopy_displacement = displacement
 
     try:
-        force_constants = phonopy_obj.get_force_constants()
+        phonopy_obj.produce_force_constants()
         force_constants = (
-            (force_constants * ureg.eV / ureg.angstrom**2).to('J/(m**2)').magnitude
+            (phonopy_obj.force_constants * ureg.eV / ureg.angstrom**2)
+            .to('J/(m**2)')
+            .magnitude
         )
     except Exception:
         logger.error('Error producing force constants.')
@@ -532,10 +536,10 @@ class PhonopyParser:
             sym = self.control_parser.get('symmetry_thresh', 1e-6)
             try:
                 phonopy_obj = phonopy.Phonopy(
-                    cell_obj, supercell_matrix, symprec=sym, calculator='fhi-aims'
+                    cell_obj, supercell_matrix, symprec=sym, calculator='aims'
                 )
                 phonopy_obj.generate_displacements(distance=displacement)
-                supercells = phonopy_obj.get_supercells_with_displacements()
+                supercells = phonopy_obj.supercells_with_displacements
                 set_of_forces, relative_paths = read_forces_aims(
                     supercells,
                     logger=self.logger,
@@ -569,7 +573,7 @@ class PhonopyParser:
 
         if set_of_forces:
             try:
-                phonopy_obj.set_forces(set_of_forces)
+                phonopy_obj.forces = set_of_forces
                 phonopy_obj.produce_force_constants()
             except Exception:
                 self.logger.error('Error producing force constants.')
