@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "nomad-parser-plugins-workflow"
 dynamic = ["version"]
+requires-python = ">=3.10"
 description = "Collection of NOMAD parsers for workflow engines."
 readme = "README.md"
 authors = [{ name = "The NOMAD Authors" }]
@@ -18,9 +19,9 @@ dependencies = [
     # problem with reading QE inp with ase.io.read v>25
     'ase>=3.22',
     "xarray>=0.20.1",
-    "phonopy>=2.35,<=2.38",
+    "phonopy>=3,<4",
     "h5py>=3.11.0",
-    "pydantic>=1.10.8",
+    "pydantic>=2",
     # issue with reading nc file in 1.7.3: https://github.com/Unidata/netcdf4-python/issues/1438
     "netcdf4<=1.7.2",
     "h5netcdf"
@@ -64,6 +65,7 @@ lint.ignore = [
     "PLR0912", # Too many branches
     "PLR0913", # Too many arguments in function definition
     "PLR0915", # Too many statements
+    "PLR0917", # too-many-positional-arguments
     "PLR2004", # Magic value used instead of constant
     "PLW0603", # Using the global statement
     "PLW2901", # redefined-loop-name
