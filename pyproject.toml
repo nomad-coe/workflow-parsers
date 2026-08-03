@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "nomad-parser-plugins-workflow"
 dynamic = ["version"]
+requires-python = ">=3.10"
 description = "Collection of NOMAD parsers for workflow engines."
 readme = "README.md"
 authors = [{ name = "The NOMAD Authors" }]
