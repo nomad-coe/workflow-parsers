@@ -739,12 +739,16 @@ def parse_COXPCAR(fname, scc, method, logger):
     if not os.path.isfile(fname):
         return
 
-    # Get the file size limit from config
-    entry_point_config = config.get_plugin_entry_point(
-        'workflowparsers:lobster_parser_entry_point'
-    )
-    max_file_size = entry_point_config.max_coxpcar_file_size
-    max_file_size_display = entry_point_config.max_coxpcar_file_size_display
+    try:
+        # Get the file size limit from config
+        entry_point_config = config.get_plugin_entry_point(
+            'workflowparsers:lobster_parser_entry_point'
+        )
+        max_file_size = entry_point_config.max_coxpcar_file_size
+        max_file_size_display = entry_point_config.max_coxpcar_file_size_display
+    except Exception:
+        max_file_size = 262_144_000
+        max_file_size_display = ''
 
     if _coxp_exceeds_uncompressed_limit(fname, logger, max_file_size):
         logger.warning(
