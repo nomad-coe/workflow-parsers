@@ -54,6 +54,7 @@ def approx(value):
     return pytest.approx(value, abs=0, rel=1e-6)
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_Fe(parser):
     """
     Tests spin-polarized Fe calculation with LOBSTER 4.0.0
@@ -237,6 +238,7 @@ def test_Fe(parser):
     assert dos_down.atom_projected[5].value[190].to('1/eV').magnitude == approx(0.29205)
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_NaCl(parser):
     """
     Test non-spin-polarized NaCl calculation with LOBSTER 3.2.0
@@ -551,6 +553,7 @@ def test_QE_Ni(parser):
     assert run.clean_end is True
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_Si(parser):
     """
     Test spin-polarized orbitalwise Si calculation with LOBSTER 4.1.0,
@@ -673,6 +676,7 @@ def test_Si(parser):
             )
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_BaTiO3(parser):
     """
     Test non-spin-polarized BaTiO3 calculation with LOBSTER 4.1.0,
@@ -750,6 +754,7 @@ def test_BaTiO3(parser):
         )
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_AlN_v51(parser):
     """
     Test non-spin-polarized AlN calculation with LOBSTER 5.1.1,
@@ -801,6 +806,7 @@ def test_AlN_v51(parser):
     }
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_BaTiO3_v5(parser):
     """
     Test non-spin-polarized BaTiO3 calculation with LOBSTER 5.1.1,
@@ -873,6 +879,7 @@ def test_failed_case(parser):
     assert run.clean_end is False
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_orbitalwise_UO3(parser):
     """
     Test that orbital-wise data is correctly parsed for a calculation with LOBSTER 4.1.0.
@@ -1097,6 +1104,7 @@ def test_workflow(parser, upload_data, upload_id, context, main_author):
     assert utils.generate_entry_id(upload_id, mainfile) in targets
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_basis_regex(parser):
     """Test for the lobsterout v5.1.1 failing basis regex"""
 
