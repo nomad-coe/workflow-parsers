@@ -1025,6 +1025,7 @@ def test_get_vasp_mainfiles_fallback(tmp_path, suffix):
     assert get_vasp_mainfiles(str(raw_dir), 'lobsterout') == f'OUTCAR{suffix}'
 
 
+@pytest.mark.skip(reason='Requires parser to be loaded as entry point.')
 def test_workflow(parser, upload_data, upload_id, context, main_author):
     mainfile = 'tests/data/lobster/Fe/lobsterout'
     archive = EntryArchive(
