@@ -102,7 +102,6 @@ asrparser = "workflowparsers:asr_parser_entry_point"
 atomateparser = "workflowparsers:atomate_parser_entry_point"
 elasticparser = "workflowparsers:elastic_parser_entry_point"
 fhivibesparser = "workflowparsers:fhivibes_parser_entry_point"
-lobsterparser = "workflowparsers:lobster_parser_entry_point"
 
 [tool.mypy]
 strict = false
