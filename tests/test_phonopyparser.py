@@ -16,11 +16,15 @@
 # limitations under the License.
 #
 
+import logging
+
 import pytest
 import numpy as np
+from ase.cell import Cell
 
 from nomad.datamodel import EntryArchive
 from workflowparsers.phonopy import PhonopyParser
+from workflowparsers.phonopy.calculator import generate_kpath_ase
 
 
 def approx(value, abs=0, rel=1e-6):
@@ -83,7 +87,24 @@ def test_hexagonal_noncanonical(parser):
 
     # TODO: also update other geometry artifacts
 
-    # TODO: add test for failed lattice classification
+
+@pytest.mark.parametrize(
+    'lengths',
+    [
+        pytest.param([9.91421472, 4.39275307, 11.33757198], id='b < a < c'),
+        pytest.param([11.33757198, 9.91421472, 4.39275307], id='c < b < a'),
+    ],
+)
+def test_kpath_fallback_non_canonical_orthorhombic(lengths):
+    """Cells ASE cannot classify (orthorhombic axes not ordered a < b < c) must
+    fall back to the generic orthorhombic k-path instead of raising `KeyError`."""
+    segments = generate_kpath_ase(
+        Cell(np.diag(lengths)), 1e-5, logging.getLogger(__name__)
+    )
+
+    assert len(segments) == 12
+    for segment in segments:
+        assert set(segment) == {'npoints', 'startname', 'kstart', 'endname', 'kend'}
 
 
 def test_standard_phonopy_naming(parser):
