@@ -1012,9 +1012,7 @@ def test_get_vasp_mainfiles_empty(tmp_path):
     assert get_vasp_mainfiles(str(tmp_path), 'lobsterout') is None
 
 
-@pytest.mark.parametrize(
-    'suffix', ['', '.gz', '.bz2'], ids=['plain', 'gzip', 'bzip2']
-)
+@pytest.mark.parametrize('suffix', ['', '.gz', '.bz2'], ids=['plain', 'gzip', 'bzip2'])
 def test_get_vasp_mainfiles_fallback(tmp_path, suffix):
     """Test that OUTCAR is used as fallback when vasprun.xml is missing."""
     raw_dir = tmp_path / 'raw'
