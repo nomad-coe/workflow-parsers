@@ -142,8 +142,8 @@ def generate_kpath_ase(cell: Cell, symprec: float, logger=None) -> list[dict[str
         points = lattice.get_special_points()
     except Exception:
         logger.warning('Cannot resolve lattice paths.')
-        paths = special_paths['orthorombic']  # TODO: remove reliance on `ase`
-        points = sc_special_points['orthorombic']  # TODO: remove reliance on `ase`
+        paths = special_paths['orthorhombic']  # TODO: remove reliance on `ase`
+        points = sc_special_points['orthorhombic']  # TODO: remove reliance on `ase`
     if points is None:
         try:
             points = get_special_points(cell)
