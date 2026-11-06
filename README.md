@@ -93,5 +93,17 @@ pip install -e workflow-parsers
 
 Running the parser now, will use the parser's Python code from the clone project.
 
+### Running tests
+
+Tests requiring MongoDB and Elasticsearch are skipped by default. To include them,
+start the services and pass `--run-infrastructure`:
+
+```sh
+docker compose up -d --wait elastic mongo
+uv run pytest --run-infrastructure tests
+```
+
+The parser's CI also runs these infrastructure-dependent tests.
+
 ## How to cite this work
 Ladines, A. N., Daelman, N., Pizarro, J. M., Ondračka, P., Himanen, L., Fekete, A., Scheidgen, M., Chang, T., Ilyas, A., & Rudzinski, J. F. (2025). Workflow Parsers (all versions). Zenodo. https://doi.org/10.5281/zenodo.14900119
