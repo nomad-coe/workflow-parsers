@@ -28,6 +28,15 @@ from nomad.datamodel.context import ServerContext
 from nomad.utils import generate_entry_id
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        '--run-infrastructure',
+        action='store_true',
+        default=False,
+        help='run tests that require MongoDB and Elasticsearch',
+    )
+
+
 # Set up pytest to pass control to the debugger on an exception.
 if os.getenv('_PYTEST_RAISE', '0') != '0':
 
@@ -98,7 +107,13 @@ def upload_archives(upload_files, main_author, upload_id):
 
 
 @pytest.fixture(scope='session')
-def upload_data(upload_id, main_author, upload_archives):
+def require_infrastructure(request):
+    if not request.config.getoption('--run-infrastructure'):
+        pytest.skip('requires MongoDB and Elasticsearch; use --run-infrastructure')
+
+
+@pytest.fixture(scope='session')
+def upload_data(require_infrastructure, upload_id, main_author, upload_archives):
     infrastructure.setup_mongo()
     infrastructure.setup_elastic()
 
